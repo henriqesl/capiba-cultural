@@ -1,16 +1,19 @@
-using System.Diagnostics.Tracing;
+using System.Collections.Generic;
 
-public class Caravana
+namespace CapibaCultura.Models
 {
-    public int Id { get; set; }
-    public int EventoId { get; set; }
-    public Evento Evento { get; set; }
-    public List<Usuario> Participantes { get; set; } = new();
-    public int BonusPorParticipante { get; set; }
-
-    public void AdicionarParticipantes (Usuario usuario)
+    public class Caravana
     {
-        Participantes.Add(usuario);
-        usuario.SaldoMoedaCapiba += BonusPorParticipante;
+        public int Id { get; set; }
+        public int EventoId { get; set; }
+        public Evento Evento { get; set; }
+        public List<Usuario> Participantes { get; set; } = new();
+        public int BonusPorParticipante { get; set; }
+
+        public void AdicionarParticipantes(Usuario usuario)
+        {
+            Participantes.Add(usuario);
+            usuario.SaldoMoedaCapiba += BonusPorParticipante;
+        }
     }
 }
