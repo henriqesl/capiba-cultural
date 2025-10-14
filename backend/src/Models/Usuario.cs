@@ -14,5 +14,26 @@ namespace CapibaCultural.Models
 
         public List<Caravana> Caravanas { get; set; } = new();
         public List<GrupoCompeticao> Grupos { get; set; } = new();
+
+        public Usuario() { }
+
+        public Usuario(string nome, string email, string senha)
+        {
+            Nome = nome;
+            Email = email;
+            Senha = senha;
+            SaldoMoedaCapiba = 0;
+            DataCadastro = DateTime.Now;
+        }
+
+        public void AdicionarMoedas(int quantidade)
+        {
+            SaldoMoedaCapiba += quantidade;
+        }
+
+        public bool GastarMoedas(int quantidade)
+        {
+            SaldoMoedaCapiba -= quantidade;
+        }
     }
 }
