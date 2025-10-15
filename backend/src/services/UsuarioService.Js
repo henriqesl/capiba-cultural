@@ -39,7 +39,7 @@ class UsuarioService {
     gastarMoedas(usuarioId, quantidade) {
         const usuario = this.obterPorId(usuarioId);
         if (quantidade > usuario.saldoMoedaCapiba) throw new Error("Usuário não pode gastar mais moedas capibas do que já tem");
-        return usuario.gastarMoedas(quantidade);
+        usuario.gastarMoedas(quantidade);
         return usuario;
     }
 
