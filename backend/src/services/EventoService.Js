@@ -6,17 +6,17 @@ class EventoService {
         this.nextId = 1;
     }
 
-    criarEvento(nome, local, data, descricao) {
+    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
         if (!nome || !local || !data || !descricao)
             throw new Error("Todos os campos são obrigatórios");
 
         if (isNaN(Date.parse(data)))
             throw new Error("Data inválida");
 
-        if (this.eventos.some(e => e.nome === nome))
+        if (!reportadoPorUsuario && this.eventos.some(e => e.nome === nome))
             throw new Error("Evento já cadastrado");
 
-        const evento = new Evento(nome, local, data, descricao);
+        const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
         evento.id = this.nextId++;
         this.eventos.push(evento);
         return evento;
