@@ -2,10 +2,10 @@ const ReporteEvento = require('../models/ReporteEvento');
 const EventoService = require('./EventoService');
 
 class ReporteService {
-    constructor() {
+    constructor(eventoService) {
         this.reportes = [];
         this.nextId = 1;
-        this.eventoService = new EventoService();
+        this.eventoService = eventoService;
     }
 
     criarOuConfirmarReporte(reportante, eventoInput, descricao = '') {

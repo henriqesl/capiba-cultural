@@ -1,5 +1,5 @@
-const Usuario = require('./Models/Usuario');
-const Evento = require('./Models/Evento');
+const Usuario = require('./Usuario');
+const Evento = require('./Evento');
 
 class ReporteEvento {
     constructor(reportante, evento, descricao = '') {

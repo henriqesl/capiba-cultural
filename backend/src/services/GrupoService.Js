@@ -44,7 +44,7 @@ class GrupoService {
         return {
             id: grupo.id,
             nome: grupo.nome,
-            vencedor: grupo.vencedor?.nome || null,
+            vencedor: grupo.vencedor || null,
             pontuacaoTotal: grupo.pontuacaoTotal,
             encerrado: grupo.encerrado
         };
