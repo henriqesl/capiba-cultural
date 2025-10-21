@@ -1,5 +1,5 @@
-const Usuario = require('./Models/Usuario');
-const Evento = require('./Models/Evento');
+const Usuario = require('./usuario');
+const Evento = require('./evento');
 
 class Caravana {
     constructor(nome, eventoDestino) {
