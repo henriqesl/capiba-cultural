@@ -1,8 +1,8 @@
-const Usuario = require('./Models/Usuario');
-const Caravana = require('./Models/Caravana');
+const Usuario = require('./usuario');
+const Caravana = require('./caravana');
 
 class Evento {
-    constructor(nome, local, data, descricao = '', pequenoPorte = false) {
+    constructor(nome, local, data, descricao = '', pequenoPorte = false, reportadoPorUsuario = false) {
         this.id = null;
         this.nome = nome;
         this.local = local;
@@ -14,11 +14,20 @@ class Evento {
         this.participantes = [];
         this.moedasDistribuidas = 0;
         this.caravanas = [];
+        this.reportadoPorUsuario = reportadoPorUsuario;
+        this.confirmacoes = 0;
     }
 
     adicionarParticipante(usuario) {
         if (!usuario) throw new Error('Usuário inválido.');
         this.participantes.push(usuario);
+    }
+
+    adicionarConfirmacao() {
+        this.confirmacoes++;
+        if (this.confirmacoes >= 3) {
+            this.aoVivo = true;
+        }
     }
 }
 
