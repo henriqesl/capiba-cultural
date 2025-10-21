@@ -1,0 +1,55 @@
+// Modelo que será guardado para o uso no banco de dataCadastro
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Puxa do .env 
+}
+
+// Será, futuramente, a tabela usuários
+model Usuario {
+  id               Int                @id @default(autoincrement()) // são os atributos, seu id e o valor padrão (que incrementa a cada novo)
+  nome             String
+  email            String             @unique // um valor único, ou seja só podera existir 1 na tabela
+  senha            String             // senha que será encripitada com jwt (explicar dps)
+  saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
+  dataCadastro     DateTime           @default(now()) // o padrão é a data atual
+
+  // Relações (O que este usuário possui?)
+  grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
+  grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
+  caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
+  
+  @@map("usuarios")
+}
+
+model GrupoCompeticao {
+  id             Int        @id @default(autoincrement())
+  nome           String
+  dataInicio     DateTime
+  dataFim        DateTime
+  encerrado      Boolean    @default(false)
+  pontuacaoTotal Int        @default(0) // Você tinha 'default(false)', mudei para 0
+
+  // Relação (Muitos-para-Muitos com Usuários)
+  membros        Usuario[]  @relation("MembrosDoGrupo")
+  
+  // Relação (Um-para-Muitos com Vencedor)
+  vencedorId     Int?       // '?' = opcional/nulo
+  vencedor       Usuario?   @relation("VencedorDoGrupo", fields: [vencedorId], references: [id])
+
+  @@map("grupos_competicao")
+}
+
+model Caravana {
+  id      Int       @id @default(autoincrement())
+  nome    String
+  data    DateTime
+  
+  membros Usuario[] @relation("MembrosDaCaravana")
+  
+  @@map("caravanas")
+}
