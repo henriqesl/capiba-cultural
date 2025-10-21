@@ -25,7 +25,7 @@ class CaravanaController {
             });
             return caravanas;
         } catch (error) {
-            console.error("Erro ao criar caravana: ", error.message);
+            console.error("Erro ao listar caravana: ", error.message);
         }
     }
 
@@ -35,7 +35,7 @@ class CaravanaController {
             console.log(`Procurando caravana por ID: ${id}`);
             return caravana;
         } catch (error) {
-            console.error("Erro ao encontrar caravana por id: ", error.message);
+            console.error("Erro ao encontrar caravana por ID: ", error.message);
         }
     }
 
