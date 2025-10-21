@@ -12,6 +12,15 @@ class ReporteEvento {
         this.dataReporte = new Date();
         this.descricao = descricao;
     }
+    
+    adicionarConfirmacao(usuario) {
+        const jaConfirmou = this.reportantes.some(u => u.id === usuario.id);
+        if (jaConfirmou) {
+            throw new Error('Usuário já confirmou este evento.');
+        }
+        this.reportantes.push(usuario);
+        this.qtdConfirmacoes++;
+    }
 }
 
 module.exports = ReporteEvento;
