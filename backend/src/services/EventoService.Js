@@ -1,12 +1,11 @@
-const Evento = require('../models/Evento');
+const { PrismaClient } = require('@prisma/client');
 
 class EventoService {
     constructor() {
-        this.eventos = [];
-        this.nextId = 1;
+        this.prisma = new PrismaClient();               
     }
 
-    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
+    async criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
         if (!nome || !local || !data || !descricao)
             throw new Error("Todos os campos são obrigatórios");
 
@@ -16,27 +15,68 @@ class EventoService {
         if (!reportadoPorUsuario && this.eventos.some(e => e.nome === nome))
             throw new Error("Evento já cadastrado");
 
-        const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
-        evento.id = this.nextId++;
-        this.eventos.push(evento);
+
+        try {
+
+            const evento = await this.prisma.evento.create({
+                data: {
+                    nome: nome,
+                    local: local,
+                    data: data,
+                    descricao: descricao,
+                    pequenoPorte: pequenoPorte,
+                    reportadoPorUsuario: reportadoPorUsuario
+                }
+            })
+
+            return evento;
+
+        } catch (error) {
+            if (error.code === 'P2002') {
+                throw new Error("Erro de banco de dados: Violação de chave única.");
+            }
+            throw error
+        }
+
+    }
+
+    async listarEventos() {
+        return await this.prisma.evento.findMany()
+    }
+
+    async obterPorId(id) {
+        const numericId = parseInt(id, 10);
+        if (isNaN(numericId)) throw new Error("ID inválido, deve ser um número.");
+
+        const evento = await this.prisma.evento.findUnique({
+            where: {
+                id: numericId
+            }
+        });
+
+        if (!evento) {
+            throw new Error("Evento não encontrado");
+        }
+        
         return evento;
     }
-
-    listarEventos() {
-        return this.eventos;
-    }
-
-    obterPorId(id) {
-        const evento = this.eventos.find(e => e.id === id);
-        if (!evento) throw new Error("Evento não encontrado");
-        return evento;
-    }
-
-    removerEvento(id) {
-        const index = this.eventos.findIndex(e => e.id === id);
-        if (index === -1) throw new Error("Evento não encontrado");
-        const [eventoRemovido] = this.eventos.splice(index, 1);
-        return eventoRemovido;
+    async removerEvento(id) {
+        const numericId = parseInt(id, 10);
+        if (isNaN(numericId)) throw new Error("ID inválido, deve ser um número.");
+        
+        try {
+            const eventoRemovido = await this.prisma.evento.delete({
+                where: {
+                    id: numericId
+                }
+            });
+            return eventoRemovido; 
+        } catch (error) {
+            if (error.code === 'P2025') {
+                 throw new Error("Evento não encontrado");
+            }
+            throw error;
+        }
     }
 }
 
