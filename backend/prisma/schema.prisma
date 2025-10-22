@@ -1,12 +1,15 @@
 // Modelo que será guardado para o uso no banco de dataCadastro
 
 generator client {
-  provider = "prisma-client-js"
-}
 
+  provider = "prisma-client-js"
+
+}
 datasource db {
+
   provider = "postgresql"
   url      = env("DATABASE_URL") // Puxa do .env 
+
 }
 
 // Será, futuramente, a tabela usuários
@@ -18,13 +21,16 @@ model Usuario {
   saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
   dataCadastro     DateTime           @default(now()) // o padrão é a data atual
 
+
   // Relações (O que este usuário possui?)
-  grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
+  grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários 
   grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
   caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
-  
+
   @@map("usuarios")
+
 }
+
 
 model GrupoCompeticao {
   id             Int        @id @default(autoincrement())
@@ -36,20 +42,22 @@ model GrupoCompeticao {
 
   // Relação (Muitos-para-Muitos com Usuários)
   membros        Usuario[]  @relation("MembrosDoGrupo")
-  
+
   // Relação (Um-para-Muitos com Vencedor)
   vencedorId     Int?       // '?' = opcional/nulo
   vencedor       Usuario?   @relation("VencedorDoGrupo", fields: [vencedorId], references: [id])
 
   @@map("grupos_competicao")
+
 }
+
+
 
 model Caravana {
   id      Int       @id @default(autoincrement())
   nome    String
   data    DateTime
-  
   membros Usuario[] @relation("MembrosDaCaravana")
-  
   @@map("caravanas")
-}
+
+} 
