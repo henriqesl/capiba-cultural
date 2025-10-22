@@ -2,42 +2,77 @@ const Caravana = require('../models/Caravana');
 
 class CaravanaService {
     constructor() {
-        this.caravanas = [];
-        this.nextId = 1;
+        this.prisma = new PrismaClient();               
     }
 
-    criarCaravana(nome, eventoDestino) {
+
+
+    async criarCaravana(nome, eventoDestino) {
         if (!nome || !eventoDestino) {
-            throw new Error("Nome e evento de destino são obrigatórios.");
-        }
+            throw new Error("Nome e evento de destino são obrigatórios."); }
 
-        const caravana = new Caravana(nome, eventoDestino);
-        caravana.id = this.nextId++;
-        this.caravanas.push(caravana);
+        try { 
+            const caravana = await this.prisma.caravana.create({
+                data: { nome: nome, eventoDestino, eventoDestino }
+            })
 
-        return caravana;
+            return caravana 
+        } catch(error) { throw error }
     }
 
-    listarCaravanas() {
-        return this.caravanas;
-    }
 
-    obterPorId(id) {
-        const caravana = this.caravanas.find(c => c.id === id);
+
+    async listarCaravanas() { 
+        return this.prisma.caravana.findMany(); }
+
+
+    async obterPorId(id) {
+        const numericId = parseInt(id, 10);
+        if (isNaN(numericId)) throw new Error("ID inválido, deve ser um número.");
+
+
+        const caravana = await this.prisma.caravana.findUnique({
+            where: { id: numericId }   
+        })
+
         if (!caravana) {
             throw new Error("Caravana não encontrada.");
         }
         return caravana;
     }
 
-    adicionarMembro(caravanaId, usuario) {
-        const caravana = this.obterPorId(caravanaId);
-        if (!usuario) {
-            throw new Error("Usuário inválido.");
+
+
+    async adicionarMembro(caravanaId, usuarioId) {
+        const numericId = parseInt(caravanaId, 10);
+        const numericUserId = parseInt(usuarioId, 10);
+
+        
+        if (isNaN(numericId)) throw new Error("ID da caravana inválido.");
+        if (isNaN(numericUserId)) throw new Error("ID do usuário inválido.");
+
+
+        const caravana = await this.prisma.caravana.findUnique({ 
+            where: { id: numericId }
+        })
+
+        if (!caravana) {
+            throw new Error("Caravana não encontrada");
         }
-        caravana.adicionarMembro(usuario);
+
+        const usuario = await prisma.usuario.findUnique({
+            where: { id: numericUserId }
+        });
+
+        if (!usuario) {
+            throw new Error("Usuário não encontrado.");
+        }
+
         return caravana;
     }
+
+    
 }
+
 
 module.exports = CaravanaService;
