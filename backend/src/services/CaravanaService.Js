@@ -68,10 +68,20 @@ class CaravanaService {
             throw new Error("Usuário não encontrado.");
         }
 
+
+        await this.prisma.carava.update({
+            where: { id: numericId },
+            data: { 
+                membros: {
+                    connect: { id: numericUserId}
+                }
+            }
+        })
+
         return caravana;
     }
 
-    
+
 }
 
 
