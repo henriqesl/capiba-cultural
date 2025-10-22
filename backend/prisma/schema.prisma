@@ -42,7 +42,7 @@ model Evento {
   aoVivo                      Boolean   @default(false)
   pequenoPorte                Boolean   @default(true)
   moedasCapibasDestribuidas   Float     @default(0)
-  reportadoPorUsuario         String
+  reportadoPorUsuario         Boolean   @default(false)
   confirmacoes                Int       @default(0)
 
   participantes     Usuario[]       @relation("ParticipantesDoEvento")
