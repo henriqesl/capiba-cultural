@@ -26,8 +26,30 @@ model Usuario {
   grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários 
   grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
   caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
+  eventos_participados Evento[] @relation("ParticipantesDoEvento")
 
   @@map("usuarios")
+
+}
+
+model Evento {
+  id                          Int @id @default(autoincrement())
+  nome                        String
+  local                       String
+  data                        DateTime
+  descricao                   String
+  ativo                       Boolean   @default(true)
+  aoVivo                      Boolean   @default(false)
+  pequenoPorte                Boolean   @default(true)
+  moedasCapibasDestribuidas   Float     @default(0)
+  reportadoPorUsuario         String
+  confirmacoes                Int       @default(0)
+
+  participantes     Usuario[]       @relation("ParticipantesDoEvento")
+  caravanas         Caravana[]      @relation("CaravanasNoEvento")
+
+
+  @@map("eventos")
 
 }
 
@@ -58,6 +80,7 @@ model Caravana {
   nome    String
   data    DateTime
   membros Usuario[] @relation("MembrosDaCaravana")
+  eventos Evento[]  @relation("CaravanasNoEvento")
   @@map("caravanas")
 
 } 
