@@ -74,13 +74,16 @@ model GrupoCompeticao {
 }
 
 
-
 model Caravana {
-  id      Int       @id @default(autoincrement())
-  nome    String
-  data    DateTime
+  id            Int       @id @default(autoincrement())
+  nome          String
+  descricao     String
+  ativo         Boolean   @default(true)
+
+
+  eventoId      Int
+  evento        Evento    @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
   membros Usuario[] @relation("MembrosDaCaravana")
-  eventos Evento[]  @relation("CaravanasNoEvento")
   @@map("caravanas")
 
 } 

@@ -1,41 +1,92 @@
-const GrupoCompeticao = require('../models/GrupoCompeticao');
+const { PrismaClient } = require('@prisma/client');
 
 class GrupoService {
     constructor() {
-        this.grupos = [];
-        this.nextId = 1;
+        this.prisma = new PrismaClient();               
     }
 
-    criarGrupo(nome, dataInicio, dataFim) {
+    async criarGrupo(nome, dataInicio, dataFim) {
         if (!nome) throw new Error("Nome do grupo é obrigatório");
         if (!dataInicio || !dataFim) throw new Error("Datas de início e fim são obrigatórias");
 
-        const grupo = new GrupoCompeticao(nome, dataInicio, dataFim);
-        grupo.id = this.nextId++;
-        this.grupos.push(grupo);
+        try {
+            const novoGrupo = await this.prisma.grupoCompeticao.create({
+                data: {
+                    nome: nome,
+                    dataInicio: dataInicio, 
+                    dataFim: dataFim,
+                    encerrado: encerrado,
+                    pontuacaoTotal: pontuacaoTotal
+                }
 
-        return grupo;
+            })      
+        return novoGrupo
+
+    } catch (error) {
+        throw error
+    }
+}
+
+    async listarGrupos() {
+        return await this.prisma.grupoCompeticao.findMany()
     }
 
-    listarGrupos() {
-        return this.grupos;
-    }
+    async obterPorId(id) {
+        const numericId = parseInt(id, 10);
+        if (isNaN(numericId)) throw new Error("ID inválido, deve ser um número.");
 
-    obterPorId(id) {
-        const grupo = this.grupos.find(g => g.id === id);
+        const grupo = await this.prisma.grupoCompeticao.findUnique({
+            where: { id: numericId}
+        })
         if (!grupo) throw new Error("Grupo não encontrado.");
         return grupo;
     }
 
-    adicionarMembro(grupoId, usuario) {
-        const grupo = this.obterPorId(grupoId);
+    async adicionarMembro(grupoId, usuario) {
+        const numericId = parseInt(id, 10);
+        const numericUserId = parseInt(usuarioId, 10);
+
+        if (isNaN(numericId)) throw new Error("ID da caravana inválido.");
+        if (isNaN(numericUserId)) throw new Error("ID do usuário inválido.");
+
+        const grupo = await this.prisma.grupoCompeticao.findUnique({
+            where: { id: numericId },
+            select: { encerrado: true }
+        })
+
+        if (!grupo) {
+            throw new Error("Grupo não encontrado");
+        }
+
         if (grupo.encerrado) throw new Error("Não é possível adicionar membros a um grupo encerrado.");
-        grupo.adicionarMembro(usuario);
-        return grupo;
+
+
+        const usuario = await prisma.usuario.findUnique({
+            where: { id: numericUserId }
+        });
+
+        if (!usuario) {
+            throw new Error("Usuário não encontrado");
+        }
+        
+    
+        await this.prisma.grupoCompeticao.update({
+            where: { id: numericId },
+            data: { 
+                membros: {
+                    connect: { id: numericUserId }
+                }
+            }
+        })
+
+        return grupoCompeticao;
+    
     }
 
     atualizarPontuacoes() {
-        this.grupos.forEach(grupo => grupo.atualizarPontuacao());
+        const usuarios = await prisma.usuario.findMany({
+            where: { grupoId: grupoId },
+            });
     }
 
     encerrarGrupo(grupoId) {
