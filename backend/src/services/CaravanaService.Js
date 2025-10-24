@@ -1,4 +1,6 @@
-const Caravana = require('../models/Caravana');
+const { PrismaClient } = require('@prisma/client');
+const Caravana = require('./models/Caravana');
+
 
 class CaravanaService {
     constructor() {
@@ -7,38 +9,70 @@ class CaravanaService {
 
 
 
-    async criarCaravana(nome, eventoDestino) {
+    async criarCaravana(nome, eventoId) {
         if (!nome || !eventoDestino) {
             throw new Error("Nome e evento de destino são obrigatórios."); }
 
+
+        const numericEventId = parseInt(eventoId, 10);
+        if (isNaN(numericEventId)) throw new Error("ID do evento inválido.");
+
+        const evento = await this.prisma.evento.findUnique({ where: { id: numericEventId } });
+        if (!evento) {
+             throw new Error("Evento de destino não encontrado.");
+
+            
+        }
+
         try { 
             const caravana = await this.prisma.caravana.create({
-                data: { nome: nome, eventoDestino, eventoDestino }
+                data: { nome: nome, eventoDestinoId: numericEventId },
+                include: { eventoDestino: true }
             })
 
-            return caravana 
-        } catch(error) { throw error }
+            return Caravana.fromPrisma(caravana);
+
+     } catch(error) { 
+            console.error("Erro ao criar caravana:", error);
+            throw new Error("Falha na criação da caravana.");
+        }
     }
 
 
 
     async listarCaravanas() { 
-        return this.prisma.caravana.findMany(); }
+        const prismaResults = await this.prisma.caravana.findMany({
+            include: {
+                membros: true,
+                eventoDestino: true
+            }
+
+        });
+
+
+        return caravanas.map(Caravana.fromPrisma);
+
+    }
 
 
     async obterPorId(id) {
         const numericId = parseInt(id, 10);
-        if (isNaN(numericId)) throw new Error("ID inválido, deve ser um número.");
-
+        if (isNaN(numericId)) throw new Error("ID da caravna inválido.");
 
         const caravana = await this.prisma.caravana.findUnique({
-            where: { id: numericId }   
-        })
+            where: { id: numericId },
+            include: {
+                membros: true, 
+                eventoDestino: true
 
-        if (!caravana) {
+            }
+        }) 
+
+        if (!prismaResult) {
             throw new Error("Caravana não encontrada.");
         }
-        return caravana;
+
+        return Caravana.fromPrisma(caravana);
     }
 
 
@@ -51,37 +85,55 @@ class CaravanaService {
         if (isNaN(numericId)) throw new Error("ID da caravana inválido.");
         if (isNaN(numericUserId)) throw new Error("ID do usuário inválido.");
 
+        
+        const [caravana, usuario] = await Promise.all([
+            this.prisma.caravana.findUnique({
+                where: { id: numericId }
+            }), 
+            
+            this.prisma.usuario.findUnique({
+                where: { id: usuarioId }
+            })
 
-        const caravana = await this.prisma.caravana.findUnique({ 
-            where: { id: numericId }
-        })
+        ])
 
-        if (!caravana) {
-            throw new Error("Caravana não encontrada");
+        if (!caravana) throw new Error("Caravana não encontrada.");
+        if (!usuario) throw new Error("Usuário não encontrado.");
+
+
+        const bonus = caravana.bonusPorParticipante;
+
+        try {
+            await this.prisma.$transaction([
+                this.prisma.caravana.update({
+                    where: { id: numericId },
+                    data: {
+                        membros: {
+                            connect: { id: numericUserId }
+                        }
+                    }
+
+                }),
+
+                this.prisma.usuario.update({
+                    where: { id: numericUserId },
+                    data: { 
+                        saldoMoedaCapiba: { increment: bonus }
+                    }
+
+
+                })
+            ]);
+
+            return this.obterPorId(numericId)
+
+        } catch(error) { 
+            // Tratamento de erros de banco (ex: já membro ou chave estrangeira inválida)
+            console.error("Erro na transação de adicionar membro/bônus:", error);
+            throw new Error("Falha ao adicionar membro e conceder bônus. Transação revertida.");
         }
 
-        const usuario = await prisma.usuario.findUnique({
-            where: { id: numericUserId }
-        });
-
-        if (!usuario) {
-            throw new Error("Usuário não encontrado.");
-        }
-
-
-        await this.prisma.carava.update({
-            where: { id: numericId },
-            data: { 
-                membros: {
-                    connect: { id: numericUserId}
-                }
-            }
-        })
-
-        return caravana;
     }
-
-
 }
 
 
