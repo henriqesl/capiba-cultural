@@ -1,9 +1,9 @@
 import React from 'react';
-import Icon from '../components/Icon';
 import BottomNav from '../components/BottomNav';
 import TopNav from '../components/TopNav';
-import { InfoRow, PaymentMethod } from '../components/ProfileComponents';
-import { ICONS, BRAND_ICONS } from '../utils/icons.jsx';
+import { Icon } from '../components/ProfileComponents';
+import { InfoRow } from '../components/ProfileComponents';
+import { ICONS } from '../utils/icons.jsx';
 import perfil_image from '../assets/foto_perfil.png';
 
 const ProfilePage = () => {
@@ -11,7 +11,7 @@ const ProfilePage = () => {
     <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center">
       <TopNav />
       
-      <div className="w-full max-w-md md:max-w-6xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col">
+      <div className="w-full max-w-md md:max-w-7xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col">
         {/* Header Mobile */}
         <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
           <button className="hover:opacity-80">
@@ -44,9 +44,12 @@ const ProfilePage = () => {
             <h2 className="text-2xl font-bold text-gray-800 mt-4">Júnior Cruz</h2>
             <p className="text-md text-gray-500">@junior.cin2007</p>
             
-            <button className="w-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg py-2 px-4 mt-6 transition-colors">
-              Editar Perfil
-            </button>
+            <div className = "w-60">
+              <button className="w-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg py-2 px-4 mt-6 transition-colors">
+                Editar Perfil
+              </button>
+            </div>
+              
           </aside>
 
           {/* Coluna Direita: Informações */}

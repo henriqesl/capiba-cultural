@@ -1,6 +1,11 @@
 import React from 'react';
-import Icon from './Icon';
 import { ICONS } from '../utils/icons';
+
+export const Icon = ({ path, className = "w-6 h-6" }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path fillRule="evenodd" d={path} clipRule="evenodd" />
+    </svg>
+);
 
 export const InfoRow = ({ label, value }) => (
     <div className="flex justify-between items-center py-4 border-b border-gray-200 group hover:bg-gray-50 px-2 rounded-lg transition-colors">
@@ -14,20 +19,3 @@ export const InfoRow = ({ label, value }) => (
     </div>
 );
 
-export const PaymentMethod = ({ icon, title, detail, brandIcon, brand }) => (
-    <div className="flex justify-between items-center p-3 border border-gray-200 rounded-lg shadow-sm hover:shadow-md hover:border-blue-300 transition-all group">
-        <div className="flex items-center gap-4">
-            <div className="text-blue-600 bg-blue-50 p-2 rounded-full">{icon}</div>
-            <div>
-                <p className="font-semibold text-gray-800">{title}</p>
-                <p className="text-sm text-gray-500">{detail}</p>
-            </div>
-        </div>
-        <div className="flex items-center gap-4">
-            <button className="text-gray-400 transition hover:scale-105 hover:text-red-600 opacity-0 group-hover:opacity-100">
-                <Icon path={ICONS.trash} />
-            </button>
-            {brandIcon && <div className="text-gray-500">{brandIcon}</div>}
-        </div>
-    </div>
-);
