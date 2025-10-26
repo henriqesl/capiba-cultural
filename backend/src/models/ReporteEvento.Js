@@ -1,25 +1,28 @@
 const Usuario = require('./Usuario');
-const Evento = require('./Evento');
+const Evento = require('../Evento');
 
 class ReporteEvento {
-    constructor(reportante, evento, descricao = '') {
+    constructor(id, reportante, evento, descricao = '', dataReporte = new Date()) {
         if (!reportante) throw new Error('Reportante inválido.');
         if (!evento) throw new Error('Evento inválido.');
 
-        this.id = null;
+        this.id = id;
         this.reportante = reportante;
         this.evento = evento;
-        this.dataReporte = new Date();
         this.descricao = descricao;
+        this.dataReporte = dataReporte;
     }
-    
-    adicionarConfirmacao(usuario) {
-        const jaConfirmou = this.reportantes.some(u => u.id === usuario.id);
-        if (jaConfirmou) {
-            throw new Error('Usuário já confirmou este evento.');
-        }
-        this.reportantes.push(usuario);
-        this.qtdConfirmacoes++;
+
+    static fromPrisma(prismaData) {
+        if (!prismaData) return null;
+
+        return new ReporteEvento(
+            prismaData.id,
+            prismaData.reportante,
+            prismaData.evento,
+            prismaData.descricao,
+            prismaData.dataReporte
+        );
     }
 }
 
