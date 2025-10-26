@@ -1,13 +1,11 @@
 class Usuario {
-    constructor(nome, email, senha) {
-
-        this.id = null;
+    constructor(id, nome, email, senha, saldoMoedaCapiba = 0, dataCadastro = new Date()) {
+        this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.saldoMoedaCapiba = 0;
-        this.dataCadastro = new Date();
-
+        this.saldoMoedaCapiba = saldoMoedaCapiba;
+        this.dataCadastro = dataCadastro;
         this.caravanas = [];
         this.grupos = [];
     }
@@ -19,10 +17,20 @@ class Usuario {
 
     gastarMoedas(quantidade) {
         if (quantidade <= 0) throw new Error("Quantidade deve ser positiva");
-        if (this.saldoMoedaCapiba < quantidade) return false;
-
+        if (this.saldoMoedaCapiba < quantidade) throw new Error("Saldo insuficiente");
         this.saldoMoedaCapiba -= quantidade;
-        return true;
+    }
+
+    static fromPrisma(prismaData) {
+        if (!prismaData) return null;
+        return new Usuario(
+            prismaData.id,
+            prismaData.nome,
+            prismaData.email,
+            prismaData.senha,
+            prismaData.saldoMoedaCapiba,
+            prismaData.dataCadastro
+        );
     }
 }
 
