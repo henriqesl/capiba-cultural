@@ -1,18 +1,14 @@
-// Modelo que será guardado para o uso no banco de dataCadastro
 
 generator client {
-
-  provider = "prisma-client-js"
-
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
+
 datasource db {
-
   provider = "postgresql"
-  url      = env("DATABASE_URL") // Puxa do .env 
-
+  url      = env("DATABASE_URL")
 }
 
-// Será, futuramente, a tabela usuários
 model Usuario {
   id               Int                @id @default(autoincrement()) // são os atributos, seu id e o valor padrão (que incrementa a cada novo)
   nome             String
