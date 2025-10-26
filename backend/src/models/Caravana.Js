@@ -9,8 +9,8 @@ class Caravana {
         this.bonusPorParticipante = bonusPorParticipante;
         
         // Relacionamentos e Chaves Estrangeiras:
-        this.eventoDestinoId = eventoDestinoId; 
-        this.eventoDestino = eventoDestino; 
+        this.eventoId = eventoId;
+        this.evento = evento;
         this.membros = membros;
     }
     
@@ -24,15 +24,15 @@ class Caravana {
             prismaData.id,
             prismaData.nome,
             dataCaravana,
-            prismaData.eventoDestinoId,
             prismaData.bonusPorParticipante,
             prismaData.membros, 
-            prismaData.eventoDestino
+            prismaData.eventoId,
+            prismaData.evento
         );
     }
     
     get resumo() {
-        return `Caravana: ${this.nome} (ID: ${this.id}) | Destino: ${this.eventoDestino?.nome || this.eventoDestinoId}`;
+        return `Caravana: ${this.nome} (ID: ${this.id}) | Destino: ${this.evento?.nome || this.eventoDestinoId}`;
     }
 }
 

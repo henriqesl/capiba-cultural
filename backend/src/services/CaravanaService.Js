@@ -10,7 +10,7 @@ class CaravanaService {
 
 
     async criarCaravana(nome, eventoId) {
-        if (!nome || !eventoDestino) {
+        if (!nome || !!eventoId) {
             throw new Error("Nome e evento de destino são obrigatórios."); }
 
 

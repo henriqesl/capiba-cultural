@@ -79,6 +79,8 @@ model Caravana {
   nome          String
   descricao     String
   ativo         Boolean   @default(true)
+  bonusPorParticipante Int @default(10)  
+
 
 
   eventoId      Int
