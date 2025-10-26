@@ -1,20 +1,35 @@
-const Usuario = require('./usuario');
+const Usuario = require('../usuario');
 
 class GrupoCompeticao {
-    constructor(nome, dataInicio, dataFim) {
-        this.id = null;
+    constructor(id, nome, dataInicio, dataFim, encerrado = false, pontuacaoTotal = 0, membros = [], vencedor = null) {
+        this.id = id;
         this.nome = nome;
-        this.membros = [];
         this.dataInicio = dataInicio instanceof Date ? dataInicio : new Date(dataInicio);
         this.dataFim = dataFim instanceof Date ? dataFim : new Date(dataFim);
-        this.encerrado = false;
-        this.pontuacaoTotal = 0;
-        this.vencedor = null;
+        this.encerrado = encerrado;
+        this.pontuacaoTotal = pontuacaoTotal;
+        this.membros = membros;
+        this.vencedor = vencedor;
+    }
+
+    static fromPrisma(prismaData) {
+        if (!prismaData) return null;
+
+        return new GrupoCompeticao(
+            prismaData.id,
+            prismaData.nome,
+            prismaData.dataInicio,
+            prismaData.dataFim,
+            prismaData.encerrado,
+            prismaData.pontuacaoTotal,
+            prismaData.membros || [],
+            prismaData.vencedor || null
+        );
     }
 
     adicionarMembro(usuario) {
         if (!usuario) throw new Error('Usuário inválido.');
-        if (this.encerrado) throw new Error('Não é possível adicionar membros a um grupo encerrado.');
+        if (this.encerrado) throw new Error('Grupo encerrado, não é possível adicionar novos membros.');
         this.membros.push(usuario);
         this.atualizarPontuacao();
     }
@@ -43,6 +58,10 @@ class GrupoCompeticao {
 
     estaExpirado() {
         return new Date() > this.dataFim;
+    }
+
+    get resumo() {
+        return `Grupo: ${this.nome} | Encerrado: ${this.encerrado ? 'Sim' : 'Não'} | Pontuação: ${this.pontuacaoTotal}`;
     }
 }
 
