@@ -45,9 +45,12 @@ class UsuarioService {
 
     removerUsuario(id) {
         const index = this.usuarios.findIndex(u => u.id === id);
-        if (index === -1) return false;
-        this.usuarios.splice(index, 1);
-        return true;
+        if (index === -1) {
+            throw new Error(`Usuário com ID ${id} não encontrado.`);
+        }
+
+        const [removido] = this.usuarios.splice(index, 1);
+        return removido;
     }
 }
 

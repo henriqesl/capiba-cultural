@@ -13,7 +13,7 @@ class EventoService {
         if (isNaN(Date.parse(data)))
             throw new Error("Data inválida");
 
-        if (!reportadoPorUsuario && this.eventos.some(e => e.nome === nome))
+        if (!reportadoPorUsuario && this.eventos.some(e => e.nome.toLowerCase() === nome.toLowerCase()))
             throw new Error("Evento já cadastrado");
 
         const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
