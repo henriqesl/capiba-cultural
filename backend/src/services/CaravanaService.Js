@@ -38,6 +38,13 @@ class CaravanaService {
         caravana.adicionarMembro(usuario);
         return caravana;
     }
+
+    removerCaravana(id) {
+        const index = this.caravanas.findIndex(c => c.id === id);
+        if (index === -1) throw new Error("Caravana não encontrada.");
+        const [removida] = this.caravanas.splice(index, 1);
+        return removida;
+    }
 }
 
 module.exports = CaravanaService;

@@ -5,7 +5,7 @@ class ReporteService {
     constructor(eventoService) {
         this.reportes = [];
         this.nextId = 1;
-        this.eventoService = eventoService;
+        this.eventoService = new EventoService ();
     }
 
     criarOuConfirmarReporte(reportante, eventoInput, descricao = '') {
