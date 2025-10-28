@@ -1,51 +1,60 @@
 const CaravanaService = require('../services/CaravanaService');
 
 class CaravanaController {
-    constructor(){
-        this.CaravanaService = new CaravanaService();
+    constructor() {
+        this.caravanaService = new CaravanaService();
     }
 
-    criarCaravana(nome, eventoDestino){
+    criarCaravana(nome, eventoDestino) {
         try {
-            const caravana = this.CaravanaService.criarCaravana(nome, eventoDestino);
+            const caravana = this.caravanaService.criarCaravana(nome, eventoDestino);
             console.log(`Caravana criada com sucesso: ${caravana.nome}`);
             return caravana;
-        } catch (error){
-            console.error("Erro ao criar caravana: ", error.message);
+        } catch (error) {
+            console.error("Erro ao criar caravana:", error.message);
         }
     }
 
-    listarCaravanas(){
-        try{
-            const caravanas = this.CaravanaService.listarCaravanas();
-            console.log(`Caravanas Cadastradas: `);
+    listarCaravanas() {
+        try {
+            const caravanas = this.caravanaService.listarCaravanas();
+            console.log(`Caravanas Cadastradas:`);
             caravanas.forEach(c => {
-                console.log(`Nome: ${c.nome}, Evento de Destino: ${c.eventoDestino}`);
-
+                console.log(`Nome: ${c.nome}, Evento de Destino: ${c.eventoDestino?.nome || 'Não definido'}`);
             });
             return caravanas;
         } catch (error) {
-            console.error("Erro ao listar caravana: ", error.message);
+            console.error("Erro ao listar caravanas:", error.message);
         }
     }
 
     obterPorId(id) {
         try {
-            const caravana = this.CaravanaService.obterPorId(id);
+            const caravana = this.caravanaService.obterPorId(id);
             console.log(`Procurando caravana por ID: ${id}`);
             return caravana;
         } catch (error) {
-            console.error("Erro ao encontrar caravana por ID: ", error.message);
+            console.error("Erro ao encontrar caravana por ID:", error.message);
         }
     }
 
-    adicionarMembro(id, usuario){
+    adicionarMembro(id, usuario) {
         try {
-            const caravana = this.CaravanaService.adicionarMembro(id, usuario);
+            const caravana = this.caravanaService.adicionarMembro(id, usuario);
             console.log(`Adicionando usuário ${usuario.nome} na caravana ${caravana.nome}`);
             return caravana;
-        } catch (error){
-            console.error("Erro ao adicionar usuário a caravana", error.message);
+        } catch (error) {
+            console.error("Erro ao adicionar usuário à caravana:", error.message);
+        }
+    }
+
+    removerCaravana(id) {
+        try {
+            const caravanaRemovida = this.caravanaService.removerCaravana(id);
+            console.log(`Caravana ${caravanaRemovida.nome} removida com sucesso!`);
+            return caravanaRemovida;
+        } catch (error) {
+            console.error("Erro ao remover caravana:", error.message);
         }
     }
 }
