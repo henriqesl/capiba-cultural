@@ -1,87 +1,109 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Usuario {
-  id               Int                @id @default(autoincrement()) // são os atributos, seu id e o valor padrão (que incrementa a cada novo)
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
   nome             String
-  email            String             @unique // um valor único, ou seja só podera existir 1 na tabela
-  senha            String             // senha que será encripitada com jwt (explicar dps)
-  saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
-  dataCadastro     DateTime           @default(now()) // o padrão é a data atual
+  email            String             @unique
+  senha            String
+  saldoMoedaCapiba Int                @default(0)
+  dataCadastro     DateTime           @default(now())
 
-
-  // Relações (O que este usuário possui?)
-  grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários 
-  grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
-  caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
-  eventos_participados Evento[] @relation("ParticipantesDoEvento")
+  // Relações
+  grupos_membro          MembroGrupo[] 
+  caravanas_membro       MembroCaravana[]       
+  eventos_participados   ParticipanteEvento[]
+  grupos_vencidos        GrupoCompeticao[] @relation("VencedorDoGrupo")
 
   @@map("usuarios")
-
 }
 
 model Evento {
-  id                          Int @id @default(autoincrement())
-  nome                        String
-  local                       String
-  data                        DateTime
-  descricao                   String
-  ativo                       Boolean   @default(true)
-  aoVivo                      Boolean   @default(false)
-  pequenoPorte                Boolean   @default(true)
-  moedasCapibasDestribuidas   Float     @default(0)
-  reportadoPorUsuario         Boolean   @default(false)
-  confirmacoes                Int       @default(0)
+  id                        String    @id @default(auto()) @map("_id") @db.ObjectId 
+  nome                      String
+  local                     String
+  data                      DateTime
+  descricao                 String
+  ativo                     Boolean   @default(true)
+  aoVivo                    Boolean   @default(false)
+  pequenoPorte              Boolean   @default(true)
+  moedasCapibasDestribuidas Float     @default(0)
+  reportadoPorUsuario       Boolean   @default(false)
+  confirmacoes              Int       @default(0)
 
-  participantes     Usuario[]       @relation("ParticipantesDoEvento")
-  caravanas         Caravana[]      @relation("CaravanasNoEvento")
-
+  participantes   ParticipanteEvento[]
+  caravanas       Caravana[] @relation("CaravanasNoEvento")
 
   @@map("eventos")
-
 }
 
-
 model GrupoCompeticao {
-  id             Int        @id @default(autoincrement())
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId 
   nome           String
   dataInicio     DateTime
   dataFim        DateTime
   encerrado      Boolean    @default(false)
-  pontuacaoTotal Int        @default(0) // Você tinha 'default(false)', mudei para 0
+  pontuacaoTotal Int        @default(0)
 
-  // Relação (Muitos-para-Muitos com Usuários)
-  membros        Usuario[]  @relation("MembrosDoGrupo")
+  // Relações
+  membros        MembroGrupo[] @relation("MembrosDoGrupo")
 
-  // Relação (Um-para-Muitos com Vencedor)
-  vencedorId     Int?       // '?' = opcional/nulo
-  vencedor       Usuario?   @relation("VencedorDoGrupo", fields: [vencedorId], references: [id])
+  vencedorId     String?       @db.ObjectId
+  vencedor       Usuario?      @relation("VencedorDoGrupo", fields: [vencedorId], references: [id])
 
   @@map("grupos_competicao")
-
 }
 
-
 model Caravana {
-  id            Int       @id @default(autoincrement())
-  nome          String
-  descricao     String
-  ativo         Boolean   @default(true)
-  bonusPorParticipante Int @default(10)  
+  id                    String       @id @default(auto()) @map("_id") @db.ObjectId 
+  nome                  String
+  descricao             String
+  ativo                 Boolean       @default(true)
+  bonusPorParticipante  Int           @default(10)
 
+  eventoId              String        @db.ObjectId
+  evento                Evento        @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
+  membros               MembroCaravana[]
 
-
-  eventoId      Int
-  evento        Evento    @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
-  membros Usuario[] @relation("MembrosDaCaravana")
   @@map("caravanas")
-
 } 
+
+model MembroGrupo {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  usuarioId   String            @db.ObjectId
+  grupoId     String            @db.ObjectId
+
+  usuario     Usuario           @relation(fields: [usuarioId], references: [id])
+  grupo       GrupoCompeticao   @relation("MembrosDoGrupo", fields: [grupoId], references: [id])
+
+  @@map("membros_grupo")
+}
+
+model MembroCaravana {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  usuarioId   String          @db.ObjectId
+  caravanaId  String          @db.ObjectId
+
+  usuario     Usuario         @relation(fields: [usuarioId], references: [id])
+  caravana    Caravana        @relation(fields: [caravanaId], references: [id])
+
+  @@map("membros_caravana")
+}
+
+model ParticipanteEvento {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  usuarioId   String        @db.ObjectId
+  eventoId    String        @db.ObjectId
+
+  usuario     Usuario       @relation(fields: [usuarioId], references: [id])
+  evento      Evento        @relation(fields: [eventoId], references: [id])
+
+  @@map("participantes_evento")
+}
