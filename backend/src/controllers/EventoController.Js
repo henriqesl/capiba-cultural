@@ -5,19 +5,20 @@ class EventoController {
         this.eventoService = new EventoService();
     }
 
-    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
+    async criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
         try {
-            const evento = this.eventoService.criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false);
+            const evento = await this.eventoService.criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false);
             console.log(`Evento criado com sucesso: ${evento.nome}`);
             return evento;
         } catch (error) {
             console.error("Erro ao criar evento:", error.message);
+            throw error;
         }
     }
 
-    listarEventos() {
+    async listarEventos() {
         try {
-            const eventos = this.eventoService.listarEventos();
+            const eventos = await this.eventoService.listarEventos();
             console.log("Eventos cadastrados:");
             eventos.forEach(e => {
                 console.log(`ID: ${e.id}, Nome: ${e.nome}, Local: ${e.local}, Data: ${e.data.toISOString().slice(0,10)}, Oficial: ${e.reportadoPorUsuario ? "❌" : "✅"}`);
@@ -25,26 +26,29 @@ class EventoController {
             return eventos;
         } catch (error) {
             console.error("Erro ao listar eventos:", error.message);
+            throw error;
         }
     }
 
-    obterPorId(id) {
+    async obterPorId(id) {
         try {
-            const evento = this.eventoService.obterPorId(id);
+            const evento = await this.eventoService.obterPorId(id);
             console.log(`Procurando evento por ID: ${id}`);
             return evento;
         } catch (error) {
             console.error("Erro ao procurar evento por ID:", error.message);
+            throw error;
         }
     }
 
-    removerEvento(id) {
+    async removerEvento(id) {
         try {
-            const evento = this.eventoService.removerEvento(id);
+            const evento = await this.eventoService.removerEvento(id);
             console.log(`Removendo evento ${evento.nome} pelo ID: ${evento.id}`);
             return evento;
         } catch (error) {
             console.error("Erro ao remover evento por ID:", error.message);
+            throw error;
         }
     }
 }

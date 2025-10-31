@@ -17,8 +17,9 @@ class EventoService {
             throw new Error("Evento já cadastrado");
 
         const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
-        evento.id = this.nextId++;
+        evento.setId(this.nextId++);
         this.eventos.push(evento);
+
         return evento;
     }
 
@@ -27,14 +28,19 @@ class EventoService {
     }
 
     obterPorId(id) {
-        const evento = this.eventos.find(e => e.id === id);
-        if (!evento) throw new Error("Evento não encontrado");
+        const evento = this.eventos.find(e => e.getId() === id);
+        if (!evento) {
+            throw new Error("Evento não encontrado");
+        }
         return evento;
     }
 
     removerEvento(id) {
-        const index = this.eventos.findIndex(e => e.id === id);
-        if (index === -1) throw new Error("Evento não encontrado");
+        const index = this.eventos.findIndex(e => e.getId() === id);
+        if (index === -1) {
+            throw new Error("Evento não encontrado");
+        }
+        
         const [eventoRemovido] = this.eventos.splice(index, 1);
         return eventoRemovido;
     }
