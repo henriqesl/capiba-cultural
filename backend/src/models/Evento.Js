@@ -17,17 +17,13 @@ class Evento {
         this.reportadoPorUsuario = reportadoPorUsuario;
         this.confirmacoes = 0;
     }
-
-    adicionarParticipante(usuario) {
-        if (!usuario) throw new Error('Usuário inválido.');
-        this.participantes.push(usuario);
+    
+    setId(id) {
+        this.id = id;
     }
 
-    adicionarConfirmacao() {
-        this.confirmacoes++;
-        if (this.confirmacoes >= 3) {
-            this.aoVivo = true;
-        }
+    getId() {
+        return this.id;
     }
 }
 
