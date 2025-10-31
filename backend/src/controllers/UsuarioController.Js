@@ -1,23 +1,24 @@
-const UsuarioService = require('../services/UsuarioService');
+const usuarioService = require('../services/UsuarioService');
 
 class UsuarioController {
     constructor() {
-        this.usuarioService = new UsuarioService();
+        this.usuarioService = usuarioService;
     }
-    
-    criarUsuario(nome, email, senha) {
+
+    async criarUsuario(nome, email, senha) {
         try {
-            const usuario = this.usuarioService.criarUsuario(nome, email, senha);
+            const usuario = await this.usuarioService.criarUsuario(nome, email, senha);
             console.log(`Usuário ${usuario.nome} criado com sucesso!`);
             return usuario;
         } catch (error) {
             console.error("Erro ao criar usuário:", error.message);
+            throw error;
         }
     }
 
-    listarUsuarios() {
+    async listarUsuarios() {
         try {
-            const usuarios = this.usuarioService.listarUsuarios();
+            const usuarios = await this.usuarioService.listarUsuarios();
             console.log("Usuários cadastrados:");
             usuarios.forEach(u => {
                 console.log(`Nome: ${u.nome}, E-mail: ${u.email}`);
@@ -25,46 +26,51 @@ class UsuarioController {
             return usuarios;
         } catch (error) {
             console.error("Erro ao listar os usuários:", error.message);
+            throw error;
         }
     }
 
-    obterPorId(id) {
+    async obterPorId(id) {
         try {
-            const usuario = this.usuarioService.obterPorId(id);
+            const usuario = await this.usuarioService.obterPorId(id);
             console.log(`Usuário encontrado: ${usuario.nome}`);
             return usuario;
         } catch (error) {
             console.error("Erro ao encontrar usuário por ID:", error.message);
+            throw error;
         }
     }
     
-    adicionarMoedas(usuarioId, quantidade) {
+    async adicionarMoedas(usuarioId, quantidade) {
         try {
-            const usuario = this.usuarioService.adicionarMoedas(usuarioId, quantidade);
+            const usuario = await this.usuarioService.adicionarMoedas(usuarioId, quantidade);
             console.log(`Adicionadas ${quantidade} moedas ao usuário ${usuario.nome}`);
             return usuario;
         } catch (error) {
             console.error("Erro ao adicionar moedas ao usuário:", error.message);
+            throw error;
         }
     }
 
-    gastarMoedas(usuarioId, quantidade) {
+    async gastarMoedas(usuarioId, quantidade) {
         try {
-            const usuario = this.usuarioService.gastarMoedas(usuarioId, quantidade);
+            const usuario = await this.usuarioService.gastarMoedas(usuarioId, quantidade);
             console.log(`Usuário ${usuario.nome} gastou ${quantidade} moedas`);
             return usuario;
         } catch (error) {
             console.error("Erro ao gastar moedas:", error.message);
+            throw error;
         }
     }
 
-    removerUsuario(id) {
+    async removerUsuario(id) {
         try {
-            const usuario = this.usuarioService.removerUsuario(id);
+            const usuario = await this.usuarioService.removerUsuario(id);
             console.log(`Usuário ${usuario.nome} removido com sucesso.`);
             return usuario;
         } catch (error) {
             console.error("Erro ao remover usuário:", error.message);
+            throw error; 
         }
     }
 }
