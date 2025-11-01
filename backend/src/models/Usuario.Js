@@ -26,6 +26,22 @@ class Usuario {
     getId() {
         return this.id;
     }
+    
+    getGrupos() {
+        return this.grupos;
+    }
+
+    setGrupos(grupos) {
+        this.grupos = grupos;
+    }
+
+    getNome() {
+        return this.nome;
+    }
+
+    setNome(nome) {
+        this.nome = nome;
+    }
 }
 
 module.exports = Usuario;
