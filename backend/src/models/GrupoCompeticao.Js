@@ -12,38 +12,60 @@ class GrupoCompeticao {
         this.vencedor = null;
     }
 
-    adicionarMembro(usuario) {
-        if (!usuario) throw new Error('Usuário inválido.');
-        if (this.encerrado) throw new Error('Não é possível adicionar membros a um grupo encerrado.');
-        this.membros.push(usuario);
-        this.atualizarPontuacao();
+    getId(){
+        return this.id;
+    }
+    setId(id) { 
+        this.id = id; 
+    }
+    
+    getNome() { 
+        return this.nome; 
+    }
+    setNome(value) { 
+        this.nome = value; 
     }
 
-    atualizarPontuacao() {
-        this.pontuacaoTotal = this.membros.reduce(
-            (total, membro) => total + (membro.saldoMoedaCapiba || 0),
-            0
-        );
+    getMembros() { 
+        return this.membros; 
+    }
+    setMembros(value) { 
+        this.membros = value; 
     }
 
-    obterVencedor() {
-        if (this.membros.length === 0) return null;
-        this.vencedor = this.membros.reduce(
-            (max, u) => (u.saldoMoedaCapiba > (max?.saldoMoedaCapiba || 0) ? u : max),
-            null
-        );
-        return this.vencedor;
+    getDataInicio() { 
+        return this.dataInicio; 
+    }
+    setDataInicio(value) {
+        this.dataInicio = value instanceof Date ? value : new Date(value);
     }
 
-    encerrarGrupo() {
-        if (this.encerrado) throw new Error('O grupo já foi encerrado.');
-        this.encerrado = true;
-        this.vencedor = this.obterVencedor();
+    getDataFim() { 
+        return this.dataFim; 
+    }
+    setDataFim(value) {
+        this.dataFim = value instanceof Date ? value : new Date(value);
     }
 
-    estaExpirado() {
-        return new Date() > this.dataFim;
+    getEncerrado() { 
+        return this.encerrado; 
+    }
+    setEncerrado(value) { 
+        this.encerrado = value; 
+    }
+    
+    getPontuacaoTotal() { 
+        return this.pontuacaoTotal; 
+    }
+    setPontuacaoTotal(value) { 
+        this.pontuacaoTotal = value; 
+    }
+    
+    getVencedor() { 
+        return this.vencedor; 
+    }
+    setVencedor(value) { 
+        this.vencedor = value; 
     }
 }
-
 module.exports = GrupoCompeticao;

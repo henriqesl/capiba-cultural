@@ -5,9 +5,9 @@ class GrupoController{
         this.GrupoService = new GrupoService ();
     }
 
-    criarGrupo(nome, dataInicio, dataFim){
+    async criarGrupo(nome, dataInicio, dataFim){
         try{
-            const grupo = this.GrupoService.criarGrupo(nome, dataInicio, dataFim);
+            const grupo = await this.GrupoService.criarGrupo(nome, dataInicio, dataFim);
             console.log(`Grupo ${grupo.nome} criado com sucesso!`);
             return grupo;
         } catch (error) {
@@ -15,9 +15,9 @@ class GrupoController{
         }
     }
 
-    listarGrupo(){
+    async listarGrupo(){
         try{
-            const grupos = this.GrupoService.listarGrupos();
+            const grupos = await this.GrupoService.listarGrupos();
             console.log(`Grupos Cadastradao: `);
             grupos.forEach(g => {
                 console.log(`Nome: ${g.nome}, Data de Início: ${g.dataInicio}, Data de Fim: ${g.dataFim}`);
@@ -28,9 +28,9 @@ class GrupoController{
         }
     }
 
-    obterPorId(id) {
+    async obterPorId(id) {
         try {
-            const grupo = this.GrupoService.obterPorId(id);
+            const grupo = await this.GrupoService.obterPorId(id);
             console.log(`Procurando Grupo por ID: ${id}`);
             return grupo;
         } catch (error) {
@@ -38,9 +38,9 @@ class GrupoController{
         }
     }
 
-    adicionarMembro(id, usuario){
+    async adicionarMembro(id, usuario){
         try{
-            const grupo = this.GrupoService.adicionarMembro(id, usuario);
+            const grupo = await this.GrupoService.adicionarMembro(id, usuario);
             console.log(`Adicionando usuário ${usuario.nome} no grupo ${grupo.nome}`);
             return grupo;
         } catch (error){
@@ -48,19 +48,20 @@ class GrupoController{
         }
     }
 
-    atualizarPontuacoes(){
-        try{
-            const grupo = this.GrupoService.atualizarPontuacoes();
-            console.log("Pontuação atualizada com sucesso!");
-            return grupo;
+   async atualizarPontuacoes() {
+        try {
+            const gruposAtualizados = this.GrupoService.atualizarPontuacoes();
+            console.log("Pontuações atualizadas com sucesso!");
+            return gruposAtualizados;
         } catch (error) {
-            console.error("Erro ao atualizar pontuação: ", error.message);
+            console.error("Erro ao atualizar pontuação:", error.message);
+            throw error;
         }
     }
 
-    encerrarGrupo(id){
+    async encerrarGrupo(id){
         try{
-            const grupo = this.GrupoService.encerrarGrupo(id);
+            const grupo = await this.GrupoService.encerrarGrupo(id);
             console.log(`Grupo ${grupo.nome} encerrado com sucesso!`);
             return grupo;
         } catch(error){
@@ -68,9 +69,9 @@ class GrupoController{
         }
     }
 
-    verificarGruposExpirados(){
+    async verificarGruposExpirados(){
         try{
-            const grupo = this.GrupoService.verificarGruposExpirados();
+            const grupo = await this.GrupoService.verificarGruposExpirados();
             console.log("Grupos expirados: ");
             return grupo;
         } catch (error) {
@@ -78,9 +79,9 @@ class GrupoController{
         }
     }
 
-    removerGrupo(id){
+    async removerGrupo(id){
         try{
-            const grupo = this.GrupoService.removerGrupo(id);
+            const grupo = await this.GrupoService.removerGrupo(id);
             console.log(`Grupo ${grupo.nome} removido com sucesso!`);
             return grupo;
         } catch (error){
