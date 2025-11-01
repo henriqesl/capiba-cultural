@@ -1,26 +1,23 @@
-const CaravanaService = require('../services/CaravanaService');
+const caravanaService = require('../services/CaravanaService');
 
 class CaravanaController {
-    constructor() {
-        this.caravanaService = new CaravanaService();
-    }
-
-    criarCaravana(nome, eventoDestino) {
+    async criarCaravana(nome) {
         try {
-            const caravana = this.caravanaService.criarCaravana(nome, eventoDestino);
-            console.log(`Caravana criada com sucesso: ${caravana.nome}`);
+            const caravana = await caravanaService.criarCaravana(nome);
+            console.log(`Caravana criada com sucesso: ${caravana.getNome()}`);
             return caravana;
         } catch (error) {
             console.error("Erro ao criar caravana:", error.message);
         }
     }
 
-    listarCaravanas() {
+    async listarCaravanas() {
         try {
-            const caravanas = this.caravanaService.listarCaravanas();
-            console.log(`Caravanas Cadastradas:`);
+            const caravanas = await caravanaService.listarCaravanas();
+            console.log("Caravanas cadastradas:");
             caravanas.forEach(c => {
-                console.log(`Nome: ${c.nome}, Evento de Destino: ${c.eventoDestino?.nome || 'Não definido'}`);
+                const evento = c.getEventoDestino();
+                console.log(`Nome: ${c.getNome()}, Evento de Destino: ${evento ? evento.getNome() : 'Não definido'}`);
             });
             return caravanas;
         } catch (error) {
@@ -28,9 +25,9 @@ class CaravanaController {
         }
     }
 
-    obterPorId(id) {
+    async obterPorId(id) {
         try {
-            const caravana = this.caravanaService.obterPorId(id);
+            const caravana = await caravanaService.obterPorId(id);
             console.log(`Procurando caravana por ID: ${id}`);
             return caravana;
         } catch (error) {
@@ -38,20 +35,30 @@ class CaravanaController {
         }
     }
 
-    adicionarMembro(id, usuario) {
+    async adicionarMembro(id, usuario) {
         try {
-            const caravana = this.caravanaService.adicionarMembro(id, usuario);
-            console.log(`Adicionando usuário ${usuario.nome} na caravana ${caravana.nome}`);
+            const caravana = await caravanaService.adicionarMembro(id, usuario.getId());
+            console.log(`Adicionando usuário ${usuario.getNome()} na caravana ${caravana.getNome()}`);
             return caravana;
         } catch (error) {
             console.error("Erro ao adicionar usuário à caravana:", error.message);
         }
     }
 
-    removerCaravana(id) {
+    async adicionarDestino(id, evento) {
         try {
-            const caravanaRemovida = this.caravanaService.removerCaravana(id);
-            console.log(`Caravana ${caravanaRemovida.nome} removida com sucesso!`);
+            const caravana = await caravanaService.adicionarDestino(id, evento);
+            console.log(`Evento ${evento.getNome()} adicionado à caravana ${caravana.getNome()}`);
+            return caravana;
+        } catch (error) {
+            console.error("Erro ao adicionar destino à caravana:", error.message);
+        }
+    }
+
+    async removerCaravana(id) {
+        try {
+            const caravanaRemovida = await caravanaService.removerCaravana(id);
+            console.log(`Caravana ${caravanaRemovida.getNome()} removida com sucesso!`);
             return caravanaRemovida;
         } catch (error) {
             console.error("Erro ao remover caravana:", error.message);
