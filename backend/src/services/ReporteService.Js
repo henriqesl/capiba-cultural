@@ -1,47 +1,42 @@
-const ReporteEvento = require('../models/ReporteEvento');
 const EventoService = require('./EventoService');
+const ReporteEvento = require('../models/ReporteEvento');
 
 class ReporteService {
-    constructor(eventoService) {
+    constructor() {
         this.reportes = [];
         this.nextId = 1;
-        this.eventoService = new EventoService ();
     }
 
-    criarOuConfirmarReporte(reportante, eventoInput, descricao = '') {
+    async criarOuConfirmarReporte(reportante, eventoInput, descricao = '') {
         if (!reportante || !eventoInput) {
             throw new Error("Reportante e evento são obrigatórios para criar um reporte!");
         }
 
-        let evento = null;
-
-        if (eventoInput.id) {
-            evento = this.eventoService.listarEventos().find(e => e.id === eventoInput.id);
-        } else {
-            evento = this.eventoService.listarEventos()
-                .find(e => e.nome.toLowerCase() === eventoInput.nome.toLowerCase());
-        }
+        let evento = EventoService.listarEventos()
+            .find(e => e.getNome().toLowerCase() === eventoInput.nome.toLowerCase());
 
         if (!evento) {
+            console.log("Evento não encontrado. Criando novo evento...");
+
             const nome = eventoInput.nome || 'Evento sem nome';
             const local = eventoInput.local || 'Local não informado';
             const data = eventoInput.data ? new Date(eventoInput.data) : new Date();
-            const descricao = eventoInput.descricao || 'Evento reportado por usuário';
+            const descricaoEvento = eventoInput.descricao || 'Evento reportado por usuário';
 
-            evento = this.eventoService.criarEvento(nome, local, data, descricao);
-            evento.reportadoPorUsuario = true;
+            evento = EventoService.criarEvento(nome, local, data, descricaoEvento);
+            evento.setReportadoPorUsuario(true);
         }
 
-        const existente = this.reportes.find(r => r.evento.id === evento.id);
+        const existente = this.reportes.find(r => r.getEvento().getId() === evento.getId());
 
         if (existente) {
-            const jaConfirmou = existente.reportantes.some(u => u.id === reportante.id);
+            const jaConfirmou = existente.getReportantes().some(u => u.getId() === reportante.getId());
             if (jaConfirmou) {
-                throw new Error('Usuário já reportou/confirmou esse evento.');
+                return { mensagem: 'Usuário já reportou/confirmou este evento.', reporte: existente };
             }
 
-            existente.reportantes.push(reportante);
-            existente.qtdConfirmacoes++;
+            existente.getReportantes().push(reportante);
+            existente.setQtdConfirmacoes(existente.getQtdConfirmacoes() + 1);
             return {
                 mensagem: 'Confirmação adicionada a um evento já reportado.',
                 reporte: existente
@@ -52,20 +47,19 @@ class ReporteService {
         const cincoMinutosAtras = new Date(agora.getTime() - 5 * 60 * 1000);
 
         const existeReporteRecente = this.reportes.some(r =>
-            r.evento.id === evento.id &&
-            r.reportantes.some(u => u.id === reportante.id) &&
-            r.dataReporte > cincoMinutosAtras
+            r.getEvento().getId() === evento.getId() &&
+            r.getReportantes().some(u => u.getId() === reportante.getId()) &&
+            r.getDataReporte() > cincoMinutosAtras
         );
-
 
         if (existeReporteRecente) {
             throw new Error("Você já enviou um reporte recentemente. Aguarde alguns minutos.");
         }
 
         const reporte = new ReporteEvento(reportante, evento, descricao);
-        reporte.id = this.nextId++;
-        reporte.reportantes = [reportante];
-        reporte.qtdConfirmacoes = 1;
+        reporte.setId(this.nextId++);
+        reporte.setReportantes([reportante]);
+        reporte.setQtdConfirmacoes(1);
         this.reportes.push(reporte);
 
         return {
@@ -79,15 +73,15 @@ class ReporteService {
     }
 
     listarPorEvento(eventoId) {
-        return this.reportes.filter(r => r.evento.id === eventoId);
+        return this.reportes.filter(r => r.getEvento().getId() === eventoId);
     }
 
     listarPorUsuario(usuarioId) {
-        return this.reportes.filter(r => r.reportantes.some(u => u.id === usuarioId));
+        return this.reportes.filter(r => r.getReportantes().some(u => u.getId() === usuarioId));
     }
 
     removerReporte(id) {
-        const index = this.reportes.findIndex(r => r.id === id);
+        const index = this.reportes.findIndex(r => r.getId() === id);
         if (index === -1) return false;
         this.reportes.splice(index, 1);
         return true;
@@ -97,11 +91,11 @@ class ReporteService {
         const agora = new Date();
         const vinteQuatroHorasAtras = new Date(agora.getTime() - 24 * 60 * 60 * 1000);
 
-        const reportesRecentes = this.reportes.filter(r => r.dataReporte > vinteQuatroHorasAtras);
+        const reportesRecentes = this.reportes.filter(r => r.getDataReporte() > vinteQuatroHorasAtras);
         const contagem = {};
 
         for (const r of reportesRecentes) {
-            contagem[r.evento.id] = (contagem[r.evento.id] || 0) + r.qtdConfirmacoes;
+            contagem[r.getEvento().getId()] = (contagem[r.getEvento().getId()] || 0) + r.getQtdConfirmacoes();
         }
 
         return Object.entries(contagem)
