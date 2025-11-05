@@ -35,6 +35,14 @@ class EventoService {
         return evento;
     }
 
+    obterPorNome(nome) {
+        const evento = this.eventos.find(e => e.getNome().toLowerCase() === nome.toLowerCase());
+        if (!evento) {
+            throw new Error("Evento não encontrado");
+        }
+        return evento;
+    }
+
     removerEvento(id) {
         const index = this.eventos.findIndex(e => e.getId() === id);
         if (index === -1) {
@@ -46,4 +54,4 @@ class EventoService {
     }
 }
 
-module.exports = EventoService;
+module.exports = new EventoService();
