@@ -1,12 +1,8 @@
 import React from 'react';
 import BottomNav from '../components/BottomNav';
 import TopNav from '../components/TopNav';
-import { Icon } from '../components/PersonalComponents.jsx';
-import { InfoRow } from '../components/PersonalComponents.jsx';
-import { PerfilImage } from '../components/PersonalComponents.jsx'
-import { ICONS } from '../utils/icons.jsx';
 
-const ProfilePage = () => {
+const Page = () => {
   return (
     <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center">
       <TopNav />
@@ -26,9 +22,9 @@ const ProfilePage = () => {
           {/* Coluna Esquerda: Foto e Ações */}
           <aside className="md:col-span-1 flex flex-col items-center justify-center text-center mb-8 md:mb-0">
             {/* Foto de Perfil */}
-            <div className="relative group mb-4 cursor-pointer"> 
+            <div className="relative group mb-4 cursor-pointer">
               <img
-                src={PerfilImage}
+                src={perfil_image}
                 alt="Foto do perfil de Júnior Cruz"
                 className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300"
               />
@@ -85,4 +81,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default GroupPage;
