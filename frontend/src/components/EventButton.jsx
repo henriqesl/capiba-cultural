@@ -1,9 +1,9 @@
 import React from 'react';
 
-
-const EventButton = ({ title, time, location }) => {
+const EventButton = ({ title, time, location, onClick }) => {
     return(
         <button 
+            onClick={onClick}
             className='
                 w-full bg-blue-600 text-white rounded-lg shadow-md 
                 p-4 px-6 // Ajustei o padding um pouco
