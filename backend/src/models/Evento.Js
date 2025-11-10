@@ -27,7 +27,7 @@ class Evento {
 
     async obterPorId(id) {
         return await prisma.evento.findUnique({
-            where: { id: id }
+            where: { id: id}
         });
     }
 

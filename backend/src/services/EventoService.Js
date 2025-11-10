@@ -32,8 +32,7 @@ class EventoService {
     }
 
     obterPorNome(nome) {
-/*         const evento = this.eventos.find(e => e.getNome().toLowerCase() === nome.toLowerCase());
- */        
+        
         const evento = this.eventoRepository.obterPorNome(nome);
         if (!evento) {
             throw new Error("Evento não encontrado");
