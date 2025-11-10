@@ -43,7 +43,7 @@ const prisma = new PrismaClient();
     
 
     async getSaldo(id) {
-        await prisma.usuario.findUnique({
+        const usuario = await prisma.usuario.findUnique({
             where: { id: id },
             select: { saldoMoedaCapiba: true },
         });
@@ -61,7 +61,7 @@ const prisma = new PrismaClient();
     }
     
     async getGrupos(id) {
-        await prisma.usuario.findUnique({
+        const usuario = await prisma.usuario.findUnique({
             where: { id: id },
             select: {  grupos: true }
         });
@@ -71,7 +71,7 @@ const prisma = new PrismaClient();
     }
 
     async setGrupos(id, grupos) {
-        await prisma.usuario.findUnique({
+        return await prisma.usuario.update({
             where: { id: id }, 
             data: { grupos }, 
             select: { grupos: true }
@@ -79,7 +79,7 @@ const prisma = new PrismaClient();
     }
 
     async getNome(id) {
-        await prisma.usuario.findUnique({
+        const usuario = await prisma.usuario.findUnique({
            where: { id: id },
             select: {  nome: true }
         })
@@ -88,8 +88,8 @@ const prisma = new PrismaClient();
 
     }
 
-    async setNome(nome) {
-        await prisma.usuario.findUnique({
+    async setNome(id, nome) {
+        return await prisma.usuario.update({
            where: { id: id },
            data: { nome: nome},
            select: {  nome: true }

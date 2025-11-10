@@ -1,6 +1,18 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 const Usuario = require('./usuario');
 
 class GrupoCompeticao {
+    async novoGrupoCompeticao {
+        return await this.prisma.GrupoCompeticao.create({
+
+            
+        })
+
+
+    }
+
+
     constructor(nome, dataInicio, dataFim) {
         this.id = null;
         this.nome = nome;

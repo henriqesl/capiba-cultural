@@ -2,17 +2,16 @@ const Usuario = require('../models/Usuario');
 
 class UsuarioService {
     constructor() {
-        this.usuarioRepository = new Usuario;
+        this.usuarioRepository = new Usuario();
     }
 
     async criarUsuario(nome, email, senha) {
         if (!nome || !email || !senha) throw new Error("Todos os campos são obrigatórios");
-        if (this.usuarioRepository.buscarEmail(email)) {
+        if (await this.usuarioRepository.buscarEmail(email)) {
             throw new Error("E-mail já cadastrado");
 
         }
-        const usuario = this.usuarioRepository.novoUsuario(nome, email, senha);
-        return usuario;
+        return await this.usuarioRepository.novoUsuario(nome, email, senha);
     }
 
     async listarUsuarios() {
@@ -28,10 +27,9 @@ class UsuarioService {
     }
 
     async adicionarMoedas(usuarioId, quantidade) {
-        const usuario = this.obterPorId(usuarioId);
         if (quantidade <= 0) throw new Error("Valor adicionado não pode ser zero ou negativo");
 
-        const saldoAtual = this.usuario.getSaldo(usuarioId);
+        const saldoAtual = await this.usuarioRepository.getSaldo(usuarioId);
         const novoSaldo = saldoAtual + quantidade;
         return await this.usuarioRepository.setSaldo(usuarioId, novoSaldo);
     }
@@ -47,7 +45,7 @@ class UsuarioService {
     }
 
     async removerUsuario(id) {
-        const usuario = this.usuarioRepository.buscarId(id);
+        const usuario = await this.usuarioRepository.buscarId(id);
         if (!usuario) {
             throw new Error(`Usuário com ID ${id} não encontrado.`);
         }
