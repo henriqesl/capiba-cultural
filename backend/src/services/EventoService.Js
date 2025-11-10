@@ -2,13 +2,12 @@ const Evento = require('../models/Evento');
 
 class EventoService {
     constructor() {
-        this.eventos = [];
-        this.nextId = 1;
+        this.eventoRepository = new Evento();
     }
 
     criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
         if (!nome || !local || !data || !descricao)
-            throw new Error("Todos os campos são obrigatórios");
+            throw new aaError("Todos os campos são obrigatórios");
 
         if (isNaN(Date.parse(data)))
             throw new Error("Data inválida");
@@ -16,19 +15,16 @@ class EventoService {
         if (!reportadoPorUsuario && this.eventos.some(e => e.nome.toLowerCase() === nome.toLowerCase()))
             throw new Error("Evento já cadastrado");
 
-        const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
-        evento.setId(this.nextId++);
-        this.eventos.push(evento);
-
+        const evento = this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false);
         return evento;
     }
 
     listarEventos() {
-        return this.eventos;
+        return this.eventoRepository.listar();
     }
 
     obterPorId(id) {
-        const evento = this.eventos.find(e => e.getId() === id);
+        const evento = this.eventoRepository.obterPorId(id);
         if (!evento) {
             throw new Error("Evento não encontrado");
         }
@@ -36,21 +32,22 @@ class EventoService {
     }
 
     obterPorNome(nome) {
-        const evento = this.eventos.find(e => e.getNome().toLowerCase() === nome.toLowerCase());
+/*         const evento = this.eventos.find(e => e.getNome().toLowerCase() === nome.toLowerCase());
+ */        
+        const evento = this.eventoRepository.obterPorNome(nome);
         if (!evento) {
             throw new Error("Evento não encontrado");
         }
         return evento;
     }
 
-    removerEvento(id) {
-        const index = this.eventos.findIndex(e => e.getId() === id);
-        if (index === -1) {
+    async removerEvento(id) {
+        const evento = this.eventoRepository.obterPorId(id);
+        if (!evento) {
             throw new Error("Evento não encontrado");
         }
         
-        const [eventoRemovido] = this.eventos.splice(index, 1);
-        return eventoRemovido;
+        return await this.eventoRepository.removerEvento(id);
     }
 }
 
