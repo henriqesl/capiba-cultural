@@ -1,72 +1,149 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 class ReporteEvento {
-    constructor(reportante, evento, descricao = '') {
+    async criarReporteEvento(reportante, evento, descricao) {
         if (!reportante) throw new Error('Reportante inválido.');
         if (!evento) throw new Error('Evento inválido.');
 
-        this.id = null;
-        this.reportante = reportante;
-        this.evento = evento;
-        this.dataReporte = new Date();
-        this.descricao = descricao;
-        this.reportantes = [reportante];
-        this.qtdConfirmacoes = 1;
+        return await prisma.ReporteEvento.create({
+            data: {
+                reportante,
+                evento,
+                descricao,
+                dataReporte: new Date(),
+                qtdConfirmacoes: 1,
+                reportantes: [reportante]
+
+            }
+        })
+
     }
 
-    getId() {
-        return this.id;
+    async listar() {
+        return await prisma.ReporteEvento.findMany();
     }
 
-    setId(id) {
-        this.id = id;
+    async buscarPorId(id) {
+        return await prisma.reporteEvento.findUnique({
+            where: { id: id },
+        });
     }
 
-    getReportante() {
-        return this.reportante;
+    async remover(id) {
+        return await prisma.ReporteEvento.delete({
+            where: { id: id}
+        })
     }
 
-    setReportante(reportante) {
-        this.reportante = reportante;
+
+    async getReportante(id) {
+        return await prisma.ReporteEvento.findUnique({
+            where: { id: id },
+            select: { reportante: reportante }
+        })
     }
 
-    getEvento() {
-        return this.evento;
+    async setReportante(id, reportante) {
+        return await prisma.ReporteEvento.update({
+            where: { id: id },
+            data: { reportante: reportante },
+            select: { reportante: true}
+        })
     }
 
-    setEvento(evento) {
-        this.evento = evento;
+
+    async getEvento(id) {
+        return await prisma.ReporteEvento.findUnique({
+            where: { id: id },
+            select: { evento: evento }
+        })
     }
 
-    getDataReporte() {
-        return this.dataReporte;
+    async setEvento(id, evento) {
+        return await prisma.ReporteEvento.update({
+            where: { id: id },
+            data: { evento: evento },
+            select: { evento: true}
+        })
     }
 
-    setDataReporte(data) {
-        this.dataReporte = data;
+    async getEvento(id) {
+        const reporte = await prisma.reporteEvento.findUnique({
+            where: { id },
+            include: { evento: true }
+        });
+        return reporte?.evento || null;
     }
 
-    getDescricao() {
-        return this.descricao;
+  
+    async getDataReporte(id) {
+        const reporte = await prisma.reporteEvento.findUnique({
+            where: { id },
+            select: { dataReporte: true }
+        });
+        return reporte?.dataReporte || null;
     }
 
-    setDescricao(descricao) {
-        this.descricao = descricao;
+    async setDataReporte(id, data) {
+        return await prisma.reporteEvento.update({
+            where: { id },
+            data: { dataReporte: data },
+            select: { dataReporte: true }
+        });
     }
 
-    getReportantes() {
-        return this.reportantes;
+    async getDescricao(id) {
+        const reporte = await prisma.reporteEvento.findUnique({
+            where: { id },
+            select: { descricao: true }
+        });
+        return reporte?.descricao || null;
     }
 
-    setReportantes(reportantes) {
-        this.reportantes = reportantes;
+    async setDescricao(id, descricao) {
+        return await prisma.reporteEvento.update({
+            where: { id },
+            data: { descricao },
+            select: { descricao: true }
+        });
+    }
+ 
+ 
+    async getReportantes(id) {
+        const reporte = await prisma.reporteEvento.findUnique({
+            where: { id },
+        });
+        return reporte?.reportantes || [];
     }
 
-    getQtdConfirmacoes() {
-        return this.qtdConfirmacoes;
+    async setReportantes(id, reportanteIds) {
+        return await prisma.reporteEvento.update({
+            where: { id },
+            data: {
+                reportantes: {
+                    set: reportanteIds.map(uid => ({ id: uid }))
+                }
+            },
+        });
     }
 
-    setQtdConfirmacoes(qtd) {
-        this.qtdConfirmacoes = qtd;
+    async getQtdConfirmacoes(id) {
+        const reporte = await prisma.reporteEvento.findUnique({
+            where: { id },
+            select: { qtdConfirmacoes: true }
+        });
+        return reporte?.qtdConfirmacoes || 0;
+    }
+
+    async setQtdConfirmacoes(id, qtd) {
+        return await prisma.reporteEvento.update({
+            where: { id },
+            data: { qtdConfirmacoes: qtd },
+            select: { qtdConfirmacoes: true }
+        });
     }
 }
+
 
 module.exports = ReporteEvento;
