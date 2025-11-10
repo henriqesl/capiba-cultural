@@ -1,9 +1,14 @@
 import React from 'react';
-import { ICONS } from '../utils/icons';
-import perfil_image from '../assets/foto_perfil.png';
+import { ICONS } from '../../utils/icons'; 
+import perfil_image from '../../assets/foto_perfil.png'; 
 
 export const Icon = ({ path, className = "w-6 h-6" }) => (
-    <svg xmlns={perfil_image} viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 24 24" 
+        fill="currentColor" 
+        className={className}
+    >
         <path fillRule="evenodd" d={path} clipRule="evenodd" />
     </svg>
 );
@@ -20,11 +25,12 @@ export const InfoRow = ({ label, value }) => (
     </div>
 );
 
-export const PerfilImage = (img={profile_image}) => {
-    <img
-        src={perfil_image}
-        alt="Foto do perfil de Júnior Cruz"
-        className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300"
-    />
+export const PerfilImage = () => {
+    return (
+        <img
+            src={perfil_image}
+            alt="Foto do perfil de Júnior Cruz"
+            className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300"
+        />
+    );
 }
-
