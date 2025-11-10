@@ -53,7 +53,7 @@ class GrupoService {
         return this.grupos;
     }
 
-    async obterVencedor(grupo) {
+    async obterVencedor(grupoId) {
         const membros = await this.grupoRepository.getMembros(grupoId);
 
         if (membros.length === 0) return null;
