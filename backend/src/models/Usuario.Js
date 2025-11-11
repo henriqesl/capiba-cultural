@@ -38,12 +38,14 @@ const prisma = new PrismaClient();
     }
 
     async listar() {
-        return await prisma.usuario.findMany()
+        return await prisma.usuario.findMany({
+            include: { grupos_membro: true, grupos_vencidos: true }
+        });
     }
     
 
     async getSaldo(id) {
-        await prisma.usuario.findUnique({
+        const usuario = await prisma.usuario.findUnique({
             where: { id: id },
             select: { saldoMoedaCapiba: true },
         });
@@ -61,25 +63,27 @@ const prisma = new PrismaClient();
     }
     
     async getGrupos(id) {
-        await prisma.usuario.findUnique({
-            where: { id: id },
-            select: {  grupos: true }
+        const usuario = await prisma.usuario.findUnique({
+            where: { id },
+            select: { grupos_membro: true }
         });
-
-        return usuario?.grupos ?? [];
-
+        return usuario?.grupos_membro ?? [];
     }
 
-    async setGrupos(id, grupos) {
-        await prisma.usuario.findUnique({
-            where: { id: id }, 
-            data: { grupos }, 
-            select: { grupos: true }
-        });
+    async setGrupos(id, gruposIds) {
+        return await prisma.usuario.update({
+            where: { id },
+            data: {
+            grupos_membro: {
+                connect: gruposIds.map(grupoId => ({ id: grupoId }))
+            }
+            },
+            include: { grupos_membro: true }
+    });
     }
 
     async getNome(id) {
-        await prisma.usuario.findUnique({
+        const usuario = await prisma.usuario.findUnique({
            where: { id: id },
             select: {  nome: true }
         })
@@ -88,8 +92,8 @@ const prisma = new PrismaClient();
 
     }
 
-    async setNome(nome) {
-        await prisma.usuario.findUnique({
+    async setNome(id, nome) {
+        return await prisma.usuario.update({
            where: { id: id },
            data: { nome: nome},
            select: {  nome: true }
