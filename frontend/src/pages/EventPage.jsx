@@ -1,7 +1,7 @@
 // src/pages/EventPage.jsx
 import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
-import Calendar from '../components/Calendar';
+import Calendar from '../components/event/Calendar';
 
 const EventPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());

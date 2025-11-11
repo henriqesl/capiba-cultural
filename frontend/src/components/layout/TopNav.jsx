@@ -16,7 +16,7 @@ const TopNav = ({ currentPath }) => {
     return (
         <nav className="hidden md:flex w-full bg-blue-600 border-b border-gray-200 py-2">
             <div className="flex justify-around items-center w-full max-w-4xl mx-auto px-4">
-                <NavItem href="#/eventos" iconPath={ICONS.home} label="Início" active={currentPath === '#/eventos'} />
+                <NavItem href="#/home" iconPath={ICONS.home} label="Início" active={currentPath === '#/home'} />
                 <NavItem href="#/eventos" iconPath={ICONS.calendar} label="Agenda" active={currentPath === '#/eventos'} />
                 <NavItem href="#/capiba" iconPath={ICONS.dollar} label="Capiba" active={currentPath === '#/capiba'} />
                 <NavItem href="#/favoritos" iconPath={ICONS.star} label="Favoritos" active={currentPath === '#/favoritos'} />
