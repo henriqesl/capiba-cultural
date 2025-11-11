@@ -5,35 +5,34 @@ class EventoService {
         this.eventoRepository = new Evento();
     }
 
-    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
+    async criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds = []) {
         if (!nome || !local || !data || !descricao)
-            throw new aaError("Todos os campos são obrigatórios");
+            throw new Error("Todos os campos são obrigatórios");
 
-        if (isNaN(Date.parse(data)))
+        if (isNaN(Date.parse(data)))    
             throw new Error("Data inválida");
 
-        if (!reportadoPorUsuario && this.eventos.some(e => e.nome.toLowerCase() === nome.toLowerCase()))
-            throw new Error("Evento já cadastrado");
+        const existente = await this.eventoRepository.obterPorNome(nome);
+        if (existente && !reportadoPorUsuario)
+            throw new Error("Evento já cadastrado.");
 
-        const evento = this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false);
-        return evento;
+        return await this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds = []);
     }
 
-    listarEventos() {
-        return this.eventoRepository.listar();
+    async listarEventos() {
+        return await this.eventoRepository.listar();
     }
 
-    obterPorId(id) {
-        const evento = this.eventoRepository.obterPorId(id);
+    async obterPorId(id) {
+        const evento = await this.eventoRepository.obterPorId(id);
         if (!evento) {
             throw new Error("Evento não encontrado");
         }
         return evento;
     }
 
-    obterPorNome(nome) {
-        
-        const evento = this.eventoRepository.obterPorNome(nome);
+    async obterPorNome(nome) {
+        const evento = await this.eventoRepository.obterPorNome(nome);
         if (!evento) {
             throw new Error("Evento não encontrado");
         }

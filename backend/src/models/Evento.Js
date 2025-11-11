@@ -3,45 +3,73 @@ const prisma = new PrismaClient();
 
 class Evento {
 
-    async novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
+    async novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds =[]) {
         return await prisma.evento.create({
             data: {
                 nome,
                 local,
-                data: Date ? data : new Date(data),
+                data: data instanceof Date ? data : new Date(data),
                 descricao,
                 pequenoPorte,
                 ativo: true,
                 aoVivo: false,
-                participantes,
-                caravanas, 
                 reportadoPorUsuario, 
-                confirmacoes: 0
+                confirmacoes: 0,
+
+                participantes: participantesIds.length
+                    ? { connect: participantesIds.map(id => ({ id })) }
+                    : undefined,
+
+                caravanas: caravanasIds.length
+                    ? { connect: caravanasIds.map(id => ({ id })) }
+                    : undefined
+            },
+
+            include: {
+                participantes: true, 
+                caravanas: true,
+                reportes: true 
             }
         });
     }
 
     async listar() {
-        return await prisma.evento.findMany();
+        return await prisma.evento.findMany({
+            include: {
+                participantes: true,
+                caravanas: true,
+                reportes: true
+            }
+        });
     }
 
     async obterPorId(id) {
         return await prisma.evento.findUnique({
-            where: { id: id}
+            where: { id: id },
+            include: {
+                participantes: true,
+                caravanas: true,
+                reportes: true
+            }
         });
     }
 
 
     async obterPorNome(nome) {
         return await prisma.evento.findUnique({
-            where: { nome: nome }
+            where: { nome: nome },
+            include: {
+                participantes: true,
+                caravanas: true,
+                reportes: true
+            }
         });
     }
 
 
     async removerEvento(id) {
         return await prisma.evento.delete({
-            where: { id: id }
+            where: { id: id }  
         });
     }
 

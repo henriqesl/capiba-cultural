@@ -23,7 +23,7 @@ class GrupoService {
         return grupo;
     }
 
-    async adicionarMembro(grupoId, usuario) {
+    async adicionarMembro(grupoId, usuarioId) {
         const grupo = await this.grupoRepository.obterPorId(grupoId);
         if (!grupo) throw new Error("Grupo não encontrado.");
         if (grupo.getEncerrado(grupoId)) throw new Error("Não é possível adicionar membros a um grupo encerrado.");

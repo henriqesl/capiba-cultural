@@ -1,10 +1,12 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 const EventoService = require('./EventoService');
 const ReporteEvento = require('../models/ReporteEvento');
 
 class ReporteService {
     constructor() {
         this.reporteEventoRepository = new ReporteEvento();
-        this.eventoService = new EventoService(); // ✅ instanciado corretamente
+        this.eventoService = new EventoService();
 
     }
 
@@ -28,13 +30,14 @@ class ReporteService {
             await evento.setReportadoPorUsuario(true);
         }
 
-        const existente = await await prisma.reporteEvento.findFirst({
-            where: { eventoId: evento.id }
+        const existente = await prisma.reporteEvento.findFirst({
+            where: { eventoId: evento.id },
+            include: { reportantes: true }
         });
 
 
-        if (existente) {
-            const jaConfirmou = existente.getReportantes().some(u => u.getId() === reportante.getId());
+          if (existente) {
+            const jaConfirmou = existente.reportantes.some(u => u.id === reportanteId);
             if (jaConfirmou) {
                 return { mensagem: 'Usuário já reportou/confirmou este evento.', reporte: existente };
             }

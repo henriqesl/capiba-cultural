@@ -2,26 +2,25 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class ReporteEvento {
-    async criarReporteEvento(reportante, evento, descricao) {
+    async criarEeporteEvento(reportante, evento, descricao) {
         if (!reportante) throw new Error('Reportante inválido.');
         if (!evento) throw new Error('Evento inválido.');
 
-        return await prisma.ReporteEvento.create({
-            data: {
-                reportante,
-                evento,
-                descricao,
-                dataReporte: new Date(),
-                qtdConfirmacoes: 1,
-                reportantes: [reportante]
-
-            }
-        })
-
+    return await prisma.reporteEvento.create({
+        data: {
+            descricao,
+            dataReporte: new Date(),
+            qtdConfirmacoes: 1,
+            evento: { connect: { id: evento.id } },
+            reportante: { connect: { id: reportante.id } },
+            reportantes: { connect: [{ id: reportante.id }] }
+        },
+        include: { evento: true, reportantes: true }
+    });
     }
 
     async listar() {
-        return await prisma.ReporteEvento.findMany();
+        return await prisma.reporteEvento.findMany();
     }
 
     async buscarPorId(id) {
@@ -31,21 +30,21 @@ class ReporteEvento {
     }
 
     async remover(id) {
-        return await prisma.ReporteEvento.delete({
+        return await prisma.reporteEvento.delete({
             where: { id: id}
         })
     }
 
 
     async getReportante(id) {
-        return await prisma.ReporteEvento.findUnique({
+        return await prisma.reporteEvento.findUnique({
             where: { id: id },
-            select: { reportante: reportante }
+            select: { reportante: true }
         })
     }
 
     async setReportante(id, reportante) {
-        return await prisma.ReporteEvento.update({
+        return await prisma.reporteEvento.update({
             where: { id: id },
             data: { reportante: reportante },
             select: { reportante: true}
@@ -53,18 +52,12 @@ class ReporteEvento {
     }
 
 
-    async getEvento(id) {
-        return await prisma.ReporteEvento.findUnique({
-            where: { id: id },
-            select: { evento: evento }
-        })
-    }
 
     async setEvento(id, evento) {
-        return await prisma.ReporteEvento.update({
+        return await prisma.reporteEvento.update({
             where: { id: id },
             data: { evento: evento },
-            select: { evento: true}
+            select: { evento: true }
         })
     }
 
@@ -109,10 +102,10 @@ class ReporteEvento {
         });
     }
  
- 
     async getReportantes(id) {
         const reporte = await prisma.reporteEvento.findUnique({
             where: { id },
+            include: { reportantes: true }
         });
         return reporte?.reportantes || [];
     }

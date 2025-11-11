@@ -38,7 +38,9 @@ const prisma = new PrismaClient();
     }
 
     async listar() {
-        return await prisma.usuario.findMany()
+        return await prisma.usuario.findMany({
+            include: { grupos_membro: true, grupos_vencidos: true }
+        });
     }
     
 
@@ -62,20 +64,22 @@ const prisma = new PrismaClient();
     
     async getGrupos(id) {
         const usuario = await prisma.usuario.findUnique({
-            where: { id: id },
-            select: {  grupos: true }
+            where: { id },
+            select: { grupos_membro: true }
         });
-
-        return usuario?.grupos ?? [];
-
+        return usuario?.grupos_membro ?? [];
     }
 
-    async setGrupos(id, grupos) {
+    async setGrupos(id, gruposIds) {
         return await prisma.usuario.update({
-            where: { id: id }, 
-            data: { grupos }, 
-            select: { grupos: true }
-        });
+            where: { id },
+            data: {
+            grupos_membro: {
+                connect: gruposIds.map(grupoId => ({ id: grupoId }))
+            }
+            },
+            include: { grupos_membro: true }
+    });
     }
 
     async getNome(id) {

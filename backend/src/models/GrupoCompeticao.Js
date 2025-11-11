@@ -3,16 +3,23 @@ const prisma = new PrismaClient();
 const Usuario = require('./usuario');
 
 class GrupoCompeticao {
-    async novoGrupoCompeticao(nome, dataInicio, dataFim, encerrado = false, pontuacaoTotal) {
-        return await prisma.GrupoCompeticao.create({
+    async novoGrupoCompeticao(nome, dataInicio, dataFim, encerrado = false, pontuacaoTotal = 0, participantesIds = []) {
+        return await prisma.grupoCompeticao.create({
             data: {
                 nome,
-                dataInicio: Date ? data : new Date(dataInicio), 
-                dataFim: Date ? data : new Date(dataFim),
+                dataInicio: dataInicio instanceof Date ? dataInicio : new Date(dataInicio), 
+                dataFim: dataFim instanceof Date ? dataFim : new Date(dataFim), 
                 encerrado,
-                membros,
-                pontuacaoTotal: 0,
-                vencedor: null
+                pontuacaoTotal,
+                vencedor: null,
+
+                membros: participantesIds.length
+                    ? { connect: participantesIds.map(id => ({ id })) }
+                    : undefined,
+            },
+
+            include: {
+                membros: true
             }
 
         })
@@ -20,13 +27,23 @@ class GrupoCompeticao {
     }
 
     async listar() {
-        return await prisma.GrupoCompeticao.findMany();
+        return await prisma.grupoCompeticao.findMany({
+            include: { membros: true }
+        });
+        
     }
     
     async obterPorId(id) {
-        return await prisma.GrupoCompeticao.findUnique({
-            where: { id: id }
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            include: { membros: true }
         });
+    }
+
+    async removerGrupo(id) {
+        return await this.prisma.grupoCompeticao.delete({
+            where: { id: id }
+        })
     }
 
     async adicionarMembro(grupoId, usuarioId) {
@@ -48,14 +65,14 @@ class GrupoCompeticao {
     }
 
     async getNome(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { nome: true }
         }) 
     }
 
     async setNome(id, value) { 
-         return await prisma.GrupoCompeticao.update({
+         return await prisma.grupoCompeticao.update({
             where: { id: id },
             data: { nome: value }, 
             select: { nome: true }
@@ -64,14 +81,14 @@ class GrupoCompeticao {
 
 
     async getMembros(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { membros: true }
         }) 
     }
 
     async setMembros(id, list) { 
-         return await prisma.GrupoCompeticao.update({
+         return await prisma.grupoCompeticao.update({
             where: { id: id },
             data: { membros: list }, 
             select: { membros: true }
@@ -80,14 +97,14 @@ class GrupoCompeticao {
 
     
     async getDataInicio(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { dataInicio: true }
         }) 
     }
 
     async setDataInicio(id, value) { 
-         return await prisma.GrupoCompeticao.update({
+         return await prisma.grupoCompeticao.update({
             where: { id: id },
             data: { dataInicio: value }, 
             select: { dataInicio: true }
@@ -95,14 +112,14 @@ class GrupoCompeticao {
     }
 
     async getDataFim(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { dataFim: true }
         }) 
     }
 
     async setDataFim(id, value) { 
-         return await prisma.GrupoCompeticao.update({
+         return await prisma.grupoCompeticao.update({
             where: { id: id },
             data: { dataFim: value }, 
             select: { dataFim: true }
@@ -111,14 +128,14 @@ class GrupoCompeticao {
 
 
     async getEncerrado(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { encerrado: true }
         }) 
     }
 
     async setEncerrado(id, value) { 
-         return await prisma.GrupoCompeticao.update({
+         return await prisma.grupoCompeticao.update({
             where: { id: id },
             data: { encerrado: value }, 
             select: { encerrado: true }
@@ -127,14 +144,14 @@ class GrupoCompeticao {
 
     
     async getPontuacaoTotal(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { pontuacaoTotal: true }
         }) 
     }
 
     async setPontuacaoTotal(id, value) { 
-         return await prisma.GrupoCompeticao.update({
+         return await prisma.grupoCompeticao.update({
             where: { id: id },
             data: { pontuacaoTotal: value }, 
             select: { pontuacaoTotal: true }
@@ -143,19 +160,20 @@ class GrupoCompeticao {
 
     
     async getVencedor(id) { 
-        return await prisma.GrupoCompeticao.findUnique({
+        return await prisma.grupoCompeticao.findUnique({
             where: { id: id },
             select: { vencedor: true }
         }) 
     }
 
-    async setVencedor(id, value) { 
-         return await prisma.GrupoCompeticao.update({
-            where: { id: id },
-            data: { vencedor: value }, 
-            select: { vencedor: true }
-         })
+    async setVencedor(id, vencedorId) { 
+        return await prisma.grupoCompeticao.update({
+            where: { id },
+            data: {
+                vencedor: { connect: { id: vencedorId } }
+            },
+            include: { vencedor: true }
+    });
     }
-
 }
 module.exports = GrupoCompeticao;
