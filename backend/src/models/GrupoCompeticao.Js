@@ -1,71 +1,179 @@
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 const Usuario = require('./usuario');
 
 class GrupoCompeticao {
-    constructor(nome, dataInicio, dataFim) {
-        this.id = null;
-        this.nome = nome;
-        this.membros = [];
-        this.dataInicio = dataInicio instanceof Date ? dataInicio : new Date(dataInicio);
-        this.dataFim = dataFim instanceof Date ? dataFim : new Date(dataFim);
-        this.encerrado = false;
-        this.pontuacaoTotal = 0;
-        this.vencedor = null;
+    async novoGrupoCompeticao(nome, dataInicio, dataFim, encerrado = false, pontuacaoTotal = 0, participantesIds = []) {
+        return await prisma.grupoCompeticao.create({
+            data: {
+                nome,
+                dataInicio: dataInicio instanceof Date ? dataInicio : new Date(dataInicio), 
+                dataFim: dataFim instanceof Date ? dataFim : new Date(dataFim), 
+                encerrado,
+                pontuacaoTotal,
+                vencedor: null,
+
+                membros: participantesIds.length
+                    ? { connect: participantesIds.map(id => ({ id })) }
+                    : undefined,
+            },
+
+            include: {
+                membros: true
+            }
+
+        })
+
     }
 
-    getId(){
-        return this.id;
-    }
-    setId(id) { 
-        this.id = id; 
+    async listar() {
+        return await prisma.grupoCompeticao.findMany({
+            include: { membros: true }
+        });
+        
     }
     
-    getNome() { 
-        return this.nome; 
-    }
-    setNome(value) { 
-        this.nome = value; 
-    }
-
-    getMembros() { 
-        return this.membros; 
-    }
-    setMembros(value) { 
-        this.membros = value; 
+    async obterPorId(id) {
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            include: { membros: true }
+        });
     }
 
-    getDataInicio() { 
-        return this.dataInicio; 
-    }
-    setDataInicio(value) {
-        this.dataInicio = value instanceof Date ? value : new Date(value);
-    }
-
-    getDataFim() { 
-        return this.dataFim; 
-    }
-    setDataFim(value) {
-        this.dataFim = value instanceof Date ? value : new Date(value);
+    async removerGrupo(id) {
+        return await this.prisma.grupoCompeticao.delete({
+            where: { id: id }
+        })
     }
 
-    getEncerrado() { 
-        return this.encerrado; 
+    async adicionarMembro(grupoId, usuarioId) {
+        return await prisma.grupoCompeticao.update({
+            where: { id: grupoId },
+            data: {
+                membros: { connect: { id: usuarioId }  }
+            },
+            include: { membros: true } 
+        });
     }
-    setEncerrado(value) { 
-        this.encerrado = value; 
+
+    async getMembros(grupoId) {
+        const grupo = await prisma.grupoCompeticao.findUnique({
+            where: { id: grupoId },
+            include: { membros: true }
+        });
+        return grupo?.membros || [];
     }
+
+    async getNome(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { nome: true }
+        }) 
+    }
+
+    async setNome(id, value) { 
+         return await prisma.grupoCompeticao.update({
+            where: { id: id },
+            data: { nome: value }, 
+            select: { nome: true }
+         })
+    }
+
+
+    async getMembros(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { membros: true }
+        }) 
+    }
+
+    async setMembros(id, list) { 
+         return await prisma.grupoCompeticao.update({
+            where: { id: id },
+            data: { membros: list }, 
+            select: { membros: true }
+         })
+    }
+
     
-    getPontuacaoTotal() { 
-        return this.pontuacaoTotal; 
+    async getDataInicio(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { dataInicio: true }
+        }) 
     }
-    setPontuacaoTotal(value) { 
-        this.pontuacaoTotal = value; 
+
+    async setDataInicio(id, value) { 
+         return await prisma.grupoCompeticao.update({
+            where: { id: id },
+            data: { dataInicio: value }, 
+            select: { dataInicio: true }
+         })
     }
+
+    async getDataFim(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { dataFim: true }
+        }) 
+    }
+
+    async setDataFim(id, value) { 
+         return await prisma.grupoCompeticao.update({
+            where: { id: id },
+            data: { dataFim: value }, 
+            select: { dataFim: true }
+         })
+    }
+
+
+    async getEncerrado(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { encerrado: true }
+        }) 
+    }
+
+    async setEncerrado(id, value) { 
+         return await prisma.grupoCompeticao.update({
+            where: { id: id },
+            data: { encerrado: value }, 
+            select: { encerrado: true }
+         })
+    }
+
     
-    getVencedor() { 
-        return this.vencedor; 
+    async getPontuacaoTotal(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { pontuacaoTotal: true }
+        }) 
     }
-    setVencedor(value) { 
-        this.vencedor = value; 
+
+    async setPontuacaoTotal(id, value) { 
+         return await prisma.grupoCompeticao.update({
+            where: { id: id },
+            data: { pontuacaoTotal: value }, 
+            select: { pontuacaoTotal: true }
+         })
+    }
+
+    
+    async getVencedor(id) { 
+        return await prisma.grupoCompeticao.findUnique({
+            where: { id: id },
+            select: { vencedor: true }
+        }) 
+    }
+
+    async setVencedor(id, vencedorId) { 
+        return await prisma.grupoCompeticao.update({
+            where: { id },
+            data: {
+                vencedor: { connect: { id: vencedorId } }
+            },
+            include: { vencedor: true }
+    });
     }
 }
 module.exports = GrupoCompeticao;

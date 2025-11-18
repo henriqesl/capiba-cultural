@@ -1,48 +1,71 @@
-import React, { useState } from 'react';
-import EventPage from './pages/EventPage'; 
-import EventDetailPage from './pages/EventDetailPage'; 
+import React, { useState, useEffect } from 'react';
 
-// 1. Importe seus eventos do novo arquivo!
-import mockEventsData from './components/EventsData'; 
-// (A lista gigante de eventos saiu daqui)
+// Layout
+import MainLayout from './components/layout/MainLayout.jsx';
 
-function App() {
-    // O resto do código continua exatamente igual
-    const [currentView, setCurrentView] = useState('list');
-    const [selectedEventId, setSelectedEventId] = useState(null);
+// Páginas
+import LoginPage from './pages/LoginPage';
+import EventPage from './pages/EventPage';
+import ProfilePage from './pages/user/ProfilePage.jsx';
+import RankingPage from './pages/user/RankingPage.jsx';
+import UserPage from './pages/user/UserPage.jsx';
+import EventDetailPage from './pages/EventDetailPage.jsx';
+import mockEventsData from './components/EventsData.jsx';
 
-    const handleGoToDetails = (eventId) => {
-        setSelectedEventId(eventId);
-        setCurrentView('details');
-        window.scrollTo(0, 0);
+// Componente de Roteamento
+const App = () => {
+  const [currentPath, setCurrentPath] = useState(window.location.hash || '#/login');
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentPath(window.location.hash || '#/login');
     };
-
-    const handleGoBackToList = () => {
-        setSelectedEventId(null);
-        setCurrentView('list');
+    window.addEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
     };
+  }, []); 
 
-    if (currentView === 'list') {
-        return (
-            <EventPage 
-                // 2. Passe os eventos importados para a página
-                events={mockEventsData} 
-                onEventClick={handleGoToDetails} 
-            />
-        );
+  const renderPage = () => {
+    if (currentPath.startsWith('#/evento/')) {
+      const eventId = parseInt(currentPath.split('/')[2]);
+      const event = mockEventsData.find(e => e.id === eventId);
+      return <EventDetailPage event={event} />;
     }
 
-    if (currentView === 'details') {
-        // 3. A lógica de busca continua funcionando
-        const event = mockEventsData.find(e => e.id === selectedEventId);
-        
-        return (
-            <EventDetailPage 
-                event={event} 
-                onBack={handleGoBackToList} 
-            />
-        );
+    switch (currentPath) {
+      case '#/eventos':
+        return <EventPage />;
+      case '#/perfil':
+        return <UserPage />; 
+      case '#/perfil/editar':
+        return <ProfilePage />;
+      case '#/ranking':
+        return <RankingPage />; 
+      case '#/login':
+      default:
+        return <LoginPage />;
     }
-}
+  };
+
+  // Define quais rotas usam o layout principal
+  const useMainLayout = 
+    currentPath.startsWith('#/eventos') || 
+    currentPath.startsWith('#/perfil') || 
+    currentPath.startsWith('#/ranking') ||
+    currentPath.startsWith('#/evento/'); 
+
+  return (
+    <>
+      {useMainLayout ? (
+        <MainLayout currentPath={currentPath}>
+          {renderPage()}
+        </MainLayout>
+      ) : (
+        renderPage()
+      )}
+    </>
+  );
+};
 
 export default App;

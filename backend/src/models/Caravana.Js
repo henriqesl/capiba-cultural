@@ -1,53 +1,59 @@
-const Evento = require('./Evento');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 class Caravana {
-    constructor(nome) {
-        this.id = null;
-        this.nome = nome;
-        this.eventoDestino = null;
-        this.eventoId = null;
-        this.membros = [];
-        this.bonusPorParticipante = 10;
-    }
+  async criar(nome, eventoId, bonusPorParticipante = 10) {
+    if (!nome) throw new Error("Nome da caravana é obrigatório");
 
-    getId() { return this.id; }
-    setId(valor) {
-        if (typeof valor !== 'number' || valor <= 0) throw new Error("ID inválido.");
-        this.id = valor;
-    }
+    const novaCaravana = await prisma.caravana.create({
+      data: {
+        nome,
+        eventoId,
+        bonusPorParticipante
+      }
+    });
 
-    getNome() { return this.nome; }
-    setNome(valor) {
-        if (!valor || typeof valor !== 'string') throw new Error("Nome inválido.");
-        this.nome = valor;
-    }
+    return novaCaravana;
+  }
 
-    getEventoDestino() { return this.eventoDestino; }
-    setEventoDestino(evento) {
-        if (!evento || typeof evento.getId !== 'function' || typeof evento.getNome !== 'function') {
-            throw new Error("Evento inválido");
-        }
-        this.eventoDestino = evento;
-        this.eventoId = evento.getId();
-    }
+  async listar() {
+    return await prisma.caravana.findMany({
+      include: { membros: true, eventoDestino: true }
+    });
+  }
 
-    getEventoId() { return this.eventoId; }
-    setEventoId(id) {
-        if (typeof id !== 'number' || id <= 0) throw new Error("ID de evento inválido.");
-        this.eventoId = id;
-    }
+  async obterPorId(id) {
+    const caravana = await prisma.caravana.findUnique({
+      where: { id },
+      include: { membros: true, eventoDestino: true }
+    });
 
-    getMembros() { return [...this.membros]; }
-    setMembros(lista) {
-        if (!Array.isArray(lista)) throw new Error("Lista de membros inválida.");
-        this.membros = lista;
-    }
+    if (!caravana) throw new Error("Caravana não encontrada");
+    return caravana;
+  }
 
-    getBonusPorParticipante() { return this.bonusPorParticipante; }
-    setBonusPorParticipante(valor) {
-        if (typeof valor !== 'number' || valor < 0) throw new Error("Bônus inválido.");
-        this.bonusPorParticipante = valor;
-    }
+  async atualizar(id, novosDados) {
+    return await prisma.caravana.update({
+      where: { id },
+      data: novosDados
+    });
+  }
+
+  async adicionarMembro(caravanaId, usuarioId) {
+    return await prisma.caravana.update({
+      where: { id: caravanaId },
+      data: {
+        membros: { connect: { id: usuarioId } }
+      },
+      include: { membros: true }
+    });
+  }
+
+  async remover(id) {
+    return await prisma.caravana.delete({
+      where: { id }
+    });
+  }
 }
 
 module.exports = Caravana;

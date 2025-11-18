@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import EventButton from '../components/EventButton';
+import Button from '../components/Button';
 import Calendar from '../components/Calendar';
-import TopNav from '../components/TopNav';
+import mockEventsData from '../components/EventsData'; 
 
-// A página agora recebe os eventos e a função de clique como props
-const EventPage = ({ events, onEventClick }) => {
+const EventPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     const formatDate = (date) => {
@@ -14,11 +13,10 @@ const EventPage = ({ events, onEventClick }) => {
             year: "numeric",
         });
     };
-
+    
     return (
-        <div className="bg-gray-100 min-h-screen p-4 sm:p-8">
-            <TopNav />
-            <br></br>
+        
+        <div className="bg-gray-100 p-4 sm:p-8 pb-24 md:pb-8">
             <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800 capitalize">
                 {selectedDate
                     ? `Eventos de ${formatDate(selectedDate)}`
@@ -30,17 +28,15 @@ const EventPage = ({ events, onEventClick }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-                {/* Agora usamos .map() para criar os botões
-                  a partir da prop 'events' 
-                */}
-                {events.map((event) => (
-                    <EventButton 
+                
+                {mockEventsData.map((event) => (
+                    <Button 
                         key={event.id}
+                        variant="event"
                         title={event.title} 
                         time={event.time} 
                         location={event.location} 
-                        // Passamos a função onEventClick com o ID do evento
-                        onClick={() => onEventClick(event.id)}
+                        href={`#/evento/${event.id}`}
                     />
                 ))}
             </div>

@@ -1,10 +1,9 @@
 import React from 'react';
 import CapibaLogo from '../components/CapibaLogo';
-import ActionButton from '../components/ActionButton';
+import Button from '../components/Button';
 
-const LoginPage = ({ onLoginSuccess }) => {
+const LoginPage = () => {
     return (
-        
         <div className="min-h-screen font-sans bg-linear-to-br from-blue-600 to-blue-800 flex justify-center items-center p-8">
             <div className="w-full max-w-sm text-center flex flex-col items-center gap-y-8 animate-fade-in">
                 <CapibaLogo />
@@ -26,12 +25,19 @@ const LoginPage = ({ onLoginSuccess }) => {
                         className="w-full px-4 py-3 rounded-lg bg-white text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm"
                     />
 
-                    <ActionButton onClick={onLoginSuccess}>
+                    <Button 
+                      variant="primary"
+                      href="#/eventos"
+                    >
                         LOGAR
-                    </ActionButton>
-                    <ActionButton onClick={() => console.log("Botão de Criar Conta Clicado")} type="secondary">
+                    </Button>
+                    
+                    <Button 
+                      variant="secondary"
+                      href="#/login" 
+                    >
                         CRIAR CONTA
-                    </ActionButton>
+                    </Button>
                 </main>
             </div>
         </div>

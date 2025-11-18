@@ -1,47 +1,107 @@
-class Usuario {
-    constructor(nome, email, senha) {
-        this.id = null;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.saldoMoedaCapiba = 0;
-        this.dataCadastro = new Date();
-        this.caravanas = [];
-        this.grupos = [];
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+
+ class Usuario {
+
+    async buscarId(id) {
+        return await prisma.usuario.findUnique({
+            where: { id: id }
+        });
+   
     }
 
-    getSaldo() {
-        return this.saldoMoedaCapiba;
+    async buscarEmail(email) {
+        return await prisma.usuario.findUnique({
+            where: { email: email }
+        });
+   
     }
 
-    setSaldo(saldo) {
-        if (saldo < 0) throw new Error("Saldo não pode ser negativo");
-        this.saldoMoedaCapiba = saldo;
+    async novoUsuario(nome, email, senha) { 
+        return await prisma.usuario.create({
+            data: {
+                nome,
+                email,
+                senha,
+                saldoMoedaCapiba: 0,
+                dataCadastro: new Date(),
+                },
+            });
     }
 
-    setId(id) {
-        this.id = id;
+    async removerUsuario(id) {
+        return await prisma.usuario.delete({
+            where: { id: id }
+        })
+      
     }
 
-    getId() {
-        return this.id;
+    async listar() {
+        return await prisma.usuario.findMany({
+            include: { grupos_membro: true, grupos_vencidos: true }
+        });
     }
     
-    getGrupos() {
-        return this.grupos;
+
+    async getSaldo(id) {
+        const usuario = await prisma.usuario.findUnique({
+            where: { id: id },
+            select: { saldoMoedaCapiba: true },
+        });
+
+        return usuario?.saldoMoedaCapiba ?? 0;
+
     }
 
-    setGrupos(grupos) {
-        this.grupos = grupos;
+   async setSaldo(id, saldo) {
+        if (saldo < 0) throw new Error("Saldo não pode ser negativo");
+        return await prisma.usuario.update({
+            where: { id },
+            data: { saldoMoedaCapiba: saldo },
+        });
+    }
+    
+    async getGrupos(id) {
+        const usuario = await prisma.usuario.findUnique({
+            where: { id },
+            select: { grupos_membro: true }
+        });
+        return usuario?.grupos_membro ?? [];
     }
 
-    getNome() {
-        return this.nome;
+    async setGrupos(id, gruposIds) {
+        return await prisma.usuario.update({
+            where: { id },
+            data: {
+            grupos_membro: {
+                connect: gruposIds.map(grupoId => ({ id: grupoId }))
+            }
+            },
+            include: { grupos_membro: true }
+    });
     }
 
-    setNome(nome) {
-        this.nome = nome;
+    async getNome(id) {
+        const usuario = await prisma.usuario.findUnique({
+           where: { id: id },
+            select: {  nome: true }
+        })
+
+        return usuario?.nome ?? null;
+
     }
+
+    async setNome(id, nome) {
+        return await prisma.usuario.update({
+           where: { id: id },
+           data: { nome: nome},
+           select: {  nome: true }
+        })
+    }
+
+
 }
+
 
 module.exports = Usuario;

@@ -1,5 +1,4 @@
-//"Banco de dados dos eventos"
-
+//"Banco de dados temporário dos eventos"
 
 const mockEventsData = [
     { 

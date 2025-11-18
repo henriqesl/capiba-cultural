@@ -2,55 +2,50 @@ const Evento = require('../models/Evento');
 
 class EventoService {
     constructor() {
-        this.eventos = [];
-        this.nextId = 1;
+        this.eventoRepository = new Evento();
     }
 
-    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
+    async criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds = []) {
         if (!nome || !local || !data || !descricao)
             throw new Error("Todos os campos são obrigatórios");
 
-        if (isNaN(Date.parse(data)))
+        if (isNaN(Date.parse(data)))    
             throw new Error("Data inválida");
 
-        if (!reportadoPorUsuario && this.eventos.some(e => e.nome.toLowerCase() === nome.toLowerCase()))
-            throw new Error("Evento já cadastrado");
+        const existente = await this.eventoRepository.obterPorNome(nome);
+        if (existente && !reportadoPorUsuario)
+            throw new Error("Evento já cadastrado.");
 
-        const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
-        evento.setId(this.nextId++);
-        this.eventos.push(evento);
-
-        return evento;
+        return await this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds = []);
     }
 
-    listarEventos() {
-        return this.eventos;
+    async listarEventos() {
+        return await this.eventoRepository.listar();
     }
 
-    obterPorId(id) {
-        const evento = this.eventos.find(e => e.getId() === id);
+    async obterPorId(id) {
+        const evento = await this.eventoRepository.obterPorId(id);
         if (!evento) {
             throw new Error("Evento não encontrado");
         }
         return evento;
     }
 
-    obterPorNome(nome) {
-        const evento = this.eventos.find(e => e.getNome().toLowerCase() === nome.toLowerCase());
+    async obterPorNome(nome) {
+        const evento = await this.eventoRepository.obterPorNome(nome);
         if (!evento) {
             throw new Error("Evento não encontrado");
         }
         return evento;
     }
 
-    removerEvento(id) {
-        const index = this.eventos.findIndex(e => e.getId() === id);
-        if (index === -1) {
+    async removerEvento(id) {
+        const evento = this.eventoRepository.obterPorId(id);
+        if (!evento) {
             throw new Error("Evento não encontrado");
         }
         
-        const [eventoRemovido] = this.eventos.splice(index, 1);
-        return eventoRemovido;
+        return await this.eventoRepository.removerEvento(id);
     }
 }
 

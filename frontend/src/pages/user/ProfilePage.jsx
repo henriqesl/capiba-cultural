@@ -1,15 +1,12 @@
 import React from 'react';
-import BottomNav from '../components/BottomNav';
-import TopNav from '../components/TopNav';
-import { Icon } from '../components/PersonalComponents.jsx';
-import { InfoRow } from '../components/PersonalComponents.jsx';
-import { PerfilImage } from '../components/PersonalComponents.jsx'
-import { ICONS } from '../utils/icons.jsx';
+import { Icon } from '../../components/user/PersonalComponents.jsx';
+import { InfoRow } from '../../components/user/PersonalComponents.jsx';
+import { PerfilImage } from '../../components/user/PersonalComponents.jsx'; 
+import { ICONS } from '../../utils/icons.jsx';
 
 const ProfilePage = () => {
   return (
-    <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center">
-      <TopNav />
+    <div className="w-full bg-gray-100 flex flex-col items-center">
       
       <div className="w-full max-w-md md:max-w-7xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col">
         {/* Header Mobile */}
@@ -21,17 +18,14 @@ const ProfilePage = () => {
           <div className="w-6"></div>
         </header>
 
-        {/* Main Content */}
+        {/* pb-24 é importante para o BottomNav */}
         <main className="p-6 pb-24 md:p-8 md:grid md:grid-cols-3 md:gap-12">
           {/* Coluna Esquerda: Foto e Ações */}
           <aside className="md:col-span-1 flex flex-col items-center justify-center text-center mb-8 md:mb-0">
             {/* Foto de Perfil */}
             <div className="relative group mb-4 cursor-pointer"> 
-              <img
-                src={PerfilImage}
-                alt="Foto do perfil de Júnior Cruz"
-                className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300"
-              />
+              <PerfilImage />
+              
               <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <span className="text-white font-bold text-sm">Editar foto</span>
               </div>
@@ -49,7 +43,6 @@ const ProfilePage = () => {
                 Editar Perfil
               </button>
             </div>
-              
           </aside>
 
           {/* Coluna Direita: Informações */}
@@ -79,8 +72,6 @@ const ProfilePage = () => {
           </div>
         </main>
       </div>
-
-      <BottomNav />
     </div>
   );
 };
