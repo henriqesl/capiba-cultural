@@ -10,16 +10,23 @@ const ProfilePage = () => {
       
       <div className="w-full max-w-md md:max-w-7xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col">
         {/* Header Mobile */}
-        <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
-          <button className="hover:opacity-80">
+        <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden ">
+          <a href="#/perfil" className="hover:opacity-80">
             <Icon path={ICONS.arrowLeft} />
-          </button>
+          </a>
           <h1 className="text-xl font-bold">Editar Perfil</h1>
           <div className="w-6"></div>
         </header>
 
-        {/* pb-24 é importante para o BottomNav */}
+        <header className="hidden md:flex p-4 items-center border-b border-gray-200">
+          <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
+            <Icon path={ICONS.arrowLeft} className="w-6 h-6" />
+          </a>
+          <h1 className="text-xl font-bold text-gray-800 ml-4">Editar Perfil</h1>
+        </header>
+
         <main className="p-6 pb-24 md:p-8 md:grid md:grid-cols-3 md:gap-12">
+
           {/* Coluna Esquerda: Foto e Ações */}
           <aside className="md:col-span-1 flex flex-col items-center justify-center text-center mb-8 md:mb-0">
             {/* Foto de Perfil */}

@@ -15,7 +15,7 @@ const EventPage = () => {
     };
     
     return (
-        
+        // O padding-bottom (pb-24) é importante para o BottomNav
         <div className="bg-gray-100 p-4 sm:p-8 pb-24 md:pb-8">
             <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800 capitalize">
                 {selectedDate
@@ -29,6 +29,7 @@ const EventPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
                 
+                {/* 3. Lógica de map (da branch main) mantida */}
                 {mockEventsData.map((event) => (
                     <Button 
                         key={event.id}
