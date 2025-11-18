@@ -6,31 +6,33 @@ import MainLayout from './components/layout/MainLayout.jsx';
 // Páginas
 import LoginPage from './pages/LoginPage';
 import EventPage from './pages/EventPage';
-import ProfilePage from './pages/user/ProfilePage';
+import ProfilePage from './pages/user/ProfilePage.jsx';
 import RankingPage from './pages/user/RankingPage.jsx';
-import UserPage from './pages/user/UserPage.jsx'; 
+import UserPage from './pages/user/UserPage.jsx';
+import EventDetailPage from './pages/EventDetailPage.jsx';
+import mockEventsData from './components/EventsData.jsx';
 
 // Componente de Roteamento
 const App = () => {
   const [currentPath, setCurrentPath] = useState(window.location.hash || '#/login');
 
   useEffect(() => {
-    // Função para atualizar o estado com base no hash
     const handleHashChange = () => {
       setCurrentPath(window.location.hash || '#/login');
     };
-
-    // Ouve mudanças no hash
     window.addEventListener('hashchange', handleHashChange);
-
-    // Limpa o listener ao desmontar
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
   }, []); 
 
-  // Função para renderizar a página correta
   const renderPage = () => {
+    if (currentPath.startsWith('#/evento/')) {
+      const eventId = parseInt(currentPath.split('/')[2]);
+      const event = mockEventsData.find(e => e.id === eventId);
+      return <EventDetailPage event={event} />;
+    }
+
     switch (currentPath) {
       case '#/eventos':
         return <EventPage />;
@@ -41,17 +43,18 @@ const App = () => {
       case '#/ranking':
         return <RankingPage />; 
       case '#/login':
+      default:
         return <LoginPage />;
     }
   };
 
-  // Define se a página atual deve ter o 'layout' 
+  // Define quais rotas usam o layout principal
   const useMainLayout = 
     currentPath.startsWith('#/eventos') || 
     currentPath.startsWith('#/perfil') || 
-    currentPath.startsWith('#/ranking');
+    currentPath.startsWith('#/ranking') ||
+    currentPath.startsWith('#/evento/'); 
 
-  // Renderiza a página com ou sem o MainLayout
   return (
     <>
       {useMainLayout ? (
@@ -65,4 +68,4 @@ const App = () => {
   );
 };
 
-export default App
+export default App;
