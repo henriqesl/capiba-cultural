@@ -43,6 +43,13 @@ const prisma = new PrismaClient();
         });
     }
     
+    async atualizar(id, dados) {
+        return await prisma.usuario.update({
+            where: { id },
+            data: dados
+        });
+    }
+
 
     async getSaldo(id) {
         const usuario = await prisma.usuario.findUnique({

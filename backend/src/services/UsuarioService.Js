@@ -27,6 +27,28 @@ class UsuarioService {
         return await this.usuarioRepository.listar();
     }
 
+    async atualizarUsuario(id, dadosAtualizados) {
+        const usuario = await this.usuarioRepository.buscarId(id);
+        if (!usuario) {
+            throw new Error("Usuário não encontrado");
+        }
+
+        const camposPermitidos = ["nome", "idade", "email" , "dataCadastro"];
+        const dadosFiltrados = {};
+
+        for (const campo in dadosAtualizados) {
+            if (camposPermitidos.includes(campo)) {
+                dadosFiltrados[campo] = dadosAtualizados[campo];
+            }
+        }
+
+        if (Object.keys(dadosFiltrados).length === 0) {
+            throw new Error("Nenhum campo válido para atualização");
+        }
+
+        return await this.usuarioRepository.atualizar(id, dadosFiltrados);
+    }
+
     async obterPorId(id) {
         const usuario = await this.usuarioRepository.buscarId(id);
         if (!usuario) {
