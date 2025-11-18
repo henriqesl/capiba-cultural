@@ -1,4 +1,5 @@
 const Usuario = require('../models/Usuario');
+const bcrypt = require('bcryptjs');
 
 class UsuarioService {
     constructor() {
@@ -11,8 +12,16 @@ class UsuarioService {
             throw new Error("E-mail já cadastrado");
 
         }
-        return await this.usuarioRepository.novoUsuario(nome, email, senha);
+
+        const salt = await bcrypt.genSalt(10);
+        const senhaHash = await bcrypt.hash(senha, salt)
+
+        const novoUsuario = await this.usuarioRepository.novoUsuario(nome, email, senhaHash);
+        delete novoUsuario.senha;
+        return await novoUsuario;
     }
+
+    
 
     async listarUsuarios() {
         return await this.usuarioRepository.listar();
