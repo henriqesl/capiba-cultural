@@ -14,6 +14,16 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.post('/login', async (req, res) => {
+    const { email, senha } = req.body;
+    try {
+        const resultado = await usuarioController.login(email, senha);
+        res.status(200).json(resultado);
+    } catch (error) {
+        res.status(401).json({ erro: error.message });
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
         const usuarios = await usuarioController.listarUsuarios();

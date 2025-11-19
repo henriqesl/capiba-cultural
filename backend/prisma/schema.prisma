@@ -23,6 +23,9 @@ model Usuario {
   grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
   caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
   
+  // Histórico de Check-ins do usuário
+  checkins         CheckIn[]
+
   @@map("usuarios")
 }
 
@@ -52,4 +55,37 @@ model Caravana {
   membros Usuario[] @relation("MembrosDaCaravana")
   
   @@map("caravanas")
+}
+
+model Evento {
+  id                 Int      @id @default(autoincrement())
+  nome               String
+  data               DateTime
+  local              String
+  moedasDistribuidas Int      @default(10) // Valor padrão de moedas ao participar
+
+  // Relação com check-ins
+  checkins           CheckIn[] 
+
+  @@map("eventos")
+}
+
+// Controle de presença e fraudes
+model CheckIn {
+  id        Int      @id @default(autoincrement())
+  data      DateTime @default(now()) // Data exata que leu o QR Code
+
+  // Quem fez?
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+
+  // Em qual evento?
+  evento    Evento  @relation(fields: [eventoId], references: [id])
+  eventoId  Int
+
+
+  // impede que o mesmo usuário (usuarioId) faça check-in no mesmo evento (eventoId) mais de uma vez.
+  @@unique([usuarioId, eventoId]) 
+  
+  @@map("checkins")
 }
