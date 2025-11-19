@@ -9,7 +9,8 @@ datasource db {
 
 
 model Usuario {
-  id               Int       @id @default(autoincrement())
+  id               Int       @id      @default(autoincrement())
+  cpf              String    @unique  @db.VarChar(11)
   nome             String
   email            String    @unique
   senha            String
