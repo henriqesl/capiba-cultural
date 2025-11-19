@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
     try {
         const caravana = await caravanaController.criarCaravana(nome);
         res.status(201).json({
-            mensagem: `Caravana criada com sucesso: ${caravana.getNome()}`,
+            mensagem: `Caravana criada com sucesso: ${caravana.nome}`,
             caravana
         });
     } catch (error) {
@@ -32,7 +32,7 @@ router.post('/:id/destinos', async (req, res) => {
 
         const caravana = await caravanaController.adicionarDestino(Number(id), evento);
         res.json({
-            mensagem: `Evento ${evento.getNome()} adicionado como destino da caravana ${caravana.getNome()}`,
+            mensagem: `Evento ${evento.nome} adicionado como destino da caravana ${caravana.nome}`,
             caravana
         });
     } catch (error) {
@@ -50,7 +50,7 @@ router.post('/:id/membros', async (req, res) => {
 
         const caravana = await caravanaController.adicionarMembro(Number(id), usuario);
         res.json({
-            mensagem: `Usuário ${usuario.getNome()} adicionado à caravana ${caravana.getNome()}`,
+            mensagem: `Usuário ${usuario.nome} adicionado à caravana ${caravana.nome}`,
             caravana
         });
     } catch (error) {
@@ -86,7 +86,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const removida = await caravanaController.removerCaravana(Number(id));
         res.json({
-            mensagem: `Caravana "${removida.getNome()}" removida com sucesso.`
+            mensagem: `Caravana "${removida.nome}" removida com sucesso.`
         });
     } catch (error) {
         res.status(400).json({ erro: error.message });

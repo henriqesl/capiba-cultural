@@ -1,21 +1,21 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-class Caravana {
-    async novaCaravana(nome) {
+class CaravanaService {
+    async criarCaravana(nome) {
         return await prisma.caravana.create({
             data: {
                 nome,
-                bonusPorParticipante: 10
+                data: new Date()
             }
         });
     }
 
-    async listar() {
+    async listarCaravanas() {
         return await prisma.caravana.findMany({ include: { membros: true } });
     }
 
-    async buscarPorId(id) {
+    async obterPorId(id) {
         return await prisma.caravana.findUnique({
             where: { id },
             include: { membros: true, eventoDestino: true }
@@ -32,7 +32,7 @@ class Caravana {
         });
     }
 
-    async definirEventoDestino(caravanaId, eventoId) {
+    async adicionarDestino(caravanaId, eventoId) {
         return await prisma.caravana.update({
             where: { id: caravanaId },
             data: { eventoId }
@@ -44,4 +44,4 @@ class Caravana {
     }
 }
 
-module.exports = Caravana;
+module.exports = new CaravanaService();

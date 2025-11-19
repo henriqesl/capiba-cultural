@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 
     async buscarId(id) {
         return await prisma.usuario.findUnique({
-            where: { id: id }
+            where: { id: id },
+            include: {caravanas_membro: true}
         });
    
     }
@@ -39,7 +40,7 @@ const prisma = new PrismaClient();
 
     async listar() {
         return await prisma.usuario.findMany({
-            include: { grupos_membro: true, grupos_vencidos: true }
+            include: { grupos_membro: true, grupos_vencidos: true, caravanas_membro:true }
         });
     }
     
