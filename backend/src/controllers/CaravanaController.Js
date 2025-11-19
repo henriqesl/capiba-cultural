@@ -4,10 +4,11 @@ class CaravanaController {
     async criarCaravana(nome) {
         try {
             const caravana = await caravanaService.criarCaravana(nome);
-            console.log(`Caravana criada com sucesso: ${caravana.getNome()}`);
+            console.log(`Caravana criada com sucesso: ${caravana.nome}`);
             return caravana;
         } catch (error) {
             console.error("Erro ao criar caravana:", error.message);
+            throw error;
         }
     }
 
@@ -16,12 +17,12 @@ class CaravanaController {
             const caravanas = await caravanaService.listarCaravanas();
             console.log("Caravanas cadastradas:");
             caravanas.forEach(c => {
-                const evento = c.getEventoDestino();
-                console.log(`Nome: ${c.getNome()}, Evento de Destino: ${evento ? evento.getNome() : 'Não definido'}`);
+                console.log(`Nome: ${c.nome}`);
             });
             return caravanas;
         } catch (error) {
             console.error("Erro ao listar caravanas:", error.message);
+            throw error;
         }
     }
 
@@ -32,36 +33,40 @@ class CaravanaController {
             return caravana;
         } catch (error) {
             console.error("Erro ao encontrar caravana por ID:", error.message);
+            throw error;
         }
     }
 
     async adicionarMembro(id, usuario) {
         try {
             const caravana = await caravanaService.adicionarMembro(id, usuario.getId());
-            console.log(`Adicionando usuário ${usuario.getNome()} na caravana ${caravana.getNome()}`);
+            console.log(`Adicionando usuário ${usuario.nome} na caravana ${caravana.nome}`);
             return caravana;
         } catch (error) {
             console.error("Erro ao adicionar usuário à caravana:", error.message);
+            throw error;
         }
     }
 
     async adicionarDestino(id, evento) {
         try {
             const caravana = await caravanaService.adicionarDestino(id, evento);
-            console.log(`Evento ${evento.getNome()} adicionado à caravana ${caravana.getNome()}`);
+            console.log(`Evento ${evento.nome} adicionado à caravana ${caravana.nome}`);
             return caravana;
         } catch (error) {
             console.error("Erro ao adicionar destino à caravana:", error.message);
+            throw error;
         }
     }
 
     async removerCaravana(id) {
         try {
             const caravanaRemovida = await caravanaService.removerCaravana(id);
-            console.log(`Caravana ${caravanaRemovida.getNome()} removida com sucesso!`);
+            console.log(`Caravana ${caravanaRemovida.nome} removida com sucesso!`);
             return caravanaRemovida;
         } catch (error) {
             console.error("Erro ao remover caravana:", error.message);
+            throw error;
         }
     }
 }
