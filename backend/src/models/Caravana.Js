@@ -4,8 +4,7 @@ const prisma = new PrismaClient();
 class Caravana {
   async criarCaravana(nome, eventoId, bonusPorParticipante = 10) {
     if (!nome) throw new Error("Nome da caravana é obrigatório");
-
-    const novaCaravana = await prisma.caravana.create({
+    return await prisma.caravana.create({
       data: {
         nome,
         eventoId,
@@ -13,8 +12,8 @@ class Caravana {
       }
     });
 
-    return novaCaravana;
   }
+
 
   async listar() {
     return await prisma.caravana.findMany({
@@ -23,13 +22,10 @@ class Caravana {
   }
 
   async obterPorId(id) {
-    const caravana = await prisma.caravana.findUnique({
+    return await prisma.caravana.findUnique({
       where: { id },
       include: { membros: true, eventoDestino: true }
     });
-
-    if (!caravana) throw new Error("Caravana não encontrada");
-    return caravana;
   }
 
   async atualizar(id, novosDados) {
@@ -54,6 +50,30 @@ class Caravana {
       where: { id }
     });
   }
+
+    async adicionarDestino(caravanaId, eventoId) {
+        return await prisma.caravana.update({
+            where: { id: caravanaId },
+            data: { eventoId }
+        });
+    }
+
+  async getMembros(id) { 
+    return await prisma.grupoCompeticao.findUnique({
+        where: { id: id },
+        select: { membros: true }
+    });
+  }
+
+    async setMembros(id, list) { 
+      return await prisma.grupoCompeticao.update({
+          where: { id: id },
+          data: { membros: list }, 
+          select: { membros: true }
+        });
+    }
+
+    
 }
 
 module.exports = Caravana;
