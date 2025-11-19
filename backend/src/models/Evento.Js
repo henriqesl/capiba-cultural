@@ -3,73 +3,36 @@ const prisma = new PrismaClient();
 
 class Evento {
 
-    async novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds =[]) {
+    async novoEvento(nome, local, data, descricao) {
         return await prisma.evento.create({
             data: {
                 nome,
                 local,
-                data: data instanceof Date ? data : new Date(data),
-                descricao,
-                pequenoPorte,
-                ativo: true,
-                aoVivo: false,
-                reportadoPorUsuario, 
-                confirmacoes: 0,
-
-                participantes: participantesIds.length
-                    ? { connect: participantesIds.map(id => ({ id })) }
-                    : undefined,
-
-                caravanas: caravanasIds.length
-                    ? { connect: caravanasIds.map(id => ({ id })) }
-                    : undefined
-            },
-
-            include: {
-                participantes: true, 
-                caravanas: true,
-                reportes: true 
+                data: new Date(data), 
+                moedasDistribuidas: 10
             }
         });
     }
 
     async listar() {
-        return await prisma.evento.findMany({
-            include: {
-                participantes: true,
-                caravanas: true,
-                reportes: true
-            }
-        });
+        return await prisma.evento.findMany();
     }
 
     async obterPorId(id) {
         return await prisma.evento.findUnique({
-            where: { id: id },
-            include: {
-                participantes: true,
-                caravanas: true,
-                reportes: true
-            }
+            where: { id: id }
         });
     }
-
 
     async obterPorNome(nome) {
-        return await prisma.evento.findUnique({
-            where: { nome: nome },
-            include: {
-                participantes: true,
-                caravanas: true,
-                reportes: true
-            }
+        return await prisma.evento.findFirst({
+            where: { nome: nome }
         });
     }
-
 
     async removerEvento(id) {
         return await prisma.evento.delete({
-            where: { id: id }  
+            where: { id: id }
         });
     }
 

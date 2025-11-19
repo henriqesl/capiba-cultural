@@ -1,5 +1,6 @@
 const Usuario = require('../models/Usuario');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 class UsuarioService {
     constructor() {
@@ -21,7 +22,21 @@ class UsuarioService {
         return await novoUsuario;
     }
 
-    
+    async autenticarUsuario(email, senha) {
+        const usuario = await this.usuarioRepository.buscarEmail(email);
+        if (!usuario) throw new Error("Credenciais inválidas");
+
+        const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+        if (!senhaCorreta) throw new Error("Credenciais inválidas");
+
+        const token = jwt.sign(
+            { id: usuario.id, nome: usuario.nome },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
+        );
+
+        return { token, usuario: { id: usuario.id, email: usuario.email } };
+    }
 
     async listarUsuarios() {
         return await this.usuarioRepository.listar();
