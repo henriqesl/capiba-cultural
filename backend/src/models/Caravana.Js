@@ -50,6 +50,30 @@ class Caravana {
       where: { id }
     });
   }
+
+    async adicionarDestino(caravanaId, eventoId) {
+        return await prisma.caravana.update({
+            where: { id: caravanaId },
+            data: { eventoId }
+        });
+    }
+
+  async getMembros(id) { 
+    return await prisma.grupoCompeticao.findUnique({
+        where: { id: id },
+        select: { membros: true }
+    });
+  }
+
+    async setMembros(id, list) { 
+      return await prisma.grupoCompeticao.update({
+          where: { id: id },
+          data: { membros: list }, 
+          select: { membros: true }
+        });
+    }
+
+    
 }
 
 module.exports = Caravana;
