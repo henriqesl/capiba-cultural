@@ -7,7 +7,7 @@ const usuarioController = new UsuarioController();
 router.post('/', async (req, res) => {
     const { nome, email, senha } = req.body;
     try {
-        const usuario = await usuarioController.criarUsuario(nome, email, senha);
+        const usuario = await usuarioController.criarUsuario(nome, email, senha, cpf);
         res.status(201).json(usuario);
     } catch (error) {
         res.status(400).json({ erro: error.message });
