@@ -5,13 +5,13 @@ class UsuarioService {
         this.usuarioRepository = new Usuario();
     }
 
-    async criarUsuario(nome, email, senha) {
-        if (!nome || !email || !senha) throw new Error("Todos os campos são obrigatórios");
+    async criarUsuario(nome, email, senha, cpf) {
+        if (!nome || !email || !senha || !cpf) throw new Error("Todos os campos são obrigatórios");
         if (await this.usuarioRepository.buscarEmail(email)) {
             throw new Error("E-mail já cadastrado");
 
         }
-        return await this.usuarioRepository.novoUsuario(nome, email, senha);
+        return await this.usuarioRepository.novoUsuario(nome, email, senha, cpf);
     }
 
     async listarUsuarios() {
@@ -24,7 +24,7 @@ class UsuarioService {
             throw new Error("Usuário não encontrado");
         }
 
-        const camposPermitidos = ["nome", "idade", "email" , "dataCadastro"];
+        const camposPermitidos = ["nome", "idade", "email" , "dataCadastro", "cpf"];
         const dadosFiltrados = {};
 
         for (const campo in dadosAtualizados) {
