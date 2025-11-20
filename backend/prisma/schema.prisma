@@ -1,98 +1,124 @@
-generator client {
-  provider = "prisma-client-js"
-}
+  generator client {
+    provider = "prisma-client-js"
+  }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL") 
-}
-
-
-model Usuario {
-  id               Int       @id      @default(autoincrement())
-  cpf              String    @unique  @db.VarChar(11)
-  nome             String
-  email            String    @unique
-  senha            String
-  saldoMoedaCapiba Int       @default(0)
-  dataCadastro     DateTime  @default(now())
-
-  grupos_membro    GrupoCompeticao[] @relation("MembrosDoGrupo")
-  grupos_vencidos  GrupoCompeticao[] @relation("VencedorDoGrupo")
-  caravanas_membro Caravana[]        @relation("MembrosDaCaravana")
-  eventos_participados Evento[]      @relation("ParticipantesDoEvento")
-  reportes_feitos        ReporteEvento[] @relation("ReportesFeitos")
-  reportes_confirmados   ReporteEvento[] @relation("ConfirmadoresDoReporte")
-
-  @@map("usuarios")
-}
+  datasource db {
+    provider = "postgresql"
+  }
 
 
-model Evento {
-  id                        Int       @id @default(autoincrement())
-  nome                      String
-  local                     String
-  data                      DateTime
-  descricao                 String
-  ativo                     Boolean   @default(true)
-  aoVivo                    Boolean   @default(false)
-  pequenoPorte              Boolean   @default(true)
-  moedasCapibasDestribuidas  Float     @default(0)
-  reportadoPorUsuario       Boolean   @default(false)
-  confirmacoes              Int       @default(0)
+  model Usuario {
+    id               Int       @id      @default(autoincrement())
+    cpf              String    @unique  @db.VarChar(11)
+    nome             String
+    email            String             @unique // um valor único, ou seja só podera existir 1 na tabela
+    senha            String             // senha que será encripitada com jwt (explicar dps)
+    saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
+    dataCadastro     DateTime           @default(now()) // o padrão é a data atual
 
-  participantes Usuario[]   @relation("ParticipantesDoEvento")
-  caravanas     Caravana[]  @relation("CaravanasNoEvento")
-  reportes ReporteEvento[] @relation("ReportesDoEvento")
+    // Relações (O que este usuário possui?)
+    grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
+    grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
+    caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
+    
+    // Histórico de Check-ins do usuário
+    checkins         CheckIn[]
+    eventos_participados Evento[]      @relation("ParticipantesDoEvento")
+    reportes_feitos        ReporteEvento[] @relation("ReportesFeitos")
+    reportes_confirmados   ReporteEvento[] @relation("ConfirmadoresDoReporte")
 
-  @@map("eventos")
-}
-
-
-model GrupoCompeticao {
-  id             Int       @id @default(autoincrement())
-  nome           String
-  dataInicio     DateTime
-  dataFim        DateTime
-  encerrado      Boolean   @default(false)
-  pontuacaoTotal Int       @default(0)
-
-  membros        Usuario[] @relation("MembrosDoGrupo")
-
-  vencedorId     Int?
-  vencedor       Usuario?  @relation("VencedorDoGrupo", fields: [vencedorId], references: [id])
-
-  @@map("grupos_competicao")
-}
+    @@map("usuarios")
+  }
 
 
-model Caravana {
-  id                    Int       @id @default(autoincrement())
-  nome                  String
-  descricao             String
-  ativo                 Boolean   @default(true)
-  bonusPorParticipante  Int       @default(10)
+  model Evento {
+    id                        Int       @id @default(autoincrement())
+    nome                      String
+    local                     String
+    data                      DateTime
+    descricao                 String
+    ativo                     Boolean   @default(true)
+    aoVivo                    Boolean   @default(false)
+    pequenoPorte              Boolean   @default(true)
+    moedasCapibasDestribuidas  Float     @default(0)
+    reportadoPorUsuario       Boolean   @default(false)
+    confirmacoes              Int       @default(0)
 
-  eventoId              Int
-  evento                Evento    @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
-  membros               Usuario[] @relation("MembrosDaCaravana")
+    checkins           CheckIn[] 
+    participantes Usuario[]   @relation("ParticipantesDoEvento")
+    caravanas     Caravana[]  @relation("CaravanasNoEvento")
+    reportes ReporteEvento[] @relation("ReportesDoEvento")
 
-  @@map("caravanas")
-}
+    @@map("eventos")
+  }
 
-model ReporteEvento {
-  id              Int       @id @default(autoincrement())
-  descricao       String?
-  dataReporte     DateTime  @default(now())
-  qtdConfirmacoes Int       @default(1)
 
-  eventoId        Int
-  evento          Evento    @relation("ReportesDoEvento", fields: [eventoId], references: [id])
+  model GrupoCompeticao {
+    id             Int       @id @default(autoincrement())
+    nome           String
+    dataInicio     DateTime
+    dataFim        DateTime
+    encerrado      Boolean   @default(false)
+    pontuacaoTotal Int       @default(0)
 
-  reportanteId    Int
-  reportante      Usuario   @relation("ReportesFeitos", fields: [reportanteId], references: [id])
+    membros        Usuario[] @relation("MembrosDoGrupo")
 
-  confirmadores   Usuario[] @relation("ConfirmadoresDoReporte")
+    vencedorId     Int?
+    vencedor       Usuario?  @relation("VencedorDoGrupo", fields: [vencedorId], references: [id])
 
-  @@map("reportes_eventos")
-}
+    @@map("grupos_competicao")
+  }
+
+
+  model Caravana {
+    id                    Int       @id @default(autoincrement())
+    nome                  String
+    descricao             String
+    ativo                 Boolean   @default(true)
+    bonusPorParticipante  Int       @default(10)
+
+    eventoId              Int
+    evento                Evento    @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
+    membros               Usuario[] @relation("MembrosDaCaravana")
+
+    @@map("caravanas")
+  }
+
+
+
+  // Controle de presença e fraudes
+  model CheckIn {
+    id        Int      @id @default(autoincrement())
+    data      DateTime @default(now()) // Data exata que leu o QR Code
+
+    // Quem fez?
+    usuario   Usuario @relation(fields: [usuarioId], references: [id])
+    usuarioId Int
+
+    // Em qual evento?
+    evento    Evento  @relation(fields: [eventoId], references: [id])
+    eventoId  Int
+
+
+    // impede que o mesmo usuário (usuarioId) faça check-in no mesmo evento (eventoId) mais de uma vez.
+    @@unique([usuarioId, eventoId]) 
+    
+    @@map("checkins")
+  }
+
+  model ReporteEvento {
+    id              Int       @id @default(autoincrement())
+    descricao       String?
+    dataReporte     DateTime  @default(now())
+    qtdConfirmacoes Int       @default(1)
+
+    eventoId        Int
+    evento          Evento    @relation("ReportesDoEvento", fields: [eventoId], references: [id])
+
+    reportanteId    Int
+    reportante      Usuario   @relation("ReportesFeitos", fields: [reportanteId], references: [id])
+
+    confirmadores   Usuario[] @relation("ConfirmadoresDoReporte")
+
+    @@map("reportes_eventos")
+  }
