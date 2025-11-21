@@ -1,3 +1,4 @@
+const Caravana = require('../models/Caravana');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -51,4 +52,4 @@ class CaravanaService {
     }
 }
 
-module.exports = new CaravanaService();
+module.exports = new CaravanaService;
