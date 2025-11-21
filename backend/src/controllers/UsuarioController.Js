@@ -1,8 +1,10 @@
 const usuarioService = require('../services/UsuarioService');
+const GrupoService = require('../services/GrupoService');
 
 class UsuarioController {
     constructor() {
         this.usuarioService = usuarioService;
+        this.grupoService = new GrupoService();
     }
 
     async criarUsuario(nome, email, senha, cpf) {
@@ -83,6 +85,30 @@ class UsuarioController {
             throw error; 
         }
     }
+
+
+    async entrarNoGrupo(usuarioId, grupoId) {
+        try {
+            const grupoAtualizado = await this.grupoService.adicionarMembro(grupoId, usuarioId);
+            console.log(`Usuário ${usuarioId} adicionado ao grupo ${grupoAtualizado.nome}.`);
+            return grupoAtualizado;
+        } catch (error) {
+            console.error("Erro ao adicionar usuário ao grupo:", error.message);
+            throw error;
+        }
+    }
+
+    async sairDoGrupo(usuarioId, grupoId) {
+        try {
+            const grupoAtualizado = await this.grupoService.removerMembro(grupoId, usuarioId); 
+            console.log(`Usuário ${usuarioId} removido do grupo ${grupoAtualizado.nome}.`);
+            return grupoAtualizado;
+        } catch (error) {
+            console.error("Erro ao remover usuário do grupo:", error.message);
+            throw error;
+        }
+    }
 }
+
 
 module.exports = UsuarioController;
