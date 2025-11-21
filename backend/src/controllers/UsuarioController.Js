@@ -5,9 +5,9 @@ class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    async criarUsuario(nome, email, senha) {
+    async criarUsuario(nome, email, senha, cpf) {
         try {
-            const usuario = await this.usuarioService.criarUsuario(nome, email, senha);
+            const usuario = await this.usuarioService.criarUsuario(nome, email, senha, cpf);
             console.log(`Usuário ${usuario.nome} criado com sucesso!`);
             return usuario;
         } catch (error) {

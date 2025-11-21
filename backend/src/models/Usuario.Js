@@ -19,12 +19,13 @@ const prisma = new PrismaClient();
    
     }
 
-    async novoUsuario(nome, email, senha) { 
+    async novoUsuario(nome, email, senha, cpf) { 
         return await prisma.usuario.create({
             data: {
                 nome,
                 email,
                 senha,
+                cpf,
                 saldoMoedaCapiba: 0,
                 dataCadastro: new Date(),
                 },
