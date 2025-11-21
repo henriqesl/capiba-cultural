@@ -80,11 +80,12 @@ class GrupoCompeticao {
     }
 
 
-    async getMembros(id) { 
-        return await prisma.grupoCompeticao.findUnique({
-            where: { id: id },
-            select: { membros: true }
-        }) 
+    async getMembros(grupoId) {
+        const grupo = await prisma.grupoCompeticao.findUnique({
+            where: { id: grupoId },
+            include: { membros: true }
+        });
+        return grupo?.membros || []; 
     }
 
     async setMembros(id, list) { 
