@@ -9,7 +9,8 @@ class Evento {
                 nome,
                 local,
                 data: new Date(data), 
-                moedasDistribuidas: 10
+                moedasCapibasDestribuidas: 10,
+                descricao
             }
         });
     }
