@@ -86,28 +86,6 @@ class UsuarioController {
         }
     }
 
-
-    async entrarNoGrupo(usuarioId, grupoId) {
-        try {
-            const grupoAtualizado = await this.grupoService.adicionarMembro(grupoId, usuarioId);
-            console.log(`Usuário ${usuarioId} adicionado ao grupo ${grupoAtualizado.nome}.`);
-            return grupoAtualizado;
-        } catch (error) {
-            console.error("Erro ao adicionar usuário ao grupo:", error.message);
-            throw error;
-        }
-    }
-
-    async sairDoGrupo(usuarioId, grupoId) {
-        try {
-            const grupoAtualizado = await this.grupoService.removerMembro(grupoId, usuarioId); 
-            console.log(`Usuário ${usuarioId} removido do grupo ${grupoAtualizado.nome}.`);
-            return grupoAtualizado;
-        } catch (error) {
-            console.error("Erro ao remover usuário do grupo:", error.message);
-            throw error;
-        }
-    }
 }
 
 

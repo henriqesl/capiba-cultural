@@ -78,33 +78,5 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-router.post('/:id/grupos', async (req, res) => {
-    const usuarioId = Number(req.params.id);
-    const { grupoId } = req.body;
-
-    if (!grupoId || isNaN(Number(grupoId))) {
-        return res.status(400).json({ erro: 'ID do Grupo inválido.' });
-    }
-
-    try {
-        const grupo = await usuarioController.entrarNoGrupo(usuarioId, Number(grupoId));
-        res.status(200).json(grupo);
-    } catch (error) {
-        res.status(400).json({ erro: error.message });
-    }
-});
-
-
-router.delete('/:id/grupos/:grupoId', async (req, res) => {
-    const usuarioId = Number(req.params.id);
-    const grupoId = Number(req.params.grupoId);
-
-    try {
-        await usuarioController.sairDoGrupo(usuarioId, grupoId);
-        res.status(200).json({ mensagem: `Usuário ${usuarioId} removido do grupo ${grupoId} com sucesso.` });
-    } catch (error) {
-        res.status(400).json({ erro: error.message });
-    }
-});
 
 module.exports = router;

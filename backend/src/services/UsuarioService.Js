@@ -90,21 +90,6 @@ class UsuarioService {
         return await this.usuarioRepository.setSaldo(usuarioId, novoSaldo);
     }
 
-    async adicionarGrupoAoUsuario(usuarioId, grupoId) {
-        const usuario = await this.usuarioRepository.buscarId(usuarioId);
-        if (!usuario) {
-            throw new Error("Usuário não encontrado.");
-        }
-        return await this.usuarioRepository.adicionarGrupo(usuarioId, grupoId);
-    }
-
-    async removerGrupoDoUsuario(usuarioId, grupoId) {
-        const usuario = await this.usuarioRepository.buscarId(usuarioId);
-        if (!usuario) {
-            throw new Error("Usuário não encontrado.");
-        }
-        return await this.usuarioRepository.removerGrupo(usuarioId, grupoId);
-    }
 
     async removerUsuario(id) {
         const usuario = await this.usuarioRepository.buscarId(id);

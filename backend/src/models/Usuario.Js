@@ -71,30 +71,6 @@ const prisma = new PrismaClient();
         });
     }
     
-    async adicionarGrupo(usuarioId, grupoId) {
-        return await prisma.usuario.update({
-            where: { id: usuarioId },
-            data: {
-                grupos_membro: {
-                    connect: { id: grupoId }
-                }
-            },
-            include: { grupos_membro: true }
-        });
-    }
-    
-    async removerGrupo(usuarioId, grupoId) {
-        return await prisma.usuario.update({
-            where: { id: usuarioId },
-            data: {
-                grupos_membro: {
-                    disconnect: { id: grupoId }
-                }
-            },
-            include: { grupos_membro: true }
-        });
-    }
-
     async getNome(id) {
         const usuario = await prisma.usuario.findUnique({
            where: { id: id },
