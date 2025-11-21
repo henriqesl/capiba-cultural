@@ -1,9 +1,9 @@
-const usuarioService = require('../services/UsuarioService');
+const UsuarioService = require('../services/UsuarioService');
 const GrupoService = require('../services/GrupoService');
 
 class UsuarioController {
     constructor() {
-        this.usuarioService = usuarioService;
+        this.usuarioService = new UsuarioService();
         this.grupoService = new GrupoService();
     }
 

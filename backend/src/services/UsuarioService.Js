@@ -17,7 +17,7 @@ class UsuarioService {
         const salt = await bcrypt.genSalt(10);
         const senhaHash = await bcrypt.hash(senha, salt)
 
-        const novoUsuario = await this.usuarioRepository.novoUsuario(nome, email, senhaHash);
+        const novoUsuario = await this.usuarioRepository.novoUsuario(nome, email, senhaHash, cpf);
         delete novoUsuario.senha;
         return await novoUsuario;
     }
@@ -101,4 +101,4 @@ class UsuarioService {
     }
 }
 
-module.exports = new UsuarioService();
+module.exports = UsuarioService;
