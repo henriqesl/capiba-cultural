@@ -11,7 +11,7 @@ class GrupoCompeticao {
                 dataFim: dataFim instanceof Date ? dataFim : new Date(dataFim), 
                 encerrado,
                 pontuacaoTotal,
-                vencedor: null,
+                vencedorId: null,
 
                 membros: participantesIds.length
                     ? { connect: participantesIds.map(id => ({ id })) }
@@ -61,7 +61,7 @@ class GrupoCompeticao {
             where: { id: grupoId },
             include: { membros: true }
         });
-        return grupo?.membros || [];
+        return grupo?.membros || []; 
     }
 
     async getNome(id) { 
@@ -80,11 +80,12 @@ class GrupoCompeticao {
     }
 
 
-    async getMembros(id) { 
-        return await prisma.grupoCompeticao.findUnique({
-            where: { id: id },
-            select: { membros: true }
-        }) 
+    async getMembros(grupoId) {
+        const grupo = await prisma.grupoCompeticao.findUnique({
+            where: { id: grupoId },
+            include: { membros: true }
+        });
+        return grupo?.membros || []; 
     }
 
     async setMembros(id, list) { 
@@ -170,10 +171,10 @@ class GrupoCompeticao {
         return await prisma.grupoCompeticao.update({
             where: { id },
             data: {
-                vencedor: { connect: { id: vencedorId } }
+                vencedorId: vencedorId, 
             },
             include: { vencedor: true }
-    });
+        });
     }
 }
 module.exports = GrupoCompeticao;

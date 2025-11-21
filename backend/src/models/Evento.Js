@@ -9,7 +9,8 @@ class Evento {
                 nome,
                 local,
                 data: new Date(data), 
-                moedasDistribuidas: 10
+                moedasCapibasDestribuidas: 10,
+                descricao
             }
         });
     }
@@ -18,6 +19,18 @@ class Evento {
         return await prisma.evento.findMany();
     }
 
+
+    async obterPorNomeLocalEData(nome, local, data) {
+        return await prisma.evento.findFirst({
+            where: {
+                nome: nome,
+                local: local,
+                data: new Date(data), 
+            }
+        });
+    }
+
+    
     async obterPorId(id) {
         return await prisma.evento.findUnique({
             where: { id: id }

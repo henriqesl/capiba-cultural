@@ -44,7 +44,7 @@ router.post('/:id/membros', async (req, res) => {
         const usuario = await usuarioController.obterPorId(usuarioId);
         if (!usuario) return res.status(404).json({ erro: 'Usuário não encontrado.' });
 
-        const grupoAtualizado = await grupoController.adicionarMembro(id, usuario);
+        const grupoAtualizado = await grupoController.adicionarMembro(id, usuario.id);
         res.json({ mensagem: `Usuário ${usuario.nome} adicionado ao grupo ${grupoAtualizado.nome}`, grupo: grupoAtualizado });
     } catch (error) {
         res.status(400).json({ erro: error.message });

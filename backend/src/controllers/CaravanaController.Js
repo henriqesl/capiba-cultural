@@ -50,7 +50,7 @@ class CaravanaController {
 
     async adicionarDestino(id, evento) {
         try {
-            const caravana = await caravanaService.adicionarDestino(id, evento);
+            const caravana = await caravanaService.adicionarDestino(id, evento.id);
             console.log(`Evento ${evento.nome} adicionado à caravana ${caravana.nome}`);
             return caravana;
         } catch (error) {

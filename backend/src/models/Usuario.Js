@@ -19,12 +19,13 @@ const prisma = new PrismaClient();
    
     }
 
-    async novoUsuario(nome, email, senha) { 
+    async novoUsuario(nome, email, senha, cpf) { 
         return await prisma.usuario.create({
             data: {
                 nome,
                 email,
                 senha,
+                cpf,
                 saldoMoedaCapiba: 0,
                 dataCadastro: new Date(),
                 },
@@ -70,26 +71,6 @@ const prisma = new PrismaClient();
         });
     }
     
-    async getGrupos(id) {
-        const usuario = await prisma.usuario.findUnique({
-            where: { id },
-            select: { grupos_membro: true }
-        });
-        return usuario?.grupos_membro ?? [];
-    }
-
-    async setGrupos(id, gruposIds) {
-        return await prisma.usuario.update({
-            where: { id },
-            data: {
-            grupos_membro: {
-                connect: gruposIds.map(grupoId => ({ id: grupoId }))
-            }
-            },
-            include: { grupos_membro: true }
-    });
-    }
-
     async getNome(id) {
         const usuario = await prisma.usuario.findUnique({
            where: { id: id },

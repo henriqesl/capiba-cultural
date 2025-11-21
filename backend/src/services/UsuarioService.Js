@@ -7,8 +7,8 @@ class UsuarioService {
         this.usuarioRepository = new Usuario();
     }
 
-    async criarUsuario(nome, email, senha) {
-        if (!nome || !email || !senha) throw new Error("Todos os campos são obrigatórios");
+    async criarUsuario(nome, email, senha, cpf) {
+        if (!nome || !email || !senha || !cpf) throw new Error("Todos os campos são obrigatórios");
         if (await this.usuarioRepository.buscarEmail(email)) {
             throw new Error("E-mail já cadastrado");
 
@@ -17,7 +17,7 @@ class UsuarioService {
         const salt = await bcrypt.genSalt(10);
         const senhaHash = await bcrypt.hash(senha, salt)
 
-        const novoUsuario = await this.usuarioRepository.novoUsuario(nome, email, senhaHash);
+        const novoUsuario = await this.usuarioRepository.novoUsuario(nome, email, senhaHash, cpf);
         delete novoUsuario.senha;
         return await novoUsuario;
     }
@@ -48,7 +48,7 @@ class UsuarioService {
             throw new Error("Usuário não encontrado");
         }
 
-        const camposPermitidos = ["nome", "idade", "email" , "dataCadastro"];
+        const camposPermitidos = ["nome", "idade", "email" , "dataCadastro", "cpf"];
         const dadosFiltrados = {};
 
         for (const campo in dadosAtualizados) {
@@ -90,6 +90,7 @@ class UsuarioService {
         return await this.usuarioRepository.setSaldo(usuarioId, novoSaldo);
     }
 
+
     async removerUsuario(id) {
         const usuario = await this.usuarioRepository.buscarId(id);
         if (!usuario) {
@@ -100,4 +101,4 @@ class UsuarioService {
     }
 }
 
-module.exports = new UsuarioService();
+module.exports = UsuarioService;

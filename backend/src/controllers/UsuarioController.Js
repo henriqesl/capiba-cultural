@@ -1,13 +1,15 @@
-const usuarioService = require('../services/UsuarioService');
+const UsuarioService = require('../services/UsuarioService');
+const GrupoService = require('../services/GrupoService');
 
 class UsuarioController {
     constructor() {
-        this.usuarioService = usuarioService;
+        this.usuarioService = new UsuarioService();
+        this.grupoService = new GrupoService();
     }
 
-    async criarUsuario(nome, email, senha) {
+    async criarUsuario(nome, email, senha, cpf) {
         try {
-            const usuario = await this.usuarioService.criarUsuario(nome, email, senha);
+            const usuario = await this.usuarioService.criarUsuario(nome, email, senha, cpf);
             console.log(`Usuário ${usuario.nome} criado com sucesso!`);
             return usuario;
         } catch (error) {
@@ -83,6 +85,8 @@ class UsuarioController {
             throw error; 
         }
     }
+
 }
+
 
 module.exports = UsuarioController;

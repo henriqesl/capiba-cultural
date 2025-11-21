@@ -12,9 +12,10 @@ class EventoService {
         if (isNaN(Date.parse(data)))    
             throw new Error("Data inválida");
 
-        const existente = await this.eventoRepository.obterPorNome(nome);
-        if (existente && !reportadoPorUsuario)
-            throw new Error("Evento já cadastrado.");
+        const eventoDuplicado = await this.eventoRepository.obterPorNomeLocalEData(nome, local, data, descricao);
+        if (eventoDuplicado) {
+            throw new Error("Um evento com o mesmo nome e local já está agendado para esta data.");
+        }
 
         return await this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false, participantesIds = [], caravanasIds = []);
     }
@@ -39,6 +40,15 @@ class EventoService {
         return evento;
     }
 
+    
+    async obterPorLocal(local) {
+        const evento = await this.eventoRepository.obterPorLocal(local);
+        if (!evento) {
+            throw new Error("Evento não encontrado");
+        }
+        return evento;
+    }
+
     async removerEvento(id) {
         const evento = this.eventoRepository.obterPorId(id);
         if (!evento) {
@@ -49,4 +59,4 @@ class EventoService {
     }
 }
 
-module.exports = new EventoService();
+module.exports = new EventoService;

@@ -1,3 +1,4 @@
+const Caravana = require('../models/Caravana');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -6,14 +7,11 @@ class CaravanaService {
       this.caravanaRepository = new Caravana();
     }
 
-    async criarCaravana(nome, eventoId, bonusPorParticipante = 10) {
-        if (!nome || !!eventoId) {
-            throw new Error("Nome e evento de destino são obrigatórios."); }
+    async criarCaravana(nome, eventoId = null, bonusPorParticipante = 10) {
+        if (!nome) {
+            throw new Error("Nome da caravana é obrigatório."); }
         
-        const evento = this.caravanaRepository.criarCaravana(nome, eventoId, bonusPorParticipante = 10);
-        if (!evento) {
-            throw new Error("Evento de destino não encontrado.");
-        }
+        return await this.caravanaRepository.criarCaravana(nome, eventoId, bonusPorParticipante = 10);
     }
 
     async listarCaravanas() {
@@ -21,7 +19,7 @@ class CaravanaService {
     }
 
     async obterPorId(id) {
-        const caravana = this.caravanaRepository.obterPorId(id);
+        const caravana = await this.caravanaRepository.obterPorId(id);
         if (!caravana) throw new Error("Caravana não encontrada");
 
         return caravana;
@@ -31,9 +29,9 @@ class CaravanaService {
         const caravana = await this.caravanaRepository.obterPorId(caravanaId);
         if (!caravana) throw new Error("Grupo não encontrado.");
 
-        const membros = await this.caravanaRepository.getMembros(caravanaId);
-        if (membros.some(m => m.id === usuario.id)) {
-            throw new Error("Usuário já faz parte do grupo.");
+        const membros = caravana.membros.map(m => m.id);
+        if (membros.includes(usuarioId)) {
+            throw new Error("Usuário já faz parte da caravana.");
         }
 
         await this.caravanaRepository.adicionarMembro(caravanaId, usuarioId);
@@ -51,4 +49,4 @@ class CaravanaService {
     }
 }
 
-module.exports = new CaravanaService();
+module.exports = new CaravanaService;
