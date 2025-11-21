@@ -4,14 +4,14 @@ class GrupoService {
     constructor() {
       this.grupoRepository = new GrupoCompeticao();
     }
+    
+    async criarGrupo(nome, dataInicio, dataFim, encerrado = false, pontuacaoTotal = 0) {
+         if (!nome) throw new Error("Nome do grupo é obrigatório"); 7
+         if (!dataInicio || !dataFim) throw new Error("Datas de início e fim são obrigatórias"); 
+         
+         return await this.grupoRepository.novoGrupoCompeticao(nome, dataInicio, dataFim, encerrado, pontuacaoTotal); 
+        }
 
-    async criarGrupo(nome, dataInicio, dataFim, encerrado, pontuacaoTotal) {
-        if (!nome) throw new Error("Nome do grupo é obrigatório");
-        if (!dataInicio || !dataFim) throw new Error("Datas de início e fim são obrigatórias");
-
-        
-        return await this.grupoRepository.novoGrupoCompeticao(nome, dataInicio, dataFim, encerrado = false, pontuacaoTotal = 0);
-    }
 
     async listarGrupos() {
         return await this.grupoRepository.listar();
@@ -29,9 +29,10 @@ class GrupoService {
         if (grupo.getEncerrado(grupoId)) throw new Error("Não é possível adicionar membros a um grupo encerrado.");
 
         const membros = await this.grupoRepository.getMembros(grupoId);
-        if (membros.some(m => m.id === usuario.id)) {
+        if (membros.some(m => m.id === usuarioId)) {
             throw new Error("Usuário já faz parte do grupo.");
         }
+
 
         await this.grupoRepository.adicionarMembro(grupoId, usuarioId);
         await this.atualizarPontuacao(grupoId);
@@ -39,18 +40,19 @@ class GrupoService {
 
     }
 
-    async atualizarPontuacao(id, total) {
+    async atualizarPontuacao(id) {
         const membros = await this.grupoRepository.getMembros(id);
-        const total = membros.reduce(
-            (acc, membro) => acc + (membro.saldoMoedaCapiba || 0),
-            0
-        );
+        const total = membros.reduce((acc, membro) => acc + (membro.saldoMoedaCapiba || 0), 0);
         await this.grupoRepository.setPontuacaoTotal(id, total);
     }
 
     async atualizarPontuacoes(id) {
-        this.grupos.forEach(grupo => this.atualizarPontuacao(grupo));
-        return this.grupos;
+        const grupos = await this.grupoRepository.listar();
+        for (const grupo of grupos) {
+            await this.atualizarPontuacao(grupo.id);
+        }   
+        
+        return grupos;
     }
 
     async obterVencedor(grupoId) {
