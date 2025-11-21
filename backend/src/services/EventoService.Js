@@ -49,4 +49,4 @@ class EventoService {
     }
 }
 
-module.exports = new EventoService();
+module.exports = new EventoService;

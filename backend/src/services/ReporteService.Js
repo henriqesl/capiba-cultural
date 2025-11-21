@@ -1,12 +1,12 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const EventoService = require('./EventoService');
+const eventoService = require('./EventoService');
 const ReporteEvento = require('../models/ReporteEvento');
 
 class ReporteService {
     constructor() {
         this.reporteEventoRepository = new ReporteEvento();
-        this.eventoService = new EventoService();
+        this.eventoService = eventoService;
 
     }
 
