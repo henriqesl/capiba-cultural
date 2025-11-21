@@ -4,6 +4,8 @@
 
   datasource db {
     provider = "postgresql"
+    url      = env("DATABASE_URL")
+
   }
 
 
@@ -73,12 +75,12 @@
   model Caravana {
     id                    Int       @id @default(autoincrement())
     nome                  String
-    descricao             String
+    descricao             String    @default("Caravana sem descrição")
     ativo                 Boolean   @default(true)
     bonusPorParticipante  Int       @default(10)
 
-    eventoId              Int
-    evento                Evento    @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
+    eventoId              Int?
+    evento                Evento?   @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
     membros               Usuario[] @relation("MembrosDaCaravana")
 
     @@map("caravanas")

@@ -2,13 +2,14 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class Caravana {
-  async criarCaravana(nome, eventoId, bonusPorParticipante = 10) {
+  async criarCaravana(nome, eventoId = null, bonusPorParticipante = 10, descricao = "Caravana sem descrição") {
     if (!nome) throw new Error("Nome da caravana é obrigatório");
     return await prisma.caravana.create({
       data: {
         nome,
         eventoId,
-        bonusPorParticipante
+        bonusPorParticipante,
+        descricao
       }
     });
 
