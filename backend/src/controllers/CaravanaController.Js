@@ -1,4 +1,4 @@
-const caravanaService = require('../services/CaravanaService');
+const caravanaService = require('../services/CaravanaService.Js');
 
 class CaravanaController {
     async criarCaravana(nome) {
@@ -48,10 +48,10 @@ class CaravanaController {
         }
     }
 
-    async adicionarDestino(id, evento) {
+    async adicionarDestino(id, eventoId) {
         try {
-            const caravana = await caravanaService.adicionarDestino(id, evento.id);
-            console.log(`Evento ${evento.nome} adicionado à caravana ${caravana.nome}`);
+            const caravana = await caravanaService.adicionarDestino(id, eventoId);
+            console.log(`Evento ${eventoId} adicionado à caravana ${caravana.nome}`);
             return caravana;
         } catch (error) {
             console.error("Erro ao adicionar destino à caravana:", error.message);
