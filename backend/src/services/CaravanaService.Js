@@ -1,4 +1,4 @@
-const Caravana = require('../models/Caravana');
+const Caravana = require('../models/Caravana.Js');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -9,9 +9,10 @@ class CaravanaService {
 
     async criarCaravana(nome, eventoId = null, bonusPorParticipante = 10) {
         if (!nome) {
-            throw new Error("Nome da caravana é obrigatório."); }
+            throw new Error("Nome da caravana é obrigatório.");
+        }
         
-        return await this.caravanaRepository.criarCaravana(nome, eventoId, bonusPorParticipante = 10);
+        return await this.caravanaRepository.criarCaravana(nome, eventoId, bonusPorParticipante);
     }
 
     async listarCaravanas() {
@@ -41,7 +42,16 @@ class CaravanaService {
 
 
     async adicionarDestino(caravanaId, eventoId) {
-        return await this.caravanaRepository.adicionarDestino(caravanaId, eventoId)
+        if (!caravanaId || !eventoId) {
+            throw new Error("Caravana e evento são obrigatórios.");
+        }
+
+        const caravana = await this.caravanaRepository.obterPorId(caravanaId);
+        if (!caravana) {
+            throw new Error("Caravana não encontrada.");
+        }
+
+        return await this.caravanaRepository.adicionarDestino(caravanaId, eventoId);
     }
 
     async removerCaravana(id) {
