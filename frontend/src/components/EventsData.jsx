@@ -1,6 +1,6 @@
 //"Banco de dados temporário dos eventos"
 
-const mockEventsData = [
+const EventsData = [
     { 
         id: 1, 
         title: "Show de Rock Nacional", 
