@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from '../components/Button';
-import Calendar from '../components/Calendar';
-import mockEventsData from '../components/EventsData'; 
+import Calendar from '../components/event/Calendar';
+import EventsData from '../components/EventsData'; 
 
 const EventPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -30,7 +30,7 @@ const EventPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
                 
                 {/* 3. Lógica de map (da branch main) mantida */}
-                {mockEventsData.map((event) => (
+                {EventsData.map((event) => (
                     <Button 
                         key={event.id}
                         variant="event"
