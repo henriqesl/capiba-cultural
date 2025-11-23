@@ -10,7 +10,8 @@ import ProfilePage from './pages/user/ProfilePage.jsx';
 import RankingPage from './pages/user/RankingPage.jsx';
 import UserPage from './pages/user/UserPage.jsx';
 import EventDetailPage from './pages/EventDetailPage.jsx';
-import mockEventsData from './components/EventsData.jsx';
+import EventsData from './components/EventsData.jsx';
+import CheckInPage from './pages/CheckInPage.jsx';
 
 // Componente de Roteamento
 const App = () => {
@@ -29,7 +30,7 @@ const App = () => {
   const renderPage = () => {
     if (currentPath.startsWith('#/evento/')) {
       const eventId = parseInt(currentPath.split('/')[2]);
-      const event = mockEventsData.find(e => e.id === eventId);
+      const event = EventsData.find(e => e.id === eventId);
       return <EventDetailPage event={event} />;
     }
 
