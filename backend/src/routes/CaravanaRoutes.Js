@@ -93,4 +93,8 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+router.get('/:id/multiplicador', async (req, res) => {
+    await caravanaController.obterMultiplicador(req, res);
+});
+
 module.exports = router;
