@@ -69,6 +69,23 @@ class CaravanaController {
             throw error;
         }
     }
+
+    async obterMultiplicador(req, res) {
+        const caravanaId = Number(req.params.id);
+        const usuarioId = req.query.usuarioId ? Number(req.query.usuarioId) : null;
+        const mes = req.query.mes ? Number(req.query.mes) : undefined;
+        const ano = req.query.ano ? Number(req.query.ano) : undefined;
+
+        if (!usuarioId) return res.status(400).json({ erro: "usuarioId query param obrigatório" });
+
+        try {
+            const multiplicador = await caravanaService.calcularMultiplicador(usuarioId, caravanaId, mes, ano);
+            res.json({ caravanaId, usuarioId, multiplicador });
+        } catch (error) {
+            res.status(400).json({ erro: error.message });
+        }
+    }
+
 }
 
 module.exports = CaravanaController;
