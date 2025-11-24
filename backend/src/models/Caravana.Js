@@ -18,14 +18,14 @@ class Caravana {
 
   async listar() {
     return await prisma.caravana.findMany({
-      include: { membros: true, eventoDestino: true }
+      include: { membros: true, evento: true }
     });
   }
 
   async obterPorId(id) {
     return await prisma.caravana.findUnique({
       where: { id },
-      include: { membros: true, eventoDestino: true }
+      include: { membros: true, evento: true }
     });
   }
 
@@ -52,14 +52,18 @@ class Caravana {
     });
   }
 
-    async adicionarDestino(caravanaId, eventoId) {
-        return await prisma.caravana.update({
-            where: { id: caravanaId },
-            data: { eventoId: eventoId },
-            include: { evento: true, membros: true }
-
-        });
-    }
+  async adicionarDestino(caravanaId, eventoId) {
+      return await prisma.caravana.update({
+          where: { id: caravanaId },
+          data: {
+              eventoId: eventoId
+          },
+          include: {
+              evento: true,
+              membros: true
+          }
+      });
+  }
 
   async getMembros(id) { 
     return await prisma.grupoCompeticao.findUnique({
