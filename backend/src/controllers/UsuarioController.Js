@@ -20,8 +20,14 @@ class UsuarioController {
 
     async login(email, senha) {
         try {
-            const resultado = await this.usuarioService.autenticarUsuario(email, senha);
-            return resultado;
+            const usuario = await this.usuarioService.autenticarUsuario(email, senha);
+            const tokenConecta = await conecta.autenticar(usuario.cpf, senha);
+
+            return {
+                usuario,
+                conectaAccessToken: tokenConecta
+            };
+
         } catch (error) {
             console.error("Erro no Login:", error.message);
             throw error;
