@@ -47,6 +47,30 @@ class EventoController {
             throw error;
         }
     }
+
+       async enviarCheckInParaConecta(req, res) {
+        try {
+            await conecta.autenticar(req.body.login, req.body.senha);
+
+            const dados = {
+                userIdentifier: req.body.userIdentifier,
+                eventName: req.body.eventName,
+                checkInDateTime: new Date().toISOString(),
+                cidade: req.body.cidade,
+                bairro: req.body.bairro,
+                rua: req.body.rua,
+                identifier: req.body.identifier,
+                document: req.body.document
+            };
+
+            const resposta = await conecta.fazerCheckIn(dados);
+            return res.json(resposta);
+
+        } catch (error) {
+            return res.status(500).json({ erro: error.message });
+        }
+    }
+
 }
 
 module.exports = EventoController;
