@@ -1,5 +1,4 @@
 import React from 'react';
-import TopNav from '../../components/layout/TopNav'; 
 
 
 const InfoItem = ({ icon, label, value }) => (
@@ -18,7 +17,6 @@ const EventDetailPage = ({ event, onBack }) => {
     if (!event) {
         return (
             <div className="bg-gray-100 min-h-screen p-8 text-center">
-                <TopNav />
                 <h1 className="text-3xl font-bold mt-10">Evento não encontrado</h1>
                 <button 
                     onClick={onBack}
@@ -32,7 +30,6 @@ const EventDetailPage = ({ event, onBack }) => {
 
     return (
         <div className="bg-gray-100 min-h-screen p-4 sm:p-8">
-            <TopNav />
             <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-8">
                 {/* Imagem Placeholder */}
                 <div className="w-full h-72 bg-gray-300 flex items-center justify-center">

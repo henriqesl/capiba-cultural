@@ -19,7 +19,7 @@ const BottomNav = ({ currentPath }) => {
                 <NavItem href="#/home" iconPath={ICONS.home} label="Início" active={currentPath === '#/eventos'} />
                 <NavItem href="#/eventos" iconPath={ICONS.calendar} label="Eventos" active={currentPath === '#/eventos'} />
                 <NavItem href="#/capiba" iconPath={ICONS.dollar} label="Capiba" active={currentPath === '#/capiba'} />
-                <NavItem href="#/favoritos" iconPath={ICONS.star} label="Status" active={currentPath === '#/favoritos'} />
+                <NavItem href="#/status" iconPath={ICONS.star} label="Status" active={currentPath === '#/status'} />
                 <NavItem href="#/perfil" iconPath={ICONS.user} label="Perfil" active={currentPath.startsWith('#/perfil')} />
             </div>
         </nav>

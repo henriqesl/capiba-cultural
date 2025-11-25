@@ -12,6 +12,7 @@ import UserPage from './pages/user/UserPage.jsx';
 import EventDetailPage from './pages/event/EventDetailPage.jsx';
 import EventsData from './components/event/EventsData.jsx';
 import CheckInPage from './pages/CheckInPage.jsx';
+import StatusPage from './pages/StatusPage.jsx';
 
 // Componente de Roteamento
 const App = () => {
@@ -31,22 +32,24 @@ const App = () => {
     if (currentPath.startsWith('#/evento/')) {
       const eventId = parseInt(currentPath.split('/')[2]);
       const event = EventsData.find(e => e.id === eventId);
-      return <EventDetailPage event={event} />;
+      return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
     }
 
     switch (currentPath) {
       case '#/eventos':
         return <EventPage />;
+      case '#/capiba':
+        return <CheckInPage />;
+      case '#/status':
+        return <StatusPage />;
       case '#/perfil':
-        return <UserPage />; 
+        return <UserPage />;
       case '#/perfil/editar':
         return <ProfilePage />;
       case '#/perfil/ranking':
         return <RankingPage />;
       case '#/perfil/caravana':
         return <></>
-      case '#/capiba':
-        return <CheckInPage />;
       case '#/login':
       default:
         return <LoginPage />;
@@ -56,8 +59,10 @@ const App = () => {
   // Define quais rotas usam o layout principal
   const useMainLayout = 
     currentPath.startsWith('#/eventos') || 
+    currentPath.startsWith('#/evento/') ||
     currentPath.startsWith('#/perfil') || 
-    currentPath.startsWith('#/capiba');
+    currentPath.startsWith('#/capiba') ||
+    currentPath.startsWith('#/status');
 
   return (
     <>
