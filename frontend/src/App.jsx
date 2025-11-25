@@ -5,12 +5,12 @@ import MainLayout from './components/layout/MainLayout.jsx';
 
 // Páginas
 import LoginPage from './pages/LoginPage';
-import EventPage from './pages/EventPage';
+import EventPage from './pages/event/EventPage';
 import ProfilePage from './pages/user/ProfilePage.jsx';
 import RankingPage from './pages/user/RankingPage.jsx';
 import UserPage from './pages/user/UserPage.jsx';
-import EventDetailPage from './pages/EventDetailPage.jsx';
-import EventsData from './components/EventsData.jsx';
+import EventDetailPage from './pages/event/EventDetailPage.jsx';
+import EventsData from './components/event/EventsData.jsx';
 import CheckInPage from './pages/CheckInPage.jsx';
 
 // Componente de Roteamento
@@ -41,8 +41,12 @@ const App = () => {
         return <UserPage />; 
       case '#/perfil/editar':
         return <ProfilePage />;
-      case '#/ranking':
-        return <RankingPage />; 
+      case '#/perfil/ranking':
+        return <RankingPage />;
+      case '#/perfil/caravana':
+        return <></>
+      case '#/capiba':
+        return <CheckInPage />;
       case '#/login':
       default:
         return <LoginPage />;
@@ -53,8 +57,7 @@ const App = () => {
   const useMainLayout = 
     currentPath.startsWith('#/eventos') || 
     currentPath.startsWith('#/perfil') || 
-    currentPath.startsWith('#/ranking') ||
-    currentPath.startsWith('#/evento/'); 
+    currentPath.startsWith('#/capiba');
 
   return (
     <>

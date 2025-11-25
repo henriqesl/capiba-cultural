@@ -51,13 +51,13 @@ const UserPage = () => {
             description="Verifique e atualize seus dados"
           />
           <NavCard 
-            href="#/ranking"
+            href="#/perfil/ranking"
             iconPath={ICONS.star} 
             title="Ranking e Status"
             description="Veja sua pontuação e classificação"
           />
           <NavCard 
-            href="#/caravana"
+            href="#/perfil/caravana"
             iconPath={ICONS} 
             title="Minhas Caravanas"
             description="Embarque com seus amigos nessa jornada"

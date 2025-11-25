@@ -16,10 +16,10 @@ const BottomNav = ({ currentPath }) => {
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] px-4 py-2 md:hidden">
             <div className="flex justify-around items-center">
-                <NavItem href="#/eventos" iconPath={ICONS.home} label="Início" active={currentPath === '#/eventos'} />
-                <NavItem href="#/eventos" iconPath={ICONS.calendar} label="Agenda" active={currentPath === '#/eventos'} />
+                <NavItem href="#/home" iconPath={ICONS.home} label="Início" active={currentPath === '#/eventos'} />
+                <NavItem href="#/eventos" iconPath={ICONS.calendar} label="Eventos" active={currentPath === '#/eventos'} />
                 <NavItem href="#/capiba" iconPath={ICONS.dollar} label="Capiba" active={currentPath === '#/capiba'} />
-                <NavItem href="#/favoritos" iconPath={ICONS.star} label="Favoritos" active={currentPath === '#/favoritos'} />
+                <NavItem href="#/favoritos" iconPath={ICONS.star} label="Status" active={currentPath === '#/favoritos'} />
                 <NavItem href="#/perfil" iconPath={ICONS.user} label="Perfil" active={currentPath.startsWith('#/perfil')} />
             </div>
         </nav>

@@ -1,8 +1,6 @@
 import React from 'react';
 import Button from '../components/Button';
 
-
-
 const CheckInPage =  () =>{
     return(
         <div className="bg-gray-100 p-4 sm:p-8 pb-24 md:pb-8">

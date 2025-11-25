@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'; // Importei o 'useRef'
+import React, { useRef } from 'react';
 import { Icon } from '../../components/user/PersonalComponents.jsx';
 import { ICONS } from '../../utils/icons.jsx';
 import Button from '../../components/Button.jsx'; 

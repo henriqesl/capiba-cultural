@@ -1,5 +1,5 @@
 import React from 'react';
-import TopNav from '../components/layout/TopNav'; 
+import TopNav from '../../components/layout/TopNav'; 
 
 
 const InfoItem = ({ icon, label, value }) => (
