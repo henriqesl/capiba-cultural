@@ -1,31 +1,11 @@
-import React, { useRef } from 'react';
-import { Icon } from '../../components/user/PersonalComponents.jsx';
+import React from 'react';
 import { ICONS } from '../../utils/icons.jsx';
-import Button from '../../components/Button.jsx'; 
+import Button from '../../components/Button.jsx';
+// Importa Icon do Shared e o resto do RankingComponents
+import { Icon } from '../../components/user/UserShared';
+import { GroupItem, TeamStories } from '../../components/user/RankingComponents';
 
-// --- Sub-componente para o Item do Grupo ---
-const GroupItem = ({ avatarSrc, name, points, rank }) => (
-  <div className="flex items-center bg-gray-50 p-4 rounded-xl shadow-sm hover:bg-gray-100 transition-all duration-200">
-    <img 
-      src={avatarSrc} 
-      alt={name} 
-      className="w-14 h-14 rounded-full object-cover shrink-0" 
-      onError={(e) => { e.target.src='https://placehold.co/64x64/e0e0e0/757575?text=IMG' }}
-    />
-    <div className="ml-4 grow">
-      <p className="text-lg font-bold text-gray-800">{name}</p>
-      <p className="text-sm text-gray-500">{points}</p>
-    </div>
-    <div className="ml-4 text-right shrink-0">
-      <span className="text-2xl font-bold text-blue-600">{rank}º</span>
-    </div>
-  </div>
-);
-
-// --- Componente Principal da Página ---
 const RankingPage = () => {
-  const scrollContainerRef = useRef(null);
-
   const equipes = [
     { id: 1, alt: "Equipe 1", src: "https://placehold.co/64x64/e0e0e0/757575?text=IP" },
     { id: 2, alt: "Equipe 2", src: "https://placehold.co/64x64/e0e0e0/757575?text=GP" },
@@ -44,24 +24,11 @@ const RankingPage = () => {
     { id: 6, name: "Grupo de DS", points: "Meus pontos: 20 pontos", rank: 4, src: "https://placehold.co/64x64/e0e0e0/757575?text=DS" },
   ];
 
-  // Função para controlar o scroll das equipes
-  const handleEquipeScroll = (direction) => {
-    if (!scrollContainerRef.current) return;
-    const scrollAmount = 150; 
-    if (direction === 'prev') {
-      scrollContainerRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    } else {
-      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="w-full bg-gray-100 flex flex-col items-center">
-      
-      {/* "Card" */}
       <div className="w-full max-w-md md:max-w-4xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col">
         
-        {/* === HEADER MOBILE === */}
+        {/* Header Mobile */}
         <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
           <a href="#/perfil" className="hover:opacity-80">
             <Icon path={ICONS.arrowLeft} />
@@ -70,7 +37,7 @@ const RankingPage = () => {
           <div className="w-6"></div>
         </header>
 
-        {/* === HEADER DESKTOP === */}
+        {/* Header Desktop */}
         <header className="hidden md:flex p-4 items-center border-b border-gray-200">
           <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
             <Icon path={ICONS.arrowLeft} className="w-6 h-6" />
@@ -79,53 +46,10 @@ const RankingPage = () => {
         </header>
 
         <main className="p-6 pb-24 md:p-8">
-          
-          {/* === Minhas Equipes === */}
-          <section className="mb-8">
-            
-            {/* Scroll mobile (similar aos stories do instagram) */}
-            <div className="relative w-full">
-              
-              {/* Botão Esquerda (só mobile) */}
-              <button 
-                onClick={() => handleEquipeScroll('prev')}
-                className="absolute -left-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-md hover:bg-white transition-all md:hidden"
-                aria-label="Equipe anterior"
-              >
-                <Icon path={ICONS.arrowLeft} className="w-6 h-6 text-gray-700" />
-              </button>
-              
-              {/* O Container de Scroll */}
-              <div 
-                ref={scrollContainerRef}
-                className="flex justify-center gap-6 overflow-x-auto pb-2 scroll-smooth md:justify-center"
-              >
-                {equipes.map(equipe => (
-                  <img
-                    key={equipe.id}
-                    src={equipe.src}
-                    alt={equipe.alt}
-                    className="w-16 h-16 rounded-full object-cover shrink-0 border-2 border-white shadow-md"
-                  />
-                ))}
-              </div>
+          <TeamStories teams={equipes} />
 
-              {/* Botão Direita (só mobile) */}
-              <button 
-                onClick={() => handleEquipeScroll('next')}
-                className="absolute -right-2 top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-md hover:bg-white transition-all md:hidden"
-                aria-label="Próxima equipe"
-              >
-                <Icon path={ICONS.arrowLeft} className="w-6 h-6 text-gray-700 transform rotate-180" />
-              </button>
-            </div>
-          </section>
-
-          {/* Meus Grupos */}
           <section className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Meus Grupos
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Meus Grupos</h2>
             <div className="flex flex-col gap-4">
               {grupos.map(grupo => (
                 <GroupItem
@@ -139,19 +63,12 @@ const RankingPage = () => {
             </div>
           </section>
 
-          { /* Seção Entrar e Criar Grupo */}
           <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button 
-              variant="primary" 
-              className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center"
-            >
+            <Button variant="primary" className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center">
               <Icon path={ICONS.plus} className="w-5 h-5" />
               <span className="ml-2">Criar Grupo</span>
             </Button>
-            <Button 
-              variant="primary" 
-              className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center"
-            >
+            <Button variant="primary" className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center">
               <Icon path={ICONS.arrowLeft} className="w-5 h-5 transform -rotate-180" />
               <span className="ml-2">Entrar no Grupo</span>
             </Button>

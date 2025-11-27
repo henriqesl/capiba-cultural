@@ -2,6 +2,7 @@ import React from 'react';
 import { ICONS } from '../../utils/icons'; 
 import perfil_image from '../../assets/foto_perfil.png'; 
 
+// Wrapper de Ícone genérico
 export const Icon = ({ path, className = "w-6 h-6" }) => (
     <svg 
         xmlns="http://www.w3.org/2000/svg" 
@@ -13,6 +14,18 @@ export const Icon = ({ path, className = "w-6 h-6" }) => (
     </svg>
 );
 
+// Foto de Perfil Padrão
+export const PerfilImage = () => {
+    return (
+        <img
+            src={perfil_image}
+            alt="Foto do perfil de Júnior Cruz"
+            className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300"
+        />
+    );
+};
+
+// Linha de Informação (Usada na tela de Editar Perfil)
 export const InfoRow = ({ label, value }) => (
     <div className="flex justify-between items-center py-4 border-b border-gray-200 group hover:bg-gray-50 px-2 rounded-lg transition-colors">
         <div>
@@ -24,13 +37,3 @@ export const InfoRow = ({ label, value }) => (
         </button>
     </div>
 );
-
-export const PerfilImage = () => {
-    return (
-        <img
-            src={perfil_image}
-            alt="Foto do perfil de Júnior Cruz"
-            className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-lg transition-all duration-300"
-        />
-    );
-}
