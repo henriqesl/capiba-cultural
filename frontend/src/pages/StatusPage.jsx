@@ -67,7 +67,7 @@ const StatusPage = () => {
                 className={`p-6 rounded-lg shadow-md transition-all hover:shadow-lg ${
                   conquista.conquistada 
                     ? 'bg-white border-2 border-blue-600' 
-                    : 'bg-gray-100 border-2 border-gray-300 opacity-75'
+                    : 'bg-gray-100 border-2 border-gray-400 opacity-75'
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -99,7 +99,7 @@ const StatusPage = () => {
                   <h3 className="font-bold text-lg text-gray-800">{evento.nome}</h3>
                   <p className="text-sm text-gray-500 mt-1">📅 {evento.data}</p>
                 </div>
-                <span className="text-3xl">✅</span>
+                <span className="text-3xl text-blue-600">OK</span>
               </div>
             ))}
           </div>
