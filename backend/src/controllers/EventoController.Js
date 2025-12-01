@@ -1,14 +1,16 @@
 const eventoService = require("../services/EventoService");
 
 class EventoController {
-  async criarEvento(
-    nome,
-    local,
-    data,
-    descricao,
-    pequenoPorte = false,
-    reportadoPorUsuario = false,
-  ) {
+  async criarEvento(req, res) {
+    const {
+      nome,
+      local,
+      data,
+      descricao,
+      pequenoPorte = false,
+      reportadoPorUsuario = false,
+    } = req.body;
+
     try {
       const evento = await eventoService.criarEvento(
         nome,
@@ -16,51 +18,58 @@ class EventoController {
         data,
         descricao,
         pequenoPorte,
-        reportadoPorUsuario,
+        reportadoPorUsuario
       );
-      console.log(`Evento criado com sucesso: ${evento.nome}`);
-      return evento;
+      res.status(201).json({
+        mensagem: `Evento criado com sucesso: ${evento.nome}`,
+        evento,
+      });
     } catch (error) {
-      console.error("Erro ao criar evento:", error.message);
-      throw error;
+      res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
     }
   }
 
-  async listarEventos() {
+  async listarEventos(req, res) {
     try {
       const eventos = await eventoService.listarEventos();
-      console.log("Eventos cadastrados:");
-      eventos.forEach((e) => {
-        console.log(
-          `ID: ${e.id}, Nome: ${e.nome}, Local: ${e.local}, Data: ${e.data.toISOString().slice(0, 10)}, Oficial: ${e.reportadoPorUsuario ? "❌" : "✅"}`,
-        );
+      res.status(200).json(eventos);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ erro: `Erro ao listar eventos: ${error.message}` });
+    }
+  }
+
+  async obterPorId(req, res) {
+    const { id } = req.params;
+
+    try {
+      const evento = await eventoService.obterPorId(Number(id));
+      if (!evento) {
+        return res
+          .status(404)
+          .json({ erro: `Evento com ID ${id} não encontrado` });
+      }
+      res.status(200).json(evento);
+    } catch (error) {
+      res
+        .status(400)
+        .json({ erro: `Erro ao procurar evento por ID: ${error.message}` });
+    }
+  }
+
+  async removerEvento(req, res) {
+    const { id } = req.params;
+
+    try {
+      const eventoRemovido = await eventoService.removerEvento(Number(id));
+      res.status(200).json({
+        mensagem: `Evento "${eventoRemovido.nome}" removido com sucesso.`,
       });
-      return eventos;
     } catch (error) {
-      console.error("Erro ao listar eventos:", error.message);
-      throw error;
-    }
-  }
-
-  async obterPorId(id) {
-    try {
-      const evento = await eventoService.obterPorId(id);
-      console.log(`Evento encontrado: ${evento.nome}`);
-      return evento;
-    } catch (error) {
-      console.error("Erro ao procurar evento por ID:", error.message);
-      throw error;
-    }
-  }
-
-  async removerEvento(id) {
-    try {
-      const evento = await eventoService.removerEvento(id);
-      console.log(`Removendo evento ${evento.nome} pelo ID: ${evento.id}`);
-      return evento;
-    } catch (error) {
-      console.error("Erro ao remover evento por ID:", error.message);
-      throw error;
+      res
+        .status(400)
+        .json({ erro: `Erro ao remover evento: ${error.message}` });
     }
   }
 }
