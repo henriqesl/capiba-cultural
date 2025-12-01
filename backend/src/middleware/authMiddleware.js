@@ -1,26 +1,29 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 module.exports = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-    if (!authHeader)
-        return res.status(401).json({ erro: 'O token de autenticação não foi fornecido.' });
+  if (!authHeader)
+    return res
+      .status(401)
+      .json({ erro: "O token de autenticação não foi fornecido." });
 
-    const parts = authHeader.split(' ');
-    if (!parts.length === 2)
-        return res.status(401).json({ erro: 'Erro no token.' });
+  const parts = authHeader.split(" ");
+  if (!parts.length === 2)
+    return res.status(401).json({ erro: "Erro no token." });
 
-    const [ scheme, token ] = parts;
+  const [scheme, token] = parts;
 
-    if (!/^Bearer$/i.test(scheme))
-        return res.status(401).json({ erro: 'Token mal formatado.' });
+  if (!/^Bearer$/i.test(scheme))
+    return res.status(401).json({ erro: "Token mal formatado." });
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-        if (err) return res.status(401).json({ erro: 'Token inválido ou expirado.' });
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err)
+      return res.status(401).json({ erro: "Token inválido ou expirado." });
 
-        req.usuarioId = decoded.id;
-        
-        return next();
-    });
+    req.usuarioId = decoded.id;
+
+    return next();
+  });
 };
