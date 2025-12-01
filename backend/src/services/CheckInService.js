@@ -1,11 +1,11 @@
-const EventoService = require('../services/EventoService');
-const UsuarioService = require('../services/UsuarioService');
+const EventoService = require('./EventoService');
+const UsuarioService = require('./UsuarioService');
 const ConectaAPI = require('./ConectaAPI');
 
 class CheckInService {
   constructor() {
-    this.eventoService = new EventoService();
-    this.usuarioService = new UsuarioService();
+    this.eventoService = EventoService;
+    this.usuarioService = UsuarioService;
     this.conectaAPI = ConectaAPI;
   }
 
