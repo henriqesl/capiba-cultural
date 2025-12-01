@@ -73,3 +73,23 @@ const EventDetailPage = ({ event, onBack }) => {
 };
 
 export default EventDetailPage;
+
+/*
+  [INTEGRAÇÃO]
+  Rota: GET /eventos/:id
+  
+  Dados que o Backend retorna (Evento.js Model):
+  - nome -> title
+  - data -> time (precisa formatar)
+  - local -> location
+  - descricao -> description
+  
+  O QUE FALTA NO BACKEND:
+  O layout pede campos que não existem na tabela `eventos`:
+  1. `price` (Valor/Preço)
+  2. `age` (Faixa Etária)
+  3. `needsRegistration` (Se precisa de inscrição)
+  4. `imagemUrl` (Foto do evento)
+  
+  Ação: Precisamos adicionar essas colunas no `schema.prisma` ou remover esses campos da tela por enquanto.
+*/

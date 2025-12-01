@@ -1,5 +1,4 @@
 import React from 'react';
-// Importa do Shared (Imagem) e Navigation (Card)
 import { PerfilImage } from '../../components/user/UserShared';
 import { NavCard } from '../../components/user/UserNavigation';
 import { ICONS } from '../../utils/icons.jsx';
@@ -45,3 +44,13 @@ const UserPage = () => {
 };
 
 export default UserPage;
+
+/*
+  [INTEGRAÇÃO]
+  Rota: GET /usuarios/:id (UsuarioRoutes.js)
+  
+  Como integrar:
+  - Usar o ID que salvamos no login.
+  - O JSON de resposta já traz o "saldoMoedaCapiba" (Pontos) e o "nome". É só exibir.
+  - Para mostrar "Caravanas", o backend já está configurado para trazer essa relação.
+*/

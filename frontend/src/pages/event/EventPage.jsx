@@ -66,3 +66,13 @@ const EventPage = () => {
 };
 
 export default EventPage;
+
+/*
+  [INTEGRAÇÃO]
+  Rota: GET /eventos (ver arquivo EventoRoutes.Js)
+  
+  Como integrar:
+  - Trocar esse `EventsData` fixo por um `fetch` nessa rota.
+  - O backend devolve lista com nome, local e data.
+  - Atenção: O backend não tem campo de "Imagem" no banco ainda. Vamos ter que usar imagens genéricas por enquanto.
+*/

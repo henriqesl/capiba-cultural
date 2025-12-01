@@ -88,3 +88,14 @@ const StatusPage = () => {
 };
 
 export default StatusPage;
+
+/*
+  [O QUE FALTA]
+  1. O banco de dados (`schema.prisma`) tem tabela de Check-in, mas não tem tabelas para 
+     "Missões" ou "Conquistas".
+  
+  Solução Provisória:
+  - Deixa as regras das missões fixas aqui no código (ex: "Vá em 5 eventos").
+  - Puxa a lista de check-ins do usuário da API.
+  - Se a lista tiver 5 itens, a gente pinta a missão de "Concluída" aqui no front mesmo.
+*/

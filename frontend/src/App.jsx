@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-// Layout
 import MainLayout from './components/layout/MainLayout.jsx';
-
-// Páginas
 import LoginPage from './pages/LoginPage';
 import EventPage from './pages/event/EventPage';
 import ProfilePage from './pages/user/ProfilePage.jsx';
@@ -14,18 +10,13 @@ import EventsData from './components/event/EventsData.jsx';
 import CheckInPage from './pages/CheckInPage.jsx';
 import StatusPage from './pages/StatusPage.jsx';
 
-// Componente de Roteamento
 const App = () => {
   const [currentPath, setCurrentPath] = useState(window.location.hash || '#/login');
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setCurrentPath(window.location.hash || '#/login');
-    };
+    const handleHashChange = () => setCurrentPath(window.location.hash || '#/login');
     window.addEventListener('hashchange', handleHashChange);
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []); 
 
   const renderPage = () => {
@@ -36,33 +27,18 @@ const App = () => {
     }
 
     switch (currentPath) {
-      case '#/eventos':
-        return <EventPage />;
-      case '#/capiba':
-        return <CheckInPage />;
-      case '#/status':
-        return <StatusPage />;
-      case '#/perfil':
-        return <UserPage />;
-      case '#/perfil/editar':
-        return <ProfilePage />;
-      case '#/perfil/ranking':
-        return <RankingPage />;
-      case '#/perfil/caravana':
-        return <></>
+      case '#/eventos': return <EventPage />;
+      case '#/capiba':  return <CheckInPage />;
+      case '#/status':  return <StatusPage />;
+      case '#/perfil':  return <UserPage />;
+      case '#/perfil/editar': return <ProfilePage />;
+      case '#/perfil/ranking': return <RankingPage />;
       case '#/login':
-      default:
-        return <LoginPage />;
+      default: return <LoginPage />;
     }
   };
 
-  // Define quais rotas usam o layout principal
-  const useMainLayout = 
-    currentPath.startsWith('#/eventos') || 
-    currentPath.startsWith('#/evento/') ||
-    currentPath.startsWith('#/perfil') || 
-    currentPath.startsWith('#/capiba') ||
-    currentPath.startsWith('#/status');
+  const useMainLayout = !['#/login'].includes(currentPath);
 
   return (
     <>
@@ -78,3 +54,13 @@ const App = () => {
 };
 
 export default App;
+
+/*
+  [NOTAS DE INTEGRAÇÃO]
+  1. Segurança: Hoje o router deixa entrar em qualquer tela.
+     Precisamos colocar um `if (!token) irParaLogin()` aqui dentro, senão o usuário vai ver a tela, 
+     mas os dados não vão carregar (erro 401 do backend).
+  
+  2. Dados Iniciais: Ali onde busco `EventsData`, o ideal é fazer uma chamada 
+     `GET /eventos` logo que o app abrir pra carregar o calendário real.
+*/

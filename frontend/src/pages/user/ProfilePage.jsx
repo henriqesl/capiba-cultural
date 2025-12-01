@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, InfoRow, PerfilImage } from '../../components/user/PersonalComponents.jsx'; 
+import { Icon, InfoRow, PerfilImage } from '../../components/user/UserShared.jsx'; 
 import { ICONS } from '../../utils/icons.jsx';
 
 const ProfilePage = () => {
@@ -82,3 +82,11 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+/*
+  [PROBLEMA]
+  O Service do backend (`UsuarioService.js`) tem a lógica de atualizar (`atualizarUsuario`), 
+  mas o arquivo de rotas (`UsuarioRoutes.js`) NÃO tem o endpoint PUT ou PATCH pra isso.
+  
+  Ação: Precisamos criar a rota `router.put('/:id')` no backend antes de fazer essa tela funcionar.
+*/
