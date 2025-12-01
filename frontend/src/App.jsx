@@ -13,6 +13,7 @@ import EventDetailPage from './pages/event/EventDetailPage.jsx';
 import EventsData from './components/event/EventsData.jsx';
 import CheckInPage from './pages/CheckInPage.jsx';
 import StatusPage from './pages/StatusPage.jsx';
+import CaravanaPage from './pages/user/CaravanaPage.jsx'
 
 // Componente de Roteamento
 const App = () => {
@@ -49,7 +50,7 @@ const App = () => {
       case '#/perfil/ranking':
         return <RankingPage />;
       case '#/perfil/caravana':
-        return <></>
+        return <CaravanaPage />;
       case '#/login':
       default:
         return <LoginPage />;
