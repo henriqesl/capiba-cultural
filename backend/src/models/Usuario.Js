@@ -1,96 +1,89 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+class Usuario {
+  async buscarId(id) {
+    return await prisma.usuario.findUnique({
+      where: { id: id },
+      include: { caravanas_membro: true },
+    });
+  }
 
- class Usuario {
+  async buscarEmail(email) {
+    return await prisma.usuario.findUnique({
+      where: { email: email },
+    });
+  }
 
-    async buscarId(id) {
-        return await prisma.usuario.findUnique({
-            where: { id: id },
-            include: {caravanas_membro: true}
-        });
-   
-    }
+  async novoUsuario(nome, email, senha, cpf) {
+    return await prisma.usuario.create({
+      data: {
+        nome,
+        email,
+        senha,
+        cpf,
+        saldoMoedaCapiba: 0,
+        dataCadastro: new Date(),
+      },
+    });
+  }
 
-    async buscarEmail(email) {
-        return await prisma.usuario.findUnique({
-            where: { email: email }
-        });
-   
-    }
+  async removerUsuario(id) {
+    return await prisma.usuario.delete({
+      where: { id: id },
+    });
+  }
 
-    async novoUsuario(nome, email, senha, cpf) { 
-        return await prisma.usuario.create({
-            data: {
-                nome,
-                email,
-                senha,
-                cpf,
-                saldoMoedaCapiba: 0,
-                dataCadastro: new Date(),
-                },
-            });
-    }
+  async listar() {
+    return await prisma.usuario.findMany({
+      include: {
+        grupos_membro: true,
+        grupos_vencidos: true,
+        caravanas_membro: true,
+      },
+    });
+  }
 
-    async removerUsuario(id) {
-        return await prisma.usuario.delete({
-            where: { id: id }
-        })
-      
-    }
+  async atualizar(id, dados) {
+    return await prisma.usuario.update({
+      where: { id },
+      data: dados,
+    });
+  }
 
-    async listar() {
-        return await prisma.usuario.findMany({
-            include: { grupos_membro: true, grupos_vencidos: true, caravanas_membro:true }
-        });
-    }
-    
-    async atualizar(id, dados) {
-        return await prisma.usuario.update({
-            where: { id },
-            data: dados
-        });
-    }
+  async getSaldo(id) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: id },
+      select: { saldoMoedaCapiba: true },
+    });
 
+    return usuario?.saldoMoedaCapiba ?? 0;
+  }
 
-    async getSaldo(id) {
-        const usuario = await prisma.usuario.findUnique({
-            where: { id: id },
-            select: { saldoMoedaCapiba: true },
-        });
+  async setSaldo(id, saldo) {
+    if (saldo < 0) throw new Error("Saldo não pode ser negativo");
+    return await prisma.usuario.update({
+      where: { id },
+      data: { saldoMoedaCapiba: saldo },
+    });
+  }
 
-        return usuario?.saldoMoedaCapiba ?? 0;
+  async getNome(id) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: id },
+      select: { nome: true },
+    });
 
-    }
+    return usuario?.nome ?? null;
+  }
 
-   async setSaldo(id, saldo) {
-        if (saldo < 0) throw new Error("Saldo não pode ser negativo");
-        return await prisma.usuario.update({
-            where: { id },
-            data: { saldoMoedaCapiba: saldo },
-        });
-    }
-    
-    async getNome(id) {
-        const usuario = await prisma.usuario.findUnique({
-           where: { id: id },
-            select: {  nome: true }
-        })
-
-        return usuario?.nome ?? null;
-
-    }
-
-    async setNome(id, nome) {
-        return await prisma.usuario.update({
-           where: { id: id },
-           data: { nome: nome},
-           select: {  nome: true }
-        })
-    }
-
-
+  async setNome(id, nome) {
+    return await prisma.usuario.update({
+      where: { id: id },
+      data: { nome: nome },
+      select: { nome: true },
+    });
+  }
 }
-
 
 module.exports = Usuario;

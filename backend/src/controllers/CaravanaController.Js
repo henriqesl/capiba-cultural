@@ -1,91 +1,105 @@
-const caravanaService = require('../services/CaravanaService');
+const caravanaService = require("../services/CaravanaService");
 
 class CaravanaController {
-    async criarCaravana(nome) {
-        try {
-            const caravana = await caravanaService.criarCaravana(nome);
-            console.log(`Caravana criada com sucesso: ${caravana.nome}`);
-            return caravana;
-        } catch (error) {
-            console.error("Erro ao criar caravana:", error.message);
-            throw error;
-        }
+  async criarCaravana(nome) {
+    try {
+      const caravana = await caravanaService.criarCaravana(nome);
+      console.log(`Caravana criada com sucesso: ${caravana.nome}`);
+      return caravana;
+    } catch (error) {
+      console.error("Erro ao criar caravana:", error.message);
+      throw error;
     }
+  }
 
-    async listarCaravanas() {
-        try {
-            const caravanas = await caravanaService.listarCaravanas();
-            console.log("Caravanas cadastradas:");
-            caravanas.forEach(c => {
-                console.log(`Nome: ${c.nome}`);
-            });
-            return caravanas;
-        } catch (error) {
-            console.error("Erro ao listar caravanas:", error.message);
-            throw error;
-        }
+  async listarCaravanas() {
+    try {
+      const caravanas = await caravanaService.listarCaravanas();
+      console.log("Caravanas cadastradas:");
+      caravanas.forEach((c) => {
+        console.log(`Nome: ${c.nome}`);
+      });
+      return caravanas;
+    } catch (error) {
+      console.error("Erro ao listar caravanas:", error.message);
+      throw error;
     }
+  }
 
-    async obterPorId(id) {
-        try {
-            const caravana = await caravanaService.obterPorId(id);
-            console.log(`Procurando caravana por ID: ${id}`);
-            return caravana;
-        } catch (error) {
-            console.error("Erro ao encontrar caravana por ID:", error.message);
-            throw error;
-        }
+  async obterPorId(id) {
+    try {
+      const caravana = await caravanaService.obterPorId(id);
+      console.log(`Procurando caravana por ID: ${id}`);
+      return caravana;
+    } catch (error) {
+      console.error("Erro ao encontrar caravana por ID:", error.message);
+      throw error;
     }
+  }
 
-    async adicionarMembro(id, usuario) {
-        try {
-            const caravana = await caravanaService.adicionarMembro(id, usuario.getId());
-            console.log(`Adicionando usuário ${usuario.nome} na caravana ${caravana.nome}`);
-            return caravana;
-        } catch (error) {
-            console.error("Erro ao adicionar usuário à caravana:", error.message);
-            throw error;
-        }
+  async adicionarMembro(id, usuario) {
+    try {
+      const caravana = await caravanaService.adicionarMembro(
+        id,
+        usuario.getId(),
+      );
+      console.log(
+        `Adicionando usuário ${usuario.nome} na caravana ${caravana.nome}`,
+      );
+      return caravana;
+    } catch (error) {
+      console.error("Erro ao adicionar usuário à caravana:", error.message);
+      throw error;
     }
+  }
 
-    async adicionarDestino(id, evento) {
-        try {
-            const caravana = await caravanaService.adicionarDestino(id, evento.id);
-            console.log(`Evento ${evento.nome} adicionado à caravana ${caravana.nome}`);
-            return caravana;
-        } catch (error) {
-            console.error("Erro ao adicionar destino à caravana:", error.message);
-            throw error;
-        }
+  async adicionarDestino(id, evento) {
+    try {
+      const caravana = await caravanaService.adicionarDestino(id, evento.id);
+      console.log(
+        `Evento ${evento.nome} adicionado à caravana ${caravana.nome}`,
+      );
+      return caravana;
+    } catch (error) {
+      console.error("Erro ao adicionar destino à caravana:", error.message);
+      throw error;
     }
+  }
 
-    async removerCaravana(id) {
-        try {
-            const caravanaRemovida = await caravanaService.removerCaravana(id);
-            console.log(`Caravana ${caravanaRemovida.nome} removida com sucesso!`);
-            return caravanaRemovida;
-        } catch (error) {
-            console.error("Erro ao remover caravana:", error.message);
-            throw error;
-        }
+  async removerCaravana(id) {
+    try {
+      const caravanaRemovida = await caravanaService.removerCaravana(id);
+      console.log(`Caravana ${caravanaRemovida.nome} removida com sucesso!`);
+      return caravanaRemovida;
+    } catch (error) {
+      console.error("Erro ao remover caravana:", error.message);
+      throw error;
     }
+  }
 
-    async obterMultiplicador(req, res) {
-        const caravanaId = Number(req.params.id);
-        const usuarioId = req.query.usuarioId ? Number(req.query.usuarioId) : null;
-        const mes = req.query.mes ? Number(req.query.mes) : undefined;
-        const ano = req.query.ano ? Number(req.query.ano) : undefined;
+  async obterMultiplicador(req, res) {
+    const caravanaId = Number(req.params.id);
+    const usuarioId = req.query.usuarioId ? Number(req.query.usuarioId) : null;
+    const mes = req.query.mes ? Number(req.query.mes) : undefined;
+    const ano = req.query.ano ? Number(req.query.ano) : undefined;
 
-        if (!usuarioId) return res.status(400).json({ erro: "usuarioId query param obrigatório" });
+    if (!usuarioId)
+      return res
+        .status(400)
+        .json({ erro: "usuarioId query param obrigatório" });
 
-        try {
-            const multiplicador = await caravanaService.calcularMultiplicador(usuarioId, caravanaId, mes, ano);
-            res.json({ caravanaId, usuarioId, multiplicador });
-        } catch (error) {
-            res.status(400).json({ erro: error.message });
-        }
+    try {
+      const multiplicador = await caravanaService.calcularMultiplicador(
+        usuarioId,
+        caravanaId,
+        mes,
+        ano,
+      );
+      res.json({ caravanaId, usuarioId, multiplicador });
+    } catch (error) {
+      res.status(400).json({ erro: error.message });
     }
-
+  }
 }
 
 module.exports = CaravanaController;

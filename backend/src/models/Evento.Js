@@ -1,131 +1,125 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class Evento {
+  async novoEvento(nome, local, data, descricao) {
+    return await prisma.evento.create({
+      data: {
+        nome,
+        local,
+        data: new Date(data),
+        moedasCapibasDestribuidas: 10,
+        descricao,
+      },
+    });
+  }
 
-    async novoEvento(nome, local, data, descricao) {
-        return await prisma.evento.create({
-            data: {
-                nome,
-                local,
-                data: new Date(data), 
-                moedasCapibasDestribuidas: 10,
-                descricao
-            }
-        });
-    }
+  async listar() {
+    return await prisma.evento.findMany();
+  }
 
-    async listar() {
-        return await prisma.evento.findMany();
-    }
+  async obterPorNomeLocalEData(nome, local, data) {
+    return await prisma.evento.findFirst({
+      where: {
+        nome: nome,
+        local: local,
+        data: new Date(data),
+      },
+    });
+  }
 
+  async obterPorId(id) {
+    return await prisma.evento.findUnique({
+      where: { id: id },
+    });
+  }
 
-    async obterPorNomeLocalEData(nome, local, data) {
-        return await prisma.evento.findFirst({
-            where: {
-                nome: nome,
-                local: local,
-                data: new Date(data), 
-            }
-        });
-    }
+  async obterPorNome(nome) {
+    return await prisma.evento.findFirst({
+      where: { nome: nome },
+    });
+  }
 
-    
-    async obterPorId(id) {
-        return await prisma.evento.findUnique({
-            where: { id: id }
-        });
-    }
+  async removerEvento(id) {
+    return await prisma.evento.delete({
+      where: { id: id },
+    });
+  }
 
-    async obterPorNome(nome) {
-        return await prisma.evento.findFirst({
-            where: { nome: nome }
-        });
-    }
+  async setNome(id, nome) {
+    return await prisma.evento.update({
+      where: { id: id },
+      data: { nome: nome },
+      select: { nome: true },
+    });
+  }
 
-    async removerEvento(id) {
-        return await prisma.evento.delete({
-            where: { id: id }
-        });
-    }
+  async getNome(id) {
+    return await prisma.evento.findUnique({
+      where: { id: id },
+      select: { nome: true },
+    });
+  }
 
-    async setNome(id, nome) { 
-        return await prisma.evento.update({
-            where: { id: id },
-            data: { nome: nome },
-            select: { nome: true }
-        });
-    }
-        
+  async setLocal(id, local) {
+    return await prisma.evento.update({
+      where: { id: id },
+      data: { local: local },
+      select: { local: true },
+    });
+  }
 
-    async getNome(id) { 
-        return await prisma.evento.findUnique({
-            where: { id: id },
-            select: { nome: true }
-        })
-    }
+  async getLocal(id) {
+    return await prisma.evento.findUnique({
+      where: { id: id },
+      select: { local: true },
+    });
+  }
 
-    async setLocal(id, local) { 
-        return await prisma.evento.update({
-            where: { id: id },
-            data: { local: local },
-            select: { local: true }
-        });
-    }   
+  async setData(id, data) {
+    return await prisma.evento.update({
+      where: { id: id },
+      data: { data: data },
+      select: { data: true },
+    });
+  }
 
-    async getLocal(id) { 
-        return await prisma.evento.findUnique({
-            where: { id: id },
-            select: { local: true }
-        });
-    }   
+  async getData(id) {
+    return await prisma.evento.findUnique({
+      where: { id: id },
+      select: { data: true },
+    });
+  }
 
-    async setData(id, data) { 
-        return await prisma.evento.update({
-            where: { id: id },
-            data: {data: data },
-            select: { data: true }
-        });
-    }   
+  async setDescricao(id, descricao) {
+    return await prisma.evento.update({
+      where: { id: id },
+      data: { descricao: descricao },
+      select: { descricao: true },
+    });
+  }
 
-    async getData(id) { 
-        return await prisma.evento.findUnique({
-            where: { id: id },
-            select: { data: true }
-        });
-    }   
+  async getDescricao(id) {
+    return await prisma.evento.findUnique({
+      where: { id: id },
+      select: { descricao: true },
+    });
+  }
 
+  async setReportadoPorUsuario(id, valor) {
+    return await prisma.evento.update({
+      where: { id: id },
+      data: { reportadoPorUsuario: valor },
+      select: { reportadoPorUsuario: true },
+    });
+  }
 
-    async setDescricao(id, descricao) { 
-        return await prisma.evento.update({
-            where: { id: id },
-            data: { descricao: descricao },
-            select: { descricao: true }
-        });
-    }   
-
-    async getDescricao(id) { 
-        return await prisma.evento.findUnique({
-            where: { id: id },
-            select: { descricao: true }
-        });
-    }   
-
-
-    async setReportadoPorUsuario(id, valor) { 
-        return await prisma.evento.update({
-            where: { id: id },
-            data: { reportadoPorUsuario: valor },
-            select: { reportadoPorUsuario: true }
-        });
-    }   
-
-    async getReportadoPorUsuario(id) { 
-        return await prisma.evento.findUnique({
-            where: { id: id },
-            select: { reportadoPorUsuario: true }
-        });
-    }   
+  async getReportadoPorUsuario(id) {
+    return await prisma.evento.findUnique({
+      where: { id: id },
+      select: { reportadoPorUsuario: true },
+    });
+  }
 }
 
 module.exports = Evento;
