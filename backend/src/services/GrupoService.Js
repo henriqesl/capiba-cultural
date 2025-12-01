@@ -10,7 +10,7 @@ class GrupoService {
     dataInicio,
     dataFim,
     encerrado = false,
-    pontuacaoTotal = 0,
+    pontuacaoTotal = 0
   ) {
     if (!nome) throw new Error("Nome do grupo é obrigatório");
     7;
@@ -22,7 +22,7 @@ class GrupoService {
       dataInicio,
       dataFim,
       encerrado,
-      pontuacaoTotal,
+      pontuacaoTotal
     );
   }
 
@@ -56,7 +56,7 @@ class GrupoService {
     const membros = await this.grupoRepository.getMembros(id);
     const total = membros.reduce(
       (acc, membro) => acc + (membro.saldoMoedaCapiba || 0),
-      0,
+      0
     );
     await this.grupoRepository.setPontuacaoTotal(id, total);
   }
@@ -75,11 +75,16 @@ class GrupoService {
 
     if (membros.length === 0) return null;
 
-    const vencedor = membros.reduce(
-      (max, u) => (u.saldoMoedaCapiba > (max?.saldoMoedaCapiba || 0) ? u : max),
-      null,
-    );
-    await this.grupoRepository.setVencedor(grupoId, vencedor.id);
+    const vencedor = membros.reduce((max, u) => {
+      const saldoU = u.saldoMoedaCapiba || 0;
+      const saldoMax = max.saldoMoedaCapiba || 0;
+      return saldoU >= saldoMax ? u : max;
+    }, membros[0]);
+
+    if (vencedor) {
+      await this.grupoRepository.setVencedor(grupoId, vencedor.id);
+    }
+
     return vencedor;
   }
 
@@ -103,11 +108,10 @@ class GrupoService {
 
   async verificarGruposExpirados() {
     const agora = new Date();
-    const grupos = this.grupoRepository.listar();
+    const grupos = await this.grupoRepository.listar();
     for (const grupo of grupos) {
       if (!grupo.encerrado && new Date(grupo.dataFim) < agora) {
         await this.encerrarGrupo(grupo.id);
-        console.log(`Grupo "${grupo.nome}" foi encerrado automaticamente.`);
       }
     }
   }

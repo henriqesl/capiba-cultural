@@ -12,15 +12,13 @@ class ReporteService {
   async criarOuConfirmarReporte(reportanteId, eventoInput, descricao = "") {
     if (!reportanteId || !eventoInput) {
       throw new Error(
-        "Reportante e evento são obrigatórios para criar um reporte!",
+        "Reportante e evento são obrigatórios para criar um reporte!"
       );
     }
 
     let evento = await this.eventoService.obterPorNome(eventoInput.nome);
 
     if (!evento) {
-      console.log("Evento não encontrado. Criando novo evento...");
-
       const nome = eventoInput.nome || "Evento sem nome";
       const local = eventoInput.local || "Local não informado";
       const data = eventoInput.data ? new Date(eventoInput.data) : new Date();
@@ -33,7 +31,7 @@ class ReporteService {
         data,
         descricaoEvento,
         false,
-        true,
+        true
       );
       await evento.setReportadoPorUsuario(true);
     }
@@ -45,7 +43,7 @@ class ReporteService {
 
     if (existente) {
       const jaConfirmou = existente.reportantes.some(
-        (u) => u.id === reportanteId,
+        (u) => u.id === reportanteId
       );
       if (jaConfirmou) {
         return {
@@ -82,7 +80,7 @@ class ReporteService {
 
     if (existeReporteRecente) {
       throw new Error(
-        "Você já enviou um reporte recentemente. Aguarde alguns minutos.",
+        "Você já enviou um reporte recentemente. Aguarde alguns minutos."
       );
     }
 
