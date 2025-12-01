@@ -1,45 +1,49 @@
-const EventoService = require('../EventoService');
-const UsuarioService = require('../UsuarioService');
-const CheckIn = require('../models/CheckIn')
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const EventoService = require('../services/EventoService');
+const UsuarioService = require('../services/UsuarioService');
 const ConectaAPI = require('./ConectaAPI');
 
 class CheckInService {
-    constructor() {
-        this.eventoRepository = new EventoService();
-        this.usuarioRepository = new UsuarioService();
-        this.checkInRepository = new CheckIn();
-        this.conectaRepository = new ConectaAPI();
-    }
+  constructor() {
+    this.eventoService = new EventoService();
+    this.usuarioService = new UsuarioService();
+    this.conectaAPI = ConectaAPI;
+  }
 
-    async realizarCheckIn(usuarioId, eventoId) {
-        const usuario = await this.usuarioRepository.obterPorId(usuarioId);
-        if (!usuario) throw new Error("Usuário não encontrado");
+  async realizarCheckIn(usuarioId, eventoId) {
 
-        const evento = await this.eventoRepository.obterPorId(eventoId);
-        if (!evento) throw new Error("Evento não encontrado");
+    const usuario = await this.usuarioService.obterPorId(usuarioId);
+    if (!usuario) throw new Error("Usuário não encontrado");
 
-        this.conectaRepository.setToken(tokenConecta);
+    const evento = await this.eventoService.obterPorId(eventoId);
+    if (!evento) throw new Error("Evento não encontrado");
 
-        const dadosConecta = {
-            userIdentifier: usuario.cpf,
-            eventName: evento.nome,
-            checkInDateTime: new Date().toISOString(),
-            cidade: "Recife",
-            bairro: "Centro",
-            rua: evento.local,
-            identifier: `EVENTO-${evento.id}-USER-${usuario.id}`,
-            document: usuario.cpf
-        };
+    // 🔐 Login técnico no Conecta
+    await this.conectaAPI.autenticar(
+      process.env.CONECTA_USER,
+      process.env.CONECTA_PASSWORD
+    );
 
-        await this.conectaRepository.fazerCheckIn(dadosConecta);
+    const payload = {
+      userIdentifier: usuario.cpf,
+      eventName: evento.nome,
+      checkInDateTime: new Date().toISOString(),
+      cidade: "Recife",
+      bairro: "Centro",
+      rua: evento.local,
+      identifier: `EVENTO-${evento.id}-USER-${usuario.id}`,
+      document: usuario.cpf
+    };
 
-        const moedasGanhas = evento.pequenoPorte ? 10 : 20;
-        await this.usuarioRepository.adicionarMoedas(usuarioId, moedasGanhas);
+    const respostaConecta = await this.conectaAPI.fazerCheckIn(payload);
 
-        return { moedasGanhas };
-    }
+    const moedasGanhas = evento.pequenoPorte ? 10 : 20;
+    await this.usuarioService.adicionarMoedas(usuarioId, moedasGanhas);
+
+    return {
+      moedasGanhas,
+      conecta: respostaConecta
+    };
+  }
 }
 
 module.exports = new CheckInService();
