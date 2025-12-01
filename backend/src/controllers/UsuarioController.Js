@@ -1,5 +1,8 @@
 const UsuarioService = require("../services/UsuarioService");
 const GrupoService = require("../services/GrupoService");
+const conecta = require("../services/ConectaAPI");
+const jwt = require("jsonwebtoken");
+
 
 class UsuarioController {
   constructor() {
