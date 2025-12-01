@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, InfoRow, PerfilImage } from '../../components/user/PersonalComponents.jsx'; 
+import { Icon, InfoRow, PerfilImage } from '../../components/user/UserShared.jsx'; 
 import { ICONS } from '../../utils/icons.jsx';
 
 const ProfilePage = () => {
