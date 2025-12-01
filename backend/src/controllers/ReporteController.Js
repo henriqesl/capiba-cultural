@@ -5,83 +5,106 @@ class ReporteController {
     this.reporteService = new ReporteService();
   }
 
-  criarOuConfirmarReporte(reportante, eventoInput, descricao = "") {
-    try {
-      const reporte = this.reporteService.criarOuConfirmarReporte(
-        reportante,
-        eventoInput,
-        descricao,
-      );
-      console.log(
-        `Reporte sobre o evento "${eventoInput.nome}" criado ou confirmado com sucesso!`,
-      );
-      return reporte;
-    } catch (error) {
-      console.error("Erro ao criar ou confirmar reporte:", error.message);
-    }
-  }
+  async criarOuConfirmarReporte(req, res) {
+    const { usuarioId, evento, descricao = "" } = req.body;
 
-  listarReportes() {
     try {
-      const reportes = this.reporteService.listarReportes();
-      console.log("Reportes encontrados:");
-      reportes.forEach((r) => {
-        const eventoNome =
-          r.evento?.nome || r.eventoInput?.nome || "Evento desconhecido";
-        const reportantes = (r.reportantes || [r.reportante] || [])
-          .map((u) => u.nome || u.id)
-          .join(", ");
-        console.log(
-          `Reportante(s): ${reportantes}, Evento: ${eventoNome}, Descrição: ${r.descricao || ""}`,
-        );
+      if (!usuarioId || !evento) {
+        return res
+          .status(400)
+          .json({ erro: "Usuário e evento são obrigatórios!" });
+      }
+
+      const reporte = await this.reporteService.criarOuConfirmarReporte(
+        usuarioId,
+        evento,
+        descricao
+      );
+      res.status(201).json({
+        mensagem: `Reporte sobre o evento "${evento.nome}" criado ou confirmado com sucesso!`,
+        reporte,
       });
-      return reportes;
     } catch (error) {
-      console.error("Erro ao listar reportes:", error.message);
+      res
+        .status(400)
+        .json({ erro: `Erro ao criar ou confirmar reporte: ${error.message}` });
     }
   }
 
-  listarPorEvento(eventoId) {
+  async listarReportes(req, res) {
     try {
-      const reportes = this.reporteService.listarPorEvento(eventoId);
-      console.log(`Reportes para o evento ID ${eventoId}:`, reportes.length);
-      return reportes;
+      const reportes = await this.reporteService.listarReportes();
+      res.status(200).json(reportes);
     } catch (error) {
-      console.error("Erro ao listar reportes por evento:", error.message);
+      res
+        .status(500)
+        .json({ erro: `Erro ao listar reportes: ${error.message}` });
     }
   }
 
-  listarPorUsuario(usuarioId) {
+  async listarPorEvento(req, res) {
+    const eventoId = Number(req.params.eventoId);
+
     try {
-      const reportes = this.reporteService.listarPorUsuario(usuarioId);
-      console.log(
-        `Reportes feitos pelo usuário ID ${usuarioId}:`,
-        reportes.length,
-      );
-      return reportes;
+      if (!eventoId) {
+        return res.status(400).json({ erro: "Evento ID é obrigatório." });
+      }
+
+      const reportes = await this.reporteService.listarPorEvento(eventoId);
+      res.status(200).json(reportes);
     } catch (error) {
-      console.error("Erro ao listar reportes por usuário:", error.message);
+      res
+        .status(400)
+        .json({ erro: `Erro ao listar reportes por evento: ${error.message}` });
     }
   }
 
-  removerReporte(id) {
+  async listarPorUsuario(req, res) {
+    const usuarioId = Number(req.params.usuarioId);
+
     try {
-      const removido = this.reporteService.removerReporte(id);
-      if (removido) console.log(`Reporte ${id} removido com sucesso.`);
-      else console.log(`Reporte ${id} não encontrado.`);
-      return removido;
+      if (!usuarioId) {
+        return res.status(400).json({ erro: "Usuário ID é obrigatório." });
+      }
+
+      const reportes = await this.reporteService.listarPorUsuario(usuarioId);
+      res.status(200).json(reportes);
     } catch (error) {
-      console.error("Erro ao remover reporte:", error.message);
+      res
+        .status(400)
+        .json({
+          erro: `Erro ao listar reportes por usuário: ${error.message}`,
+        });
     }
   }
 
-  listarEventosMaisReportados() {
+  async removerReporte(req, res) {
+    const { id } = req.params;
+
     try {
-      const eventos = this.reporteService.listarEventosMaisReportados();
-      console.log("Eventos mais reportados:", eventos);
-      return eventos;
+      const removido = await this.reporteService.removerReporte(Number(id));
+      if (!removido) {
+        return res.status(404).json({ erro: "Reporte não encontrado." });
+      }
+      res.status(200).json({ mensagem: `Reporte ${id} removido com sucesso.` });
     } catch (error) {
-      console.error("Erro ao listar eventos mais reportados:", error.message);
+      res
+        .status(400)
+        .json({ erro: `Erro ao remover reporte: ${error.message}` });
+    }
+  }
+
+  async listarEventosMaisReportados(req, res) {
+    try {
+      const eventosMaisReportados =
+        await this.reporteService.listarEventosMaisReportados();
+      res.status(200).json(eventosMaisReportados);
+    } catch (error) {
+      res
+        .status(400)
+        .json({
+          erro: `Erro ao listar eventos mais reportados: ${error.message}`,
+        });
     }
   }
 }
