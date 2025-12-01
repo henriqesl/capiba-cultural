@@ -1,6 +1,6 @@
 import React from 'react';
 import { ICONS } from '../../utils/icons'; 
-import perfil_image from '../../assets/foto_perfil.png'; 
+import perfil_image from '../../assets/foto_perfil.png'; // Importação da imagem
 
 // Wrapper de Ícone genérico (Atomic Component)
 export const Icon = ({ path, className = "w-6 h-6" }) => (
