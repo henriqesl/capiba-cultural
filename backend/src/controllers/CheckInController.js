@@ -1,47 +1,34 @@
 const checkInService = require('../services/CheckInService');
-const conecta = require("../services/ConectaAPI");
-const usuarioService = require("../services/UsuarioService");
-const eventoService = require("../services/EventoService");
 
 class CheckInController {
 
-    async realizarCheckIn(usuarioId, eventoId) {
+    async realizarCheckIn(req, res) {
+        const usuarioId = req.usuarioId;
+        const { eventoId } = req.body;
+
         try {
-            if (!eventoId) throw new Error("ID do evento é obrigatório.");
+            if (!eventoId) {
+                return res.status(400).json({ erro: "ID do evento é obrigatório." });
+            }
 
-            const resultado = await checkInService.realizarCheckIn(usuarioId, Number(eventoId));
+            const resultado = await checkInService.realizarCheckIn(
+                usuarioId,
+                Number(eventoId)
+            );
 
-            const usuario = await usuarioService.obterPorId(usuarioId);
-            const evento  = await eventoService.obterPorId(eventoId);
-
-            await conecta.autenticar(usuario.cpf, usuario.senha);  
-
-                const dados = {
-                    userIdentifier: usuario.cpf,   // obrigatório
-                    eventName: evento.nome,        // obrigatório
-                    checkInDateTime: new Date().toISOString(),
-                    cidade: "Recife",              // vocês podem pegar via Evento também
-                    bairro: "Centro",
-                    rua: evento.local,
-                    identifier: `EVENTO-${eventoId}-USER-${usuarioId}`,
-                    document: usuario.cpf
-            };
-
-
-            const respostaConecta = await conecta.fazerCheckIn(dados);
-
-
-            return {
-                checkInLocal: resultado,
-                conecta: respostaConecta
-            };
-
-
+            
+        return res.status(200).json({
+            mensagem: "Check-in realizado com sucesso!",
+            moedasGanhas: resultado.moedasGanhas,
+            checkInLocal: resultado.checkInLocal,
+            conecta: resultado.conecta
+        });
         } catch (error) {
             console.error("Erro no Check-in:", error.message);
-            throw error; 
+            return res.status(400).json({ erro: error.message });
+            }
         }
-    }
 }
+
 
 module.exports = CheckInController;
