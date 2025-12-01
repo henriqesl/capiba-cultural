@@ -33,3 +33,9 @@ const EventCard = ({ title, time, location, href, className = '', onClick, ...pr
 };
 
 export default EventCard;
+
+/*
+  Mesma questão das imagens: como o backend não manda URL da foto, 
+  esse quadrado cinza "IMG" vai aparecer pra todos os eventos. 
+  Ideal é usar uma biblioteca de ícones ou imagens aleatórias até o back ter suporte a upload.
+*/

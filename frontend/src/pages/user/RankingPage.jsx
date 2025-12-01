@@ -81,3 +81,12 @@ const RankingPage = () => {
 };
 
 export default RankingPage;
+
+/*
+  [INTEGRAÇÃO]
+  Rotas (GrupoRoutes.Js):
+  - Listar Rankings: GET /grupos
+  - Meus Grupos: GET /usuarios/:id (o back já traz a lista de grupos que eu participo).
+  
+  Tudo pronto no backend para essa tela funcionar.
+*/

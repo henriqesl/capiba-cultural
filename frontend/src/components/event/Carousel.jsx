@@ -75,3 +75,13 @@ const Carousel = ({ events }) => {
 };
 
 export default Carousel;
+
+/*
+  [INTEGRAÇÃO]
+  Esse componente espera receber um array `events`. 
+  Quando fizermos o fetch no `EventPage`, precisamos passar os eventos "Destaque" pra cá.
+  
+  Regra de Negócio:
+  Quais eventos aparecem aqui? 
+  Podemos filtrar no front os eventos que têm `pequenoPorte = false` ou criar uma flag `destaque` no backend.
+*/
