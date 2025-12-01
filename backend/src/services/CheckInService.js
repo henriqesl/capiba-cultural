@@ -1,48 +1,44 @@
+const EventoService = require('../EventoService');
+const UsuarioService = require('../UsuarioService');
+const CheckIn = require('../models/CheckIn')
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
-const CheckInModel = require('../models/CheckIn'); 
-const EventoModel = require('../models/Evento');
+const ConectaAPI = require('./ConectaAPI');
 
 class CheckInService {
-    
     constructor() {
-        this.checkInRepository = new CheckInModel();
-        this.eventoRepository = new EventoModel();
+        this.eventoRepository = new EventoService();
+        this.usuarioRepository = new UsuarioService();
+        this.checkInRepository = new CheckIn();
+        this.conectaRepository = new ConectaAPI();
     }
 
     async realizarCheckIn(usuarioId, eventoId) {
+        const usuario = await this.usuarioRepository.obterPorId(usuarioId);
+        if (!usuario) throw new Error("Usuário não encontrado");
+
         const evento = await this.eventoRepository.obterPorId(eventoId);
-        if (!evento) {
-            throw new Error("Evento inválido ou não encontrado.");
-        }
+        if (!evento) throw new Error("Evento não encontrado");
 
-        const checkInExistente = await this.checkInRepository.buscarPorUsuarioEEvento(usuarioId, eventoId);
-        
-        if (checkInExistente) {
-            throw new Error("Você já realizou o check-in neste evento.");
-        }
+        this.conectaRepository.setToken(tokenConecta);
 
-        const resultado = await prisma.$transaction(async (tx) => {
-            
-            // A. Cria o registro do check-in
-            const novoCheckIn = await tx.checkIn.create({
-                data: { usuarioId, eventoId }
-            });
+        const dadosConecta = {
+            userIdentifier: usuario.cpf,
+            eventName: evento.nome,
+            checkInDateTime: new Date().toISOString(),
+            cidade: "Recife",
+            bairro: "Centro",
+            rua: evento.local,
+            identifier: `EVENTO-${evento.id}-USER-${usuario.id}`,
+            document: usuario.cpf
+        };
 
-            const moedasGanhas = evento.moedasDistribuidas || 10;
+        await this.conectaRepository.fazerCheckIn(dadosConecta);
 
-            await tx.usuario.update({
-                where: { id: usuarioId },
-                data: { 
-                    saldoMoedaCapiba: { increment: moedasGanhas } 
-                }
-            });
+        const moedasGanhas = evento.pequenoPorte ? 10 : 20;
+        await this.usuarioRepository.adicionarMoedas(usuarioId, moedasGanhas);
 
-            return { checkIn: novoCheckIn, moedasGanhas };
-        });
-
-        return resultado;
+        return { moedasGanhas };
     }
 }
 
