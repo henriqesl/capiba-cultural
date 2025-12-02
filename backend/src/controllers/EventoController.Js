@@ -18,7 +18,7 @@ class EventoController {
         data,
         descricao,
         pequenoPorte,
-        reportadoPorUsuario
+        reportadoPorUsuario,
       );
       res.status(201).json({
         mensagem: `Evento criado com sucesso: ${evento.nome}`,

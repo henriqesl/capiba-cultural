@@ -43,13 +43,13 @@ describe("GrupoService", () => {
 
     it("deve criar um grupo com sucesso com valores padrão", async () => {
       mockGrupoRepository.novoGrupoCompeticao.mockResolvedValue(
-        grupoCriadoMock
+        grupoCriadoMock,
       );
 
       const resultado = await grupoService.criarGrupo(
         nome,
         dataInicio,
-        dataFim
+        dataFim,
       );
 
       expect(resultado).toEqual(grupoCriadoMock);
@@ -58,24 +58,24 @@ describe("GrupoService", () => {
         dataInicio,
         dataFim,
         false,
-        0
+        0,
       );
     });
 
     it("deve lançar um erro se o nome for nulo", async () => {
       await expect(
-        grupoService.criarGrupo(null, dataInicio, dataFim)
+        grupoService.criarGrupo(null, dataInicio, dataFim),
       ).rejects.toThrow("Nome do grupo é obrigatório");
       expect(mockGrupoRepository.novoGrupoCompeticao).not.toHaveBeenCalled();
     });
 
     it("deve lançar um erro se as datas de início ou fim estiverem faltando", async () => {
       await expect(
-        grupoService.criarGrupo(nome, null, dataFim)
+        grupoService.criarGrupo(nome, null, dataFim),
       ).rejects.toThrow("Datas de início e fim são obrigatórias");
 
       await expect(
-        grupoService.criarGrupo(nome, dataInicio, null)
+        grupoService.criarGrupo(nome, dataInicio, null),
       ).rejects.toThrow("Datas de início e fim são obrigatórias");
     });
   });
@@ -107,7 +107,7 @@ describe("GrupoService", () => {
       mockGrupoRepository.obterPorId.mockResolvedValue(null);
 
       await expect(grupoService.obterPorId(999)).rejects.toThrow(
-        "Grupo não encontrado."
+        "Grupo não encontrado.",
       );
     });
   });
@@ -131,7 +131,7 @@ describe("GrupoService", () => {
       expect(mockGrupoRepository.getMembros).toHaveBeenCalledWith(grupoId);
       expect(mockGrupoRepository.setPontuacaoTotal).toHaveBeenCalledWith(
         grupoId,
-        pontuacaoEsperada
+        pontuacaoEsperada,
       );
     });
 
@@ -142,7 +142,7 @@ describe("GrupoService", () => {
 
       expect(mockGrupoRepository.setPontuacaoTotal).toHaveBeenCalledWith(
         grupoId,
-        0
+        0,
       );
     });
   });
@@ -197,7 +197,7 @@ describe("GrupoService", () => {
       expect(mockGrupoRepository.obterPorId).toHaveBeenCalledTimes(2);
       expect(mockGrupoRepository.adicionarMembro).toHaveBeenCalledWith(
         grupoId,
-        usuarioId
+        usuarioId,
       );
       expect(grupoService.atualizarPontuacao).toHaveBeenCalledWith(grupoId);
       expect(resultado).toEqual(grupoAtualizado);
@@ -209,7 +209,7 @@ describe("GrupoService", () => {
       mockGrupoRepository.obterPorId.mockResolvedValue(null);
 
       await expect(
-        grupoService.adicionarMembro(999, usuarioId)
+        grupoService.adicionarMembro(999, usuarioId),
       ).rejects.toThrow("Grupo não encontrado.");
     });
 
@@ -218,9 +218,9 @@ describe("GrupoService", () => {
       mockGrupoRepository.obterPorId.mockResolvedValue(grupoEncerrado);
 
       await expect(
-        grupoService.adicionarMembro(grupoId, usuarioId)
+        grupoService.adicionarMembro(grupoId, usuarioId),
       ).rejects.toThrow(
-        "Não é possível adicionar membros a um grupo encerrado."
+        "Não é possível adicionar membros a um grupo encerrado.",
       );
     });
 
@@ -230,7 +230,7 @@ describe("GrupoService", () => {
       mockGrupoRepository.getMembros.mockResolvedValue(membrosExistentes);
 
       await expect(
-        grupoService.adicionarMembro(grupoId, usuarioId)
+        grupoService.adicionarMembro(grupoId, usuarioId),
       ).rejects.toThrow("Usuário já faz parte do grupo.");
       expect(mockGrupoRepository.adicionarMembro).not.toHaveBeenCalled();
     });
@@ -254,7 +254,7 @@ describe("GrupoService", () => {
       expect(resultado).toEqual(membroVencedor);
       expect(mockGrupoRepository.setVencedor).toHaveBeenCalledWith(
         grupoId,
-        membroVencedor.id
+        membroVencedor.id,
       );
     });
 
@@ -308,11 +308,11 @@ describe("GrupoService", () => {
       expect(grupoService.obterVencedor).toHaveBeenCalledWith(grupoId);
       expect(mockGrupoRepository.setEncerrado).toHaveBeenCalledWith(
         grupoId,
-        true
+        true,
       );
       expect(mockGrupoRepository.setVencedor).toHaveBeenCalledWith(
         grupoId,
-        vencedorMock.id
+        vencedorMock.id,
       );
 
       expect(resultado).toEqual({
@@ -329,7 +329,7 @@ describe("GrupoService", () => {
       mockGrupoRepository.obterPorId.mockResolvedValue(grupoEncerrado);
 
       await expect(grupoService.encerrarGrupo(grupoId)).rejects.toThrow(
-        "O grupo já foi encerrado."
+        "O grupo já foi encerrado.",
       );
       expect(grupoService.obterVencedor).not.toHaveBeenCalled();
       expect(mockGrupoRepository.setEncerrado).not.toHaveBeenCalled();
@@ -343,7 +343,7 @@ describe("GrupoService", () => {
 
       expect(mockGrupoRepository.setVencedor).toHaveBeenCalledWith(
         grupoId,
-        null
+        null,
       );
       expect(resultado.vencedor).toBeNull();
     });

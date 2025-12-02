@@ -13,7 +13,7 @@ class EventoService {
     pequenoPorte = false,
     reportadoPorUsuario = false,
     participantesIds = [],
-    caravanasIds = []
+    caravanasIds = [],
   ) {
     if (!nome || !local || !data || !descricao)
       throw new Error("Todos os campos são obrigatórios");
@@ -24,11 +24,11 @@ class EventoService {
       nome,
       local,
       data,
-      descricao
+      descricao,
     );
     if (eventoDuplicado) {
       throw new Error(
-        "Um evento com o mesmo nome e local já está agendado para esta data."
+        "Um evento com o mesmo nome e local já está agendado para esta data.",
       );
     }
 
@@ -40,7 +40,7 @@ class EventoService {
       (pequenoPorte = false),
       (reportadoPorUsuario = false),
       (participantesIds = []),
-      (caravanasIds = [])
+      (caravanasIds = []),
     );
   }
 

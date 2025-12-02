@@ -14,7 +14,7 @@ class UsuarioController {
         nome,
         email,
         senha,
-        cpf
+        cpf,
       );
       res.status(201).json({
         mensagem: `Usuário ${usuario.nome} criado com sucesso!`,
@@ -30,7 +30,7 @@ class UsuarioController {
     try {
       const resultado = await this.usuarioService.autenticarUsuario(
         email,
-        senha
+        senha,
       );
       res.status(200).json(resultado);
     } catch (error) {
@@ -73,7 +73,7 @@ class UsuarioController {
       }
       const usuario = await this.usuarioService.adicionarMoedas(
         Number(id),
-        quantidade
+        quantidade,
       );
       res.status(200).json({
         mensagem: `Adicionadas ${quantidade} moedas ao usuário ${usuario.nome}`,
@@ -95,7 +95,7 @@ class UsuarioController {
       }
       const usuario = await this.usuarioService.gastarMoedas(
         Number(id),
-        quantidade
+        quantidade,
       );
       res.status(200).json({
         mensagem: `Usuário ${usuario.nome} gastou ${quantidade} moedas`,

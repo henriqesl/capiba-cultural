@@ -64,11 +64,9 @@ class CaravanaController {
         caravana,
       });
     } catch (error) {
-      res
-        .status(400)
-        .json({
-          erro: `Erro ao adicionar usuário à caravana: ${error.message}`,
-        });
+      res.status(400).json({
+        erro: `Erro ao adicionar usuário à caravana: ${error.message}`,
+      });
     }
   }
 
@@ -90,11 +88,9 @@ class CaravanaController {
         caravana,
       });
     } catch (error) {
-      res
-        .status(400)
-        .json({
-          erro: `Erro ao adicionar destino à caravana: ${error.message}`,
-        });
+      res.status(400).json({
+        erro: `Erro ao adicionar destino à caravana: ${error.message}`,
+      });
     }
   }
 
@@ -103,7 +99,7 @@ class CaravanaController {
 
     try {
       const caravanaRemovida = await caravanaService.removerCaravana(
-        Number(id)
+        Number(id),
       );
       res.status(200).json({
         mensagem: `Caravana "${caravanaRemovida.nome}" removida com sucesso.`,
@@ -132,7 +128,7 @@ class CaravanaController {
         usuarioId,
         caravanaId,
         mes,
-        ano
+        ano,
       );
       res.status(200).json({ caravanaId, usuarioId, multiplicador });
     } catch (error) {

@@ -44,7 +44,7 @@ describe("EventoService", () => {
         nome,
         local,
         data,
-        descricao
+        descricao,
       );
 
       expect(resultado).toEqual(eventoCriadoMock);
@@ -56,43 +56,43 @@ describe("EventoService", () => {
         false,
         false,
         [],
-        []
+        [],
       );
     });
 
     it("deve lançar um erro se algum campo obrigatório estiver faltando", async () => {
       await expect(
-        EventoService.criarEvento(null, local, data, descricao)
+        EventoService.criarEvento(null, local, data, descricao),
       ).rejects.toThrow("Todos os campos são obrigatórios");
 
       await expect(
-        EventoService.criarEvento(nome, local, null, descricao)
+        EventoService.criarEvento(nome, local, null, descricao),
       ).rejects.toThrow("Todos os campos são obrigatórios");
 
       expect(
-        mockEventoRepository.obterPorNomeLocalEData
+        mockEventoRepository.obterPorNomeLocalEData,
       ).not.toHaveBeenCalled();
     });
 
     it("deve lançar um erro se a data for inválida", async () => {
       await expect(
-        EventoService.criarEvento(nome, local, "data-invalida", descricao)
+        EventoService.criarEvento(nome, local, "data-invalida", descricao),
       ).rejects.toThrow("Data inválida");
 
       expect(
-        mockEventoRepository.obterPorNomeLocalEData
+        mockEventoRepository.obterPorNomeLocalEData,
       ).not.toHaveBeenCalled();
     });
 
     it("deve lançar um erro se já existir um evento duplicado", async () => {
       mockEventoRepository.obterPorNomeLocalEData.mockResolvedValue(
-        eventoCriadoMock
+        eventoCriadoMock,
       );
 
       await expect(
-        EventoService.criarEvento(nome, local, data, descricao)
+        EventoService.criarEvento(nome, local, data, descricao),
       ).rejects.toThrow(
-        "Um evento com o mesmo nome e local já está agendado para esta data."
+        "Um evento com o mesmo nome e local já está agendado para esta data.",
       );
       expect(mockEventoRepository.novoEvento).not.toHaveBeenCalled();
     });
@@ -129,7 +129,7 @@ describe("EventoService", () => {
       mockEventoRepository.obterPorId.mockResolvedValue(null);
 
       await expect(EventoService.obterPorId(999)).rejects.toThrow(
-        "Evento não encontrado"
+        "Evento não encontrado",
       );
     });
   });
@@ -144,7 +144,7 @@ describe("EventoService", () => {
 
       expect(resultado).toEqual(eventoMock);
       expect(mockEventoRepository.obterPorNome).toHaveBeenCalledWith(
-        "Show Teste"
+        "Show Teste",
       );
     });
 
@@ -152,7 +152,7 @@ describe("EventoService", () => {
       mockEventoRepository.obterPorNome.mockResolvedValue(null);
 
       await expect(
-        EventoService.obterPorNome("Show Inexistente")
+        EventoService.obterPorNome("Show Inexistente"),
       ).rejects.toThrow("Evento não encontrado");
     });
   });
@@ -167,7 +167,7 @@ describe("EventoService", () => {
 
       expect(resultado).toEqual(eventoMock);
       expect(mockEventoRepository.obterPorLocal).toHaveBeenCalledWith(
-        "Parque Central"
+        "Parque Central",
       );
     });
 
@@ -175,7 +175,7 @@ describe("EventoService", () => {
       mockEventoRepository.obterPorLocal.mockResolvedValue(null);
 
       await expect(
-        EventoService.obterPorLocal("Local Inexistente")
+        EventoService.obterPorLocal("Local Inexistente"),
       ).rejects.toThrow("Evento não encontrado");
     });
   });

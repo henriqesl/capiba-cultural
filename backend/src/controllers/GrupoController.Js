@@ -14,7 +14,7 @@ class GrupoController {
       const grupo = await this.grupoService.criarGrupo(
         nome,
         dataInicio,
-        dataFim
+        dataFim,
       );
       res.status(201).json({
         mensagem: `Grupo ${grupo.nome} criado com sucesso!`,
@@ -66,7 +66,7 @@ class GrupoController {
 
       const grupoAtualizado = await this.grupoService.adicionarMembro(
         Number(id),
-        usuarioId
+        usuarioId,
       );
       res.status(200).json({
         mensagem: `Usuário ${usuario.nome} adicionado ao grupo ${grupoAtualizado.nome}`,

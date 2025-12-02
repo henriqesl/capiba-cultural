@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const Usuario = require("./usuario");
+const Usuario = require("./Usuario");
 
 class GrupoCompeticao {
   async novoGrupoCompeticao(
