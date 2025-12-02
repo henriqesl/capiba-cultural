@@ -64,7 +64,7 @@ describe("UsuarioService", () => {
         nome,
         email,
         senha,
-        cpf
+        cpf,
       );
 
       expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
@@ -73,7 +73,7 @@ describe("UsuarioService", () => {
         nome,
         email,
         "senha_hash_mock",
-        cpf
+        cpf,
       );
       expect(resultado.senha).toBeUndefined();
       expect(resultado.email).toBe(email);
@@ -81,7 +81,7 @@ describe("UsuarioService", () => {
 
     it("deve lançar um erro se algum campo obrigatório estiver faltando", async () => {
       await expect(
-        usuarioService.criarUsuario(nome, email, null, cpf)
+        usuarioService.criarUsuario(nome, email, null, cpf),
       ).rejects.toThrow("Todos os campos são obrigatórios");
     });
 
@@ -89,7 +89,7 @@ describe("UsuarioService", () => {
       mockUsuarioRepository.buscarEmail.mockResolvedValue(usuarioCriadoMock);
 
       await expect(
-        usuarioService.criarUsuario(nome, email, senha, cpf)
+        usuarioService.criarUsuario(nome, email, senha, cpf),
       ).rejects.toThrow("E-mail já cadastrado");
       expect(mockUsuarioRepository.novoUsuario).not.toHaveBeenCalled();
     });
@@ -116,7 +116,7 @@ describe("UsuarioService", () => {
       expect(jwt.sign).toHaveBeenCalledWith(
         { id: usuarioMock.id, nome: usuarioMock.nome },
         "secret_teste",
-        { expiresIn: "8h" }
+        { expiresIn: "8h" },
       );
       expect(resultado).toEqual({
         token: "mocked_jwt_token",
@@ -128,7 +128,7 @@ describe("UsuarioService", () => {
       mockUsuarioRepository.buscarEmail.mockResolvedValue(null);
 
       await expect(
-        usuarioService.autenticarUsuario(email, senha)
+        usuarioService.autenticarUsuario(email, senha),
       ).rejects.toThrow("Credenciais inválidas");
       expect(bcrypt.compare).not.toHaveBeenCalled();
     });
@@ -138,7 +138,7 @@ describe("UsuarioService", () => {
       bcrypt.compare.mockResolvedValue(false);
 
       await expect(
-        usuarioService.autenticarUsuario(email, senha)
+        usuarioService.autenticarUsuario(email, senha),
       ).rejects.toThrow("Credenciais inválidas");
       expect(jwt.sign).not.toHaveBeenCalled();
     });
@@ -174,7 +174,7 @@ describe("UsuarioService", () => {
 
       const resultado = await usuarioService.atualizarUsuario(
         userId,
-        dadosComCampoProibido
+        dadosComCampoProibido,
       );
 
       expect(resultado).toEqual(usuarioAtualizadoMock);
@@ -188,7 +188,7 @@ describe("UsuarioService", () => {
       mockUsuarioRepository.buscarId.mockResolvedValue(null);
 
       await expect(
-        usuarioService.atualizarUsuario(999, dadosNovos)
+        usuarioService.atualizarUsuario(999, dadosNovos),
       ).rejects.toThrow("Usuário não encontrado");
     });
 
@@ -197,7 +197,7 @@ describe("UsuarioService", () => {
       const dadosInvalidos = { saldoMoedaCapiba: 100, grupoId: 5 };
 
       await expect(
-        usuarioService.atualizarUsuario(userId, dadosInvalidos)
+        usuarioService.atualizarUsuario(userId, dadosInvalidos),
       ).rejects.toThrow("Nenhum campo válido para atualização");
     });
   });
@@ -217,7 +217,7 @@ describe("UsuarioService", () => {
       mockUsuarioRepository.buscarId.mockResolvedValue(null);
 
       await expect(usuarioService.obterPorId(999)).rejects.toThrow(
-        "Usuário não encontrado"
+        "Usuário não encontrado",
       );
     });
   });
@@ -235,23 +235,23 @@ describe("UsuarioService", () => {
 
       const resultado = await usuarioService.adicionarMoedas(
         userId,
-        quantidade
+        quantidade,
       );
 
       expect(mockUsuarioRepository.getSaldo).toHaveBeenCalledWith(userId);
       expect(mockUsuarioRepository.setSaldo).toHaveBeenCalledWith(
         userId,
-        novoSaldoEsperado
+        novoSaldoEsperado,
       );
       expect(resultado).toEqual(usuarioAtualizadoMock);
     });
 
     it("deve lançar erro se a quantidade for zero ou negativa", async () => {
       await expect(usuarioService.adicionarMoedas(userId, 0)).rejects.toThrow(
-        "Valor adicionado não pode ser zero ou negativo"
+        "Valor adicionado não pode ser zero ou negativo",
       );
       await expect(usuarioService.adicionarMoedas(userId, -10)).rejects.toThrow(
-        "Valor adicionado não pode ser zero ou negativo"
+        "Valor adicionado não pode ser zero ou negativo",
       );
       expect(mockUsuarioRepository.getSaldo).not.toHaveBeenCalled();
     });
@@ -270,13 +270,13 @@ describe("UsuarioService", () => {
 
       const resultado = await usuarioService.gastarMoedas(
         userId,
-        quantidadeGasta
+        quantidadeGasta,
       );
 
       expect(mockUsuarioRepository.getSaldo).toHaveBeenCalledWith(userId);
       expect(mockUsuarioRepository.setSaldo).toHaveBeenCalledWith(
         userId,
-        novoSaldoEsperado
+        novoSaldoEsperado,
       );
       expect(resultado).toEqual(usuarioAtualizadoMock);
     });
@@ -284,7 +284,7 @@ describe("UsuarioService", () => {
     it("deve lançar erro se a quantidade for zero ou negativa", async () => {
       mockUsuarioRepository.getSaldo.mockResolvedValue(saldoAtual);
       await expect(usuarioService.gastarMoedas(userId, 0)).rejects.toThrow(
-        "Quantidade não pode ser zero ou negativa"
+        "Quantidade não pode ser zero ou negativa",
       );
       expect(mockUsuarioRepository.setSaldo).not.toHaveBeenCalled();
     });
@@ -294,7 +294,7 @@ describe("UsuarioService", () => {
       const quantidadeExcedente = 150;
 
       await expect(
-        usuarioService.gastarMoedas(userId, quantidadeExcedente)
+        usuarioService.gastarMoedas(userId, quantidadeExcedente),
       ).rejects.toThrow("Usuário não pode gastar mais moedas do que tem");
       expect(mockUsuarioRepository.setSaldo).not.toHaveBeenCalled();
     });
@@ -319,7 +319,7 @@ describe("UsuarioService", () => {
       mockUsuarioRepository.buscarId.mockResolvedValue(null);
 
       await expect(usuarioService.removerUsuario(999)).rejects.toThrow(
-        "Usuário com ID 999 não encontrado."
+        "Usuário com ID 999 não encontrado.",
       );
       expect(mockUsuarioRepository.removerUsuario).not.toHaveBeenCalled();
     });

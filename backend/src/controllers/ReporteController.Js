@@ -18,7 +18,7 @@ class ReporteController {
       const reporte = await this.reporteService.criarOuConfirmarReporte(
         usuarioId,
         evento,
-        descricao
+        descricao,
       );
       res.status(201).json({
         mensagem: `Reporte sobre o evento "${evento.nome}" criado ou confirmado com sucesso!`,
@@ -70,11 +70,9 @@ class ReporteController {
       const reportes = await this.reporteService.listarPorUsuario(usuarioId);
       res.status(200).json(reportes);
     } catch (error) {
-      res
-        .status(400)
-        .json({
-          erro: `Erro ao listar reportes por usuário: ${error.message}`,
-        });
+      res.status(400).json({
+        erro: `Erro ao listar reportes por usuário: ${error.message}`,
+      });
     }
   }
 
@@ -100,11 +98,9 @@ class ReporteController {
         await this.reporteService.listarEventosMaisReportados();
       res.status(200).json(eventosMaisReportados);
     } catch (error) {
-      res
-        .status(400)
-        .json({
-          erro: `Erro ao listar eventos mais reportados: ${error.message}`,
-        });
+      res.status(400).json({
+        erro: `Erro ao listar eventos mais reportados: ${error.message}`,
+      });
     }
   }
 }

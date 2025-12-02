@@ -40,7 +40,7 @@ describe("CheckInService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPrismaClient.$transaction.mockImplementation((callback) =>
-      callback(mockTransaction)
+      callback(mockTransaction),
     );
   });
 
@@ -63,11 +63,11 @@ describe("CheckInService", () => {
       mockEventoRepository.obterPorId.mockResolvedValue(null);
 
       await expect(
-        CheckInService.realizarCheckIn(usuarioId, 999)
+        CheckInService.realizarCheckIn(usuarioId, 999),
       ).rejects.toThrow("Evento inválido ou não encontrado.");
 
       expect(
-        mockCheckInRepository.buscarPorUsuarioEEvento
+        mockCheckInRepository.buscarPorUsuarioEEvento,
       ).not.toHaveBeenCalled();
       expect(mockPrismaClient.$transaction).not.toHaveBeenCalled();
     });
@@ -75,11 +75,11 @@ describe("CheckInService", () => {
     it("deve lançar um erro se o check-in já tiver sido realizado", async () => {
       mockEventoRepository.obterPorId.mockResolvedValue(eventoMockComMoedas);
       mockCheckInRepository.buscarPorUsuarioEEvento.mockResolvedValue(
-        novoCheckInMock
+        novoCheckInMock,
       );
 
       await expect(
-        CheckInService.realizarCheckIn(usuarioId, eventoId)
+        CheckInService.realizarCheckIn(usuarioId, eventoId),
       ).rejects.toThrow("Você já realizou o check-in neste evento.");
 
       expect(mockPrismaClient.$transaction).not.toHaveBeenCalled();
@@ -96,7 +96,7 @@ describe("CheckInService", () => {
 
       const resultado = await CheckInService.realizarCheckIn(
         usuarioId,
-        eventoId
+        eventoId,
       );
 
       expect(mockPrismaClient.$transaction).toHaveBeenCalledTimes(1);

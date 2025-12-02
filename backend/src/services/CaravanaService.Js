@@ -15,7 +15,7 @@ class CaravanaService {
     return await this.caravanaRepository.criarCaravana(
       nome,
       eventoId,
-      (bonusPorParticipante = 10)
+      (bonusPorParticipante = 10),
     );
   }
 
@@ -55,7 +55,7 @@ class CaravanaService {
     usuarioIdParam,
     caravanaIdParam,
     mesParam,
-    anoParam
+    anoParam,
   ) {
     const usuarioId = Number(usuarioIdParam);
     const caravanaId = Number(caravanaIdParam);

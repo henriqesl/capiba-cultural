@@ -10,7 +10,7 @@ class GrupoService {
     dataInicio,
     dataFim,
     encerrado = false,
-    pontuacaoTotal = 0
+    pontuacaoTotal = 0,
   ) {
     if (!nome) throw new Error("Nome do grupo é obrigatório");
     7;
@@ -22,7 +22,7 @@ class GrupoService {
       dataInicio,
       dataFim,
       encerrado,
-      pontuacaoTotal
+      pontuacaoTotal,
     );
   }
 
@@ -56,7 +56,7 @@ class GrupoService {
     const membros = await this.grupoRepository.getMembros(id);
     const total = membros.reduce(
       (acc, membro) => acc + (membro.saldoMoedaCapiba || 0),
-      0
+      0,
     );
     await this.grupoRepository.setPontuacaoTotal(id, total);
   }

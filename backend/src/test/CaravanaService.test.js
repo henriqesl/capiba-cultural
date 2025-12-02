@@ -45,13 +45,13 @@ describe("CaravanaService", () => {
       expect(mockCaravanaRepository.criarCaravana).toHaveBeenCalledWith(
         nome,
         null,
-        10
+        10,
       );
     });
 
     it("deve lançar um erro se o nome for nulo ou vazio", async () => {
       await expect(CaravanaService.criarCaravana(null)).rejects.toThrow(
-        "Nome da caravana é obrigatório."
+        "Nome da caravana é obrigatório.",
       );
       expect(mockCaravanaRepository.criarCaravana).not.toHaveBeenCalled();
     });
@@ -87,7 +87,7 @@ describe("CaravanaService", () => {
       mockCaravanaRepository.obterPorId.mockResolvedValue(null);
 
       await expect(CaravanaService.obterPorId(999)).rejects.toThrow(
-        "Caravana não encontrada"
+        "Caravana não encontrada",
       );
     });
   });
@@ -106,19 +106,19 @@ describe("CaravanaService", () => {
         membros: [{ id: 5 }],
       });
       mockCaravanaRepository.obterPorId.mockResolvedValueOnce(
-        caravanaComMembroMock
+        caravanaComMembroMock,
       );
       mockCaravanaRepository.adicionarMembro.mockResolvedValue(true);
 
       const resultado = await CaravanaService.adicionarMembro(
         caravanaId,
-        usuarioId
+        usuarioId,
       );
 
       expect(mockCaravanaRepository.obterPorId).toHaveBeenCalledTimes(2);
       expect(mockCaravanaRepository.adicionarMembro).toHaveBeenCalledWith(
         caravanaId,
-        usuarioId
+        usuarioId,
       );
       expect(resultado).toEqual(caravanaComMembroMock);
     });
@@ -127,17 +127,17 @@ describe("CaravanaService", () => {
       mockCaravanaRepository.obterPorId.mockResolvedValue(null);
 
       await expect(
-        CaravanaService.adicionarMembro(999, usuarioId)
+        CaravanaService.adicionarMembro(999, usuarioId),
       ).rejects.toThrow("Grupo não encontrado.");
     });
 
     it("deve lançar um erro se o usuário já for membro da caravana", async () => {
       mockCaravanaRepository.obterPorId.mockResolvedValue(
-        caravanaComMembroMock
+        caravanaComMembroMock,
       );
 
       await expect(
-        CaravanaService.adicionarMembro(caravanaId, usuarioId)
+        CaravanaService.adicionarMembro(caravanaId, usuarioId),
       ).rejects.toThrow("Usuário já faz parte da caravana.");
       expect(mockCaravanaRepository.adicionarMembro).not.toHaveBeenCalled();
     });
@@ -157,7 +157,7 @@ describe("CaravanaService", () => {
       expect(resultado).toEqual(retornoMock);
       expect(mockCaravanaRepository.adicionarDestino).toHaveBeenCalledWith(
         1,
-        5
+        5,
       );
     });
   });
@@ -190,11 +190,11 @@ describe("CaravanaService", () => {
 
     it("deve lançar um erro se usuarioId ou caravanaId não forem números inteiros", async () => {
       await expect(
-        CaravanaService.calcularMultiplicador("a", caravanaId, mes, ano)
+        CaravanaService.calcularMultiplicador("a", caravanaId, mes, ano),
       ).rejects.toThrow("usuarioId e caravanaId devem ser números inteiros.");
 
       await expect(
-        CaravanaService.calcularMultiplicador(usuarioId, "b", mes, ano)
+        CaravanaService.calcularMultiplicador(usuarioId, "b", mes, ano),
       ).rejects.toThrow("usuarioId e caravanaId devem ser números inteiros.");
     });
 
@@ -202,7 +202,7 @@ describe("CaravanaService", () => {
       mockCaravanaRepository.obterPorId.mockResolvedValue(null);
 
       await expect(
-        CaravanaService.calcularMultiplicador(usuarioId, 999, mes, ano)
+        CaravanaService.calcularMultiplicador(usuarioId, 999, mes, ano),
       ).rejects.toThrow("Caravana não encontrada");
     });
 
@@ -229,7 +229,7 @@ describe("CaravanaService", () => {
         usuarioId,
         caravanaId,
         mes,
-        ano
+        ano,
       );
 
       expect(resultado).toBe(117);
@@ -263,7 +263,7 @@ describe("CaravanaService", () => {
         usuarioId,
         caravanaId,
         mes,
-        ano
+        ano,
       );
 
       expect(resultado).toBe(105);
@@ -289,19 +289,19 @@ describe("CaravanaService", () => {
       const startCurrent = new Date(
         mockDate.getFullYear(),
         mockDate.getMonth(),
-        1
+        1,
       );
       const endCurrent = new Date(
         mockDate.getFullYear(),
         mockDate.getMonth() + 1,
-        1
+        1,
       );
 
       const resultado = await CaravanaService.calcularMultiplicador(
         usuarioId,
         caravanaId,
         null,
-        null
+        null,
       );
 
       expect(resultado).toBe(115);
@@ -311,7 +311,7 @@ describe("CaravanaService", () => {
             data: { gte: startCurrent, lt: endCurrent },
             caravanas: { some: { id: caravanaId } },
           },
-        })
+        }),
       );
     });
 
@@ -332,7 +332,7 @@ describe("CaravanaService", () => {
         usuarioId,
         caravanaId,
         mes,
-        ano
+        ano,
       );
 
       expect(resultado).toBe(100);

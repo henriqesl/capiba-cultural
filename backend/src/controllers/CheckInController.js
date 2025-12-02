@@ -12,7 +12,7 @@ class CheckInController {
 
       const resultado = await checkInService.realizarCheckIn(
         usuarioId,
-        Number(eventoId)
+        Number(eventoId),
       );
 
       res.status(200).json({

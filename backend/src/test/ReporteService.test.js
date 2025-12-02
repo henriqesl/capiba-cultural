@@ -76,14 +76,14 @@ describe("ReporteService", () => {
 
     it("deve lançar erro se reportanteId ou eventoInput estiverem faltando", async () => {
       await expect(
-        reporteService.criarOuConfirmarReporte(null, eventoInput)
+        reporteService.criarOuConfirmarReporte(null, eventoInput),
       ).rejects.toThrow(
-        "Reportante e evento são obrigatórios para criar um reporte!"
+        "Reportante e evento são obrigatórios para criar um reporte!",
       );
       await expect(
-        reporteService.criarOuConfirmarReporte(reportanteId, null)
+        reporteService.criarOuConfirmarReporte(reportanteId, null),
       ).rejects.toThrow(
-        "Reportante e evento são obrigatórios para criar um reporte!"
+        "Reportante e evento são obrigatórios para criar um reporte!",
       );
     });
 
@@ -102,12 +102,12 @@ describe("ReporteService", () => {
 
       const novoReporteCriado = { id: 51, evento: novoEventoCriado };
       mockPrismaClient.reporteEvento.create.mockResolvedValue(
-        novoReporteCriado
+        novoReporteCriado,
       );
 
       const resultado = await reporteService.criarOuConfirmarReporte(
         reportanteId,
-        eventoInput
+        eventoInput,
       );
 
       expect(mockEventoService.criarEvento).toHaveBeenCalledWith(
@@ -116,10 +116,10 @@ describe("ReporteService", () => {
         new Date(eventoInput.data),
         eventoInput.descricao,
         false,
-        true
+        true,
       );
       expect(novoEventoCriado.setReportadoPorUsuario).toHaveBeenCalledWith(
-        true
+        true,
       );
       expect(mockPrismaClient.reporteEvento.create).toHaveBeenCalled();
       expect(resultado.mensagem).toBe("Novo evento reportado com sucesso.");
@@ -135,7 +135,7 @@ describe("ReporteService", () => {
         qtdConfirmacoes: 5,
       };
       mockPrismaClient.reporteEvento.findFirst.mockResolvedValue(
-        reporteParaAtualizar
+        reporteParaAtualizar,
       );
 
       const reporteAtualizadoMock = {
@@ -147,12 +147,12 @@ describe("ReporteService", () => {
         ],
       };
       mockPrismaClient.reporteEvento.update.mockResolvedValue(
-        reporteAtualizadoMock
+        reporteAtualizadoMock,
       );
 
       const resultado = await reporteService.criarOuConfirmarReporte(
         reportanteId,
-        eventoInput
+        eventoInput,
       );
 
       expect(mockPrismaClient.reporteEvento.update).toHaveBeenCalledWith(
@@ -162,10 +162,10 @@ describe("ReporteService", () => {
             reportantes: { connect: { id: reportanteId } },
             qtdConfirmacoes: 6,
           },
-        })
+        }),
       );
       expect(resultado.mensagem).toBe(
-        "Confirmação adicionada a um evento já reportado."
+        "Confirmação adicionada a um evento já reportado.",
       );
       expect(resultado.reporte).toEqual(reporteAtualizadoMock);
     });
@@ -178,17 +178,17 @@ describe("ReporteService", () => {
         reportantes: [{ id: reportanteId }, { id: 99 }],
       };
       mockPrismaClient.reporteEvento.findFirst.mockResolvedValue(
-        reporteJaConfirmado
+        reporteJaConfirmado,
       );
 
       const resultado = await reporteService.criarOuConfirmarReporte(
         reportanteId,
-        eventoInput
+        eventoInput,
       );
 
       expect(mockPrismaClient.reporteEvento.update).not.toHaveBeenCalled();
       expect(resultado.mensagem).toBe(
-        "Usuário já reportou/confirmou este evento."
+        "Usuário já reportou/confirmou este evento.",
       );
       expect(resultado.reporte).toEqual(reporteJaConfirmado);
     });
@@ -204,9 +204,9 @@ describe("ReporteService", () => {
       });
 
       await expect(
-        reporteService.criarOuConfirmarReporte(reportanteId, eventoInput)
+        reporteService.criarOuConfirmarReporte(reportanteId, eventoInput),
       ).rejects.toThrow(
-        "Você já enviou um reporte recentemente. Aguarde alguns minutos."
+        "Você já enviou um reporte recentemente. Aguarde alguns minutos.",
       );
       expect(mockPrismaClient.reporteEvento.create).not.toHaveBeenCalled();
     });
@@ -273,10 +273,10 @@ describe("ReporteService", () => {
       const resultado = await reporteService.removerReporte(reporteId);
 
       expect(mockReporteEventoRepository.buscarPorId).toHaveBeenCalledWith(
-        reporteId
+        reporteId,
       );
       expect(mockReporteEventoRepository.remover).toHaveBeenCalledWith(
-        reporteId
+        reporteId,
       );
       expect(resultado).toBe(true);
     });
@@ -294,7 +294,7 @@ describe("ReporteService", () => {
   describe("listarEventosMaisReportados", () => {
     it("deve retornar eventos ordenados por total de confirmações nas últimas 24h", async () => {
       const vinteQuatroHorasAtras = new Date(
-        MOCK_TIME.getTime() - 24 * 60 * 60 * 1000
+        MOCK_TIME.getTime() - 24 * 60 * 60 * 1000,
       );
 
       const reportesRecentesMock = [
@@ -305,7 +305,7 @@ describe("ReporteService", () => {
       ];
 
       mockPrismaClient.reporteEvento.findMany.mockResolvedValue(
-        reportesRecentesMock
+        reportesRecentesMock,
       );
 
       const resultado = await reporteService.listarEventosMaisReportados();
@@ -313,7 +313,7 @@ describe("ReporteService", () => {
       expect(mockPrismaClient.reporteEvento.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { dataReporte: { gte: vinteQuatroHorasAtras } },
-        })
+        }),
       );
 
       expect(resultado).toEqual([
