@@ -1,5 +1,8 @@
 const UsuarioService = require("../services/UsuarioService");
 const GrupoService = require("../services/GrupoService");
+const conecta = require("../services/ConectaAPI");
+const jwt = require("jsonwebtoken");
+
 
 class UsuarioController {
   constructor() {
@@ -14,7 +17,7 @@ class UsuarioController {
         nome,
         email,
         senha,
-        cpf,
+        cpf
       );
       res.status(201).json({
         mensagem: `Usuário ${usuario.nome} criado com sucesso!`,
@@ -27,16 +30,35 @@ class UsuarioController {
 
   async login(req, res) {
     const { email, senha } = req.body;
+
     try {
-      const resultado = await this.usuarioService.autenticarUsuario(
+      const usuario = await this.usuarioService.autenticarUsuario(
         email,
-        senha,
+        senha
       );
-      res.status(200).json(resultado);
+
+      const conectaToken = await conecta.autenticar(usuario.cpf, senha);
+
+      const token = jwt.sign(
+        { id: usuario.id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      res.status(200).json({
+        usuario,
+        token, 
+        conectaToken, 
+      });
+
     } catch (error) {
-      res.status(401).json({ erro: `Erro no login: ${error.message}` });
+      res.status(401).json({
+        erro: `Erro no login: ${error.message}`,
+      });
     }
   }
+
+  
 
   async listarUsuarios(req, res) {
     try {
@@ -73,7 +95,7 @@ class UsuarioController {
       }
       const usuario = await this.usuarioService.adicionarMoedas(
         Number(id),
-        quantidade,
+        quantidade
       );
       res.status(200).json({
         mensagem: `Adicionadas ${quantidade} moedas ao usuário ${usuario.nome}`,
@@ -95,7 +117,7 @@ class UsuarioController {
       }
       const usuario = await this.usuarioService.gastarMoedas(
         Number(id),
-        quantidade,
+        quantidade
       );
       res.status(200).json({
         mensagem: `Usuário ${usuario.nome} gastou ${quantidade} moedas`,

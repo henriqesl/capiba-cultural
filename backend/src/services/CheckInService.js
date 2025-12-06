@@ -1,47 +1,48 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
-
-const CheckInModel = require("../models/CheckIn");
-const EventoModel = require("../models/Evento");
+const EventoService = require('./EventoService');
+const UsuarioService = require('./UsuarioService');
+const ConectaAPI = require('./ConectaAPI');
 
 class CheckInService {
   constructor() {
-    this.checkInRepository = new CheckInModel();
-    this.eventoRepository = new EventoModel();
+    this.eventoService = EventoService;
+    this.usuarioService = UsuarioService;
+    this.conectaAPI = ConectaAPI;
   }
 
   async realizarCheckIn(usuarioId, eventoId) {
-    const evento = await this.eventoRepository.obterPorId(eventoId);
-    if (!evento) {
-      throw new Error("Evento inválido ou não encontrado.");
-    }
 
-    const checkInExistente =
-      await this.checkInRepository.buscarPorUsuarioEEvento(usuarioId, eventoId);
+    const usuario = await this.usuarioService.obterPorId(usuarioId);
+    if (!usuario) throw new Error("Usuário não encontrado");
 
-    if (checkInExistente) {
-      throw new Error("Você já realizou o check-in neste evento.");
-    }
+    const evento = await this.eventoService.obterPorId(eventoId);
+    if (!evento) throw new Error("Evento não encontrado");
 
-    const resultado = await prisma.$transaction(async (tx) => {
-      // A. Cria o registro do check-in
-      const novoCheckIn = await tx.checkIn.create({
-        data: { usuarioId, eventoId },
-      });
+    // 🔐 Login técnico no Conecta
+    await this.conectaAPI.autenticar(
+      process.env.CONECTA_USER,
+      process.env.CONECTA_PASSWORD
+    );
 
-      const moedasGanhas = evento.moedasDistribuidas || 10;
+    const payload = {
+      userIdentifier: usuario.cpf,
+      eventName: evento.nome,
+      checkInDateTime: new Date().toISOString(),
+      cidade: "Recife",
+      bairro: "Centro",
+      rua: evento.local,
+      identifier: `EVENTO-${evento.id}-USER-${usuario.id}`,
+      document: usuario.cpf
+    };
 
-      await tx.usuario.update({
-        where: { id: usuarioId },
-        data: {
-          saldoMoedaCapiba: { increment: moedasGanhas },
-        },
-      });
+    const respostaConecta = await this.conectaAPI.fazerCheckIn(payload);
 
-      return { checkIn: novoCheckIn, moedasGanhas };
-    });
+    const moedasGanhas = evento.pequenoPorte ? 10 : 20;
+    await this.usuarioService.adicionarMoedas(usuarioId, moedasGanhas);
 
-    return resultado;
+    return {
+      moedasGanhas,
+      conecta: respostaConecta
+    };
   }
 }
 

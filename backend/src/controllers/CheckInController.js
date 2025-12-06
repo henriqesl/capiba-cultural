@@ -5,23 +5,23 @@ class CheckInController {
     const usuarioId = req.usuarioId;
     const { eventoId } = req.body;
 
+  async realizarCheckIn(req, res) {
     try {
-      if (!eventoId) {
-        return res.status(400).json({ erro: "ID do evento é obrigatório." });
-      }
+      const usuarioId = req.usuarioId; 
+      const { eventoId } = req.body;
 
       const resultado = await checkInService.realizarCheckIn(
         usuarioId,
-        Number(eventoId),
+        Number(eventoId)
       );
 
-      res.status(200).json({
-        mensagem: "Check-in realizado com sucesso!",
-        moedasGanhas: resultado.moedasGanhas,
-        checkIn: resultado.checkIn,
+      return res.status(200).json({
+        mensagem: "Check-in realizado com sucesso",
+        ...resultado
       });
+
     } catch (error) {
-      res.status(400).json({ erro: `Erro no Check-in: ${error.message}` });
+      return res.status(400).json({ erro: error.message });
     }
   }
 }
