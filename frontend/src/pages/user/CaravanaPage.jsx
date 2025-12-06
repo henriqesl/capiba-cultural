@@ -1,92 +1,109 @@
 import React from 'react';
-// 1. Removi imports antigos e adicionei os da Lucide
-import { ArrowLeft, Plus, Search } from 'lucide-react';
+// Adicionei 'Crown' nas importações
+import { ArrowLeft, Plus, Search, Users, Calendar, ChevronRight, Crown } from 'lucide-react';
 
-import Button from '../../components/Button.jsx';
-// Removi o componente 'Icon' antigo pois não precisamos mais dele
-// import { Icon } from '../../components/user/UserShared'; 
-import { CaravanaItem } from '../../components/caravana/CaravanaItem';
+const CaravanaPage = ({ caravanas = [] }) => {
+  
+  const handleBack = () => {
+    window.location.hash = '#/perfil';
+  };
 
-const CaravanaPage = () => {
-  const minhasCaravanas = [
-    { id: 1, nome: "Caravana do Rock", evento: "Show de Rock Nacional", data: "15/11", membros: 15, dono: true },
-    { id: 2, nome: "Busão do Jazz", evento: "Festival de Jazz", data: "20/11", membros: 42, dono: false },
-    { id: 3, nome: "Van Cultural", evento: "Peça 'Auto da Compadecida'", data: "05/12", membros: 4, dono: false },
-  ];
+  const handleOpenDetails = (id) => {
+    window.location.hash = `#/perfil/caravana/${id}`;
+  };
+
+  const handleCreateNew = () => {
+    window.location.hash = '#/perfil/caravana/criar';
+  };
+
+  const handleSearch = () => {
+    alert("Funcionalidade de busca em breve!");
+  };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
-      
-      <div className="w-full max-w-md md:max-w-4xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col min-h-screen md:min-h-fit">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-10">
+      <div className="w-full max-w-md bg-white min-h-screen flex flex-col">
         
-        {/* === HEADER MOBILE === */}
-        <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
-          <a href="#/perfil" className="hover:opacity-80">
-            {/* Ícone Voltar Mobile */}
+        {/* Header */}
+        <header className="p-4 flex items-center border-b border-gray-100">
+          <button onClick={handleBack} className="p-2 -ml-2 hover:bg-gray-100 rounded-full text-gray-600">
             <ArrowLeft className="w-6 h-6" />
-          </a>
-          <h1 className="text-xl font-bold">Minhas Caravanas</h1>
-          <div className="w-6"></div>
+          </button>
+          <h1 className="text-lg font-bold text-gray-800 ml-2">Minhas Caravanas</h1>
         </header>
 
-        {/* === HEADER DESKTOP === */}
-        <header className="hidden md:flex p-4 items-center border-b border-gray-200">
-          <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
-            {/* Ícone Voltar Desktop */}
-            <ArrowLeft className="w-6 h-6" />
-          </a>
-          <h1 className="text-xl font-bold text-gray-800 ml-4">Minhas Caravanas</h1>
-        </header>
-
-        <main className="p-6 pb-24 md:p-8 flex flex-col h-full">
+        {/* ÁREA DE AÇÕES */}
+        <div className="p-4 grid grid-cols-2 gap-3">
+          <button 
+            onClick={handleSearch}
+            className="flex items-center justify-center gap-2 p-3 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors"
+          >
+            <Search className="w-5 h-5" />
+            Buscar
+          </button>
           
-          {/* Seção de Listagem */}
-          <section className="mb-8 grow">
-            <div className="flex justify-between items-end mb-4 border-b border-gray-200 pb-2">
-              <h2 className="text-lg font-bold text-gray-800">Próximas Viagens</h2>
-              <span className="text-sm text-gray-500">{minhasCaravanas.length} ativas</span>
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              {minhasCaravanas.map(c => (
-                <CaravanaItem
-                  key={c.id}
-                  name={c.nome}
-                  eventName={c.evento}
-                  date={c.data} 
-                  membersCount={c.membros}
-                  isOwner={c.dono}
-                  onClick={() => window.location.hash = `#/perfil/caravana/${c.id}`}
-                />
-              ))}
-            </div>
-          </section>
+          <button 
+            onClick={handleCreateNew}
+            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Criar Nova
+          </button>
+        </div>
 
-          {/* Botões de Ação */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto pt-4 border-t border-gray-100">
-            
-            {/* Botão Criar */}
-            <Button 
-                variant="primary" 
-                className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center gap-2 shadow-md border-none!"
-            >
-              {/* Ícone Plus adicionado aqui */}
-              <Plus className="w-5 h-5" />
-              <span>Criar Nova Caravana</span>
-            </Button>
-            
-            {/* Botão Buscar */}
-            <Button 
-                variant="primary" 
-                className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center gap-2 shadow-md border-none!"
-            >
-              {/* Troquei o emoji 🔍 pelo componente Search para manter o padrão */}
-              <Search className="w-5 h-5" />
-              <span>Buscar Caravanas</span>
-            </Button>
-          </section>
+        {/* Lista de Caravanas */}
+        <div className="px-4 pb-4 flex flex-col gap-3">
+          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mt-2 mb-1">
+            Seus Grupos
+          </h2>
 
-        </main>
+          {caravanas.length === 0 ? (
+            <div className="py-10 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
+              <p className="text-gray-500 text-sm">Você não participa de nenhuma caravana.</p>
+            </div>
+          ) : (
+            caravanas.map((c) => (
+              <div 
+                key={c.id} 
+                onClick={() => handleOpenDetails(c.id)}
+                className="bg-white border border-gray-100 p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer flex justify-between items-center group"
+              >
+                <div>
+                  <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+                    {c.nome}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-2">{c.evento}</p>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                      <Calendar className="w-3 h-3" />
+                      {c.data}
+                    </div>
+
+                    {/* Badge de ORGANIZADOR (com coroa) */}
+                    {c.souDono && (
+                      <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                        <Crown className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                        <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wide">
+                          Organizador
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-center text-gray-400">
+                     <Users className="w-5 h-5 mb-1" />
+                     <span className="text-xs font-bold">{c.membrosCount}</span>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-300" />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
       </div>
     </div>
   );
