@@ -1,12 +1,14 @@
 const EventoService = require("./EventoService");
 const UsuarioService = require("./UsuarioService");
 const ConectaAPI = require("./ConectaAPI");
+const GrupoService = require("./GrupoService");
 
 class CheckInService {
   constructor() {
     this.eventoService = EventoService;
     this.usuarioService = UsuarioService;
     this.conectaAPI = ConectaAPI;
+    this.grupoService = GrupoService;
   }
 
   async realizarCheckIn(usuarioId, eventoId) {
