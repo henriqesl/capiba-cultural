@@ -1,7 +1,10 @@
 import React from 'react';
-import { ICONS } from '../../utils/icons.jsx';
+// 1. Removi imports antigos e adicionei os da Lucide
+import { ArrowLeft, Plus, Search } from 'lucide-react';
+
 import Button from '../../components/Button.jsx';
-import { Icon } from '../../components/user/UserShared';
+// Removi o componente 'Icon' antigo pois não precisamos mais dele
+// import { Icon } from '../../components/user/UserShared'; 
 import { CaravanaItem } from '../../components/caravana/CaravanaItem';
 
 const CaravanaPage = () => {
@@ -19,7 +22,8 @@ const CaravanaPage = () => {
         {/* === HEADER MOBILE === */}
         <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
           <a href="#/perfil" className="hover:opacity-80">
-            <Icon path={ICONS.arrowLeft} />
+            {/* Ícone Voltar Mobile */}
+            <ArrowLeft className="w-6 h-6" />
           </a>
           <h1 className="text-xl font-bold">Minhas Caravanas</h1>
           <div className="w-6"></div>
@@ -28,7 +32,8 @@ const CaravanaPage = () => {
         {/* === HEADER DESKTOP === */}
         <header className="hidden md:flex p-4 items-center border-b border-gray-200">
           <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
-            <Icon path={ICONS.arrowLeft} className="w-6 h-6" />
+            {/* Ícone Voltar Desktop */}
+            <ArrowLeft className="w-6 h-6" />
           </a>
           <h1 className="text-xl font-bold text-gray-800 ml-4">Minhas Caravanas</h1>
         </header>
@@ -65,7 +70,8 @@ const CaravanaPage = () => {
                 variant="primary" 
                 className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center gap-2 shadow-md border-none!"
             >
-              <Icon path={ICONS.plus} className="w-5 h-5" />
+              {/* Ícone Plus adicionado aqui */}
+              <Plus className="w-5 h-5" />
               <span>Criar Nova Caravana</span>
             </Button>
             
@@ -74,7 +80,8 @@ const CaravanaPage = () => {
                 variant="primary" 
                 className="bg-blue-600! text-white! hover:bg-blue-700! flex justify-center items-center gap-2 shadow-md border-none!"
             >
-              <span className="text-xl">🔍</span> 
+              {/* Troquei o emoji 🔍 pelo componente Search para manter o padrão */}
+              <Search className="w-5 h-5" />
               <span>Buscar Caravanas</span>
             </Button>
           </section>
