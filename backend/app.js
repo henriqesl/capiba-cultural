@@ -2,14 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const caravanaRoutes = require("./routes/caravanaRoutes");
-const eventoRoutes = require("./routes/eventoRoutes");
-const grupoRoutes = require("./routes/grupoRoutes");
-const reporteRoutes = require("./routes/reporteRoutes");
-const usuarioRoutes = require("./routes/usuarioRoutes");
-const checkInRoutes = require("./routes/checkInRoutes");
+const caravanaRoutes = require("./src/routes/CaravanaRoutes");
+const eventoRoutes = require("./src/routes/EventoRoutes");
+const grupoRoutes = require("./src/routes/GrupoRoutes");
+const reporteRoutes = require("./src/routes/ReporteRoutes");
+const usuarioRoutes = require("./src/routes/UsuarioRoutes");
+const checkInRoutes = require("./src/routes/CheckInRoutes");
 
-const authMiddleware = require("./middleware/authMiddleware");
+const authMiddleware = require("./src/middleware/authMiddleware");
 
 const app = express();
 
