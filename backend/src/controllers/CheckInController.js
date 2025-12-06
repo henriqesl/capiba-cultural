@@ -2,12 +2,8 @@ const checkInService = require("../services/CheckInService");
 
 class CheckInController {
   async realizarCheckIn(req, res) {
-    const usuarioId = req.usuarioId;
-    const { eventoId } = req.body;
-
-  async realizarCheckIn(req, res) {
     try {
-      const usuarioId = req.usuarioId; 
+      const usuarioId = req.usuarioId;
       const { eventoId } = req.body;
 
       const resultado = await checkInService.realizarCheckIn(
@@ -17,9 +13,8 @@ class CheckInController {
 
       return res.status(200).json({
         mensagem: "Check-in realizado com sucesso",
-        ...resultado
+        ...resultado,
       });
-
     } catch (error) {
       return res.status(400).json({ erro: error.message });
     }

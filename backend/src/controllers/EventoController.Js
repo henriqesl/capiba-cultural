@@ -18,7 +18,7 @@ class EventoController {
         data,
         descricao,
         pequenoPorte,
-        reportadoPorUsuario,
+        reportadoPorUsuario
       );
       res.status(201).json({
         mensagem: `Evento criado com sucesso: ${evento.nome}`,
@@ -71,30 +71,29 @@ class EventoController {
         .status(400)
         .json({ erro: `Erro ao remover evento: ${error.message}` });
     }
+  }
 
-       async enviarCheckInParaConecta(req, res) {
-        try {
-            await conecta.autenticar(req.body.login, req.body.senha);
+  async enviarCheckInParaConecta(req, res) {
+    try {
+      await conecta.autenticar(req.body.login, req.body.senha);
 
-            const dados = {
-                userIdentifier: req.body.userIdentifier,
-                eventName: req.body.eventName,
-                checkInDateTime: new Date().toISOString(),
-                cidade: req.body.cidade,
-                bairro: req.body.bairro,
-                rua: req.body.rua,
-                identifier: req.body.identifier,
-                document: req.body.document
-            };
+      const dados = {
+        userIdentifier: req.body.userIdentifier,
+        eventName: req.body.eventName,
+        checkInDateTime: new Date().toISOString(),
+        cidade: req.body.cidade,
+        bairro: req.body.bairro,
+        rua: req.body.rua,
+        identifier: req.body.identifier,
+        document: req.body.document,
+      };
 
-            const resposta = await conecta.fazerCheckIn(dados);
-            return res.json(resposta);
-
-        } catch (error) {
-            return res.status(500).json({ erro: error.message });
-        }
+      const resposta = await conecta.fazerCheckIn(dados);
+      return res.json(resposta);
+    } catch (error) {
+      return res.status(500).json({ erro: error.message });
     }
-
+  }
 }
 
 module.exports = EventoController;
