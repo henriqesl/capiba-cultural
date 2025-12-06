@@ -1,22 +1,24 @@
 import React from 'react';
-import { Icon } from './UserShared'; // Reutiliza o Icon do Shared
-import { ICONS } from '../../utils/icons';
+import { ChevronRight } from 'lucide-react'; // Importe a setinha também
 
-export const NavCard = ({ href, iconPath, title, description }) => (
-  <a 
-    href={href}
-    className="
-      flex items-center p-6 bg-white rounded-2xl shadow-lg 
-      transition-all duration-300 transform 
-      hover:shadow-xl hover:-translate-y-1"
-  >
-    <div className="p-4 bg-blue-100 rounded-full">
-      <Icon path={iconPath} className="w-8 h-8 text-blue-600" />
-    </div>
-    <div className="ml-5">
-      <h3 className="text-xl font-bold text-gray-800">{title}</h3>
-      <p className="text-gray-500">{description}</p>
-    </div>
-    <Icon path={ICONS.arrowLeft} className="w-6 h-6 text-gray-400 ml-auto transform rotate-180" />
-  </a>
-);
+export const NavCard = ({ href, icon: Icon, title, description }) => {
+    return (
+        <a 
+            href={href} 
+            className="flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 transition-transform hover:scale-[1.02] hover:shadow-md group"
+        >
+            {/* Renderiza o ícone da Lucide passado via prop */}
+            <div className="bg-blue-50 p-3 rounded-full mr-4 group-hover:bg-blue-100 transition-colors">
+                <Icon className="w-6 h-6 text-blue-600" />
+            </div>
+            
+            <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-800">{title}</h3>
+                <p className="text-sm text-gray-500">{description}</p>
+            </div>
+
+            {/* Setinha indicando clique */}
+            <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-blue-500 transition-colors" />
+        </a>
+    );
+};
