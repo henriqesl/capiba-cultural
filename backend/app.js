@@ -13,7 +13,16 @@ const authMiddleware = require("./src/middleware/authMiddleware");
 
 const app = express();
 
-app.use(cors());
+const allowedOrigin = "http://localhost:5173";
+
+app.use(
+  cors({
+    origin: allowedOrigin,
+    methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true,
+  })
+);
 
 app.use(bodyParser.json());
 

@@ -9,7 +9,7 @@ class GrupoCompeticao {
     dataFim,
     encerrado = false,
     pontuacaoTotal = 0,
-    participantesIds = [],
+    participantesIds = []
   ) {
     return await prisma.grupoCompeticao.create({
       data: {
@@ -174,6 +174,34 @@ class GrupoCompeticao {
         vencedorId: vencedorId,
       },
       include: { vencedor: true },
+    });
+  }
+
+  async obterGrupoPorUsuarioId(usuarioId) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: usuarioId },
+      select: { grupoCompeticaoId: true },
+    });
+
+    if (!usuario || !usuario.grupoCompeticaoId) {
+      return null;
+    }
+
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: usuario.grupoCompeticaoId },
+      select: { id: true, encerrado: true },
+    });
+  }
+
+  async incrementarPontuacao(grupoId, valor) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: grupoId },
+      data: {
+        pontuacaoTotal: {
+          increment: valor,
+        },
+      },
+      select: { id: true, pontuacaoTotal: true },
     });
   }
 }
