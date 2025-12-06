@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon } from '../user/PersonalComponents.jsx';
+import { Icon } from '../user/UserShared.jsx';
 import { ICONS } from '../../utils/icons.jsx';
 
 const NavItem = ({ href, iconPath, label, active = false }) => {

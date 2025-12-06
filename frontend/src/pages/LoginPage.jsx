@@ -45,3 +45,16 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+/*
+  [INTEGRAÇÃO]
+  Rota: POST /usuarios/login (UsuarioRoutes.js)
+  
+  O que fazer:
+  1. Pegar email e senha dos inputs.
+  2. Mandar pro backend.
+  3. Se der certo (200 OK), o back devolve um token e o ID do usuário.
+  4. Salvar esse token no localStorage (é nosso crachá de acesso).
+  
+  Obs: O layout pede CPF, mas o backend valida por email. Ajustar um dos dois.
+*/

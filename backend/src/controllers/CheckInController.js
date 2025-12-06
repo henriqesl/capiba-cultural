@@ -1,6 +1,9 @@
-const checkInService = require('../services/CheckInService');
+const checkInService = require("../services/CheckInService");
 
 class CheckInController {
+  async realizarCheckIn(req, res) {
+    const usuarioId = req.usuarioId;
+    const { eventoId } = req.body;
 
   async realizarCheckIn(req, res) {
     try {
