@@ -18,9 +18,23 @@ const mockCheckInRepository = {
   buscarPorUsuarioEEvento: jest.fn(),
 };
 
-const mockEventoRepository = {
+const mockConectaAPI = {
+  autenticar: jest.fn().mockResolvedValue(true),
+  fazerCheckIn: jest.fn().mockResolvedValue({ status: "OK" }),
+};
+
+const mockUsuarioService = {
+  obterPorId: jest.fn(),
+  adicionarMoedas: jest.fn().mockResolvedValue(true),
+};
+
+const mockEventoService = {
   obterPorId: jest.fn(),
 };
+
+jest.mock("../services/UsuarioService", () => mockUsuarioService);
+jest.mock("../services/EventoService", () => mockEventoService);
+jest.mock("../services/ConectaAPI", () => mockConectaAPI);
 
 jest.mock("../models/CheckIn", () => {
   return jest.fn().mockImplementation(() => {
@@ -28,113 +42,114 @@ jest.mock("../models/CheckIn", () => {
   });
 });
 
-jest.mock("../models/Evento", () => {
-  return jest.fn().mockImplementation(() => {
-    return mockEventoRepository;
-  });
-});
-
 const CheckInService = require("../services/CheckInService");
 
 describe("CheckInService", () => {
+  const usuarioId = 1;
+  const eventoId = 10;
+
+  const usuarioMock = {
+    id: usuarioId,
+    cpf: "12345678900",
+    nome: "Mock User",
+    saldoMoedaCapiba: 100,
+  };
+
+  const eventoMockNormal = {
+    id: eventoId,
+    nome: "Show",
+    local: "Praça",
+    pequenoPorte: false,
+  };
+
+  const eventoMockPequeno = {
+    id: eventoId,
+    nome: "Feira",
+    local: "Rua",
+    pequenoPorte: true,
+  };
+
+  const novoCheckInMock = { id: 100, usuarioId, eventoId };
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockPrismaClient.$transaction.mockImplementation((callback) =>
-      callback(mockTransaction),
+      callback(mockTransaction)
     );
+    mockUsuarioService.obterPorId.mockResolvedValue(usuarioMock);
   });
 
   describe("realizarCheckIn", () => {
-    const usuarioId = 1;
-    const eventoId = 10;
-    const eventoMockComMoedas = {
-      id: eventoId,
-      nome: "Show",
-      moedasDistribuidas: 50,
-    };
-    const eventoMockSemMoedas = {
-      id: eventoId,
-      nome: "Feira",
-      moedasDistribuidas: null,
-    };
-    const novoCheckInMock = { id: 100, usuarioId, eventoId };
+    it("deve lançar um erro se o usuário não for encontrado", async () => {
+      mockUsuarioService.obterPorId.mockResolvedValue(null);
+
+      await expect(
+        CheckInService.realizarCheckIn(999, eventoId)
+      ).rejects.toThrow("Usuário não encontrado");
+
+      expect(mockEventoService.obterPorId).not.toHaveBeenCalled();
+      expect(mockConectaAPI.autenticar).not.toHaveBeenCalled();
+    });
 
     it("deve lançar um erro se o evento não for encontrado", async () => {
-      mockEventoRepository.obterPorId.mockResolvedValue(null);
+      mockEventoService.obterPorId.mockResolvedValue(null);
 
       await expect(
-        CheckInService.realizarCheckIn(usuarioId, 999),
-      ).rejects.toThrow("Evento inválido ou não encontrado.");
+        CheckInService.realizarCheckIn(usuarioId, 999)
+      ).rejects.toThrow("Evento não encontrado");
 
-      expect(
-        mockCheckInRepository.buscarPorUsuarioEEvento,
-      ).not.toHaveBeenCalled();
-      expect(mockPrismaClient.$transaction).not.toHaveBeenCalled();
+      expect(mockConectaAPI.autenticar).not.toHaveBeenCalled();
     });
 
-    it("deve lançar um erro se o check-in já tiver sido realizado", async () => {
-      mockEventoRepository.obterPorId.mockResolvedValue(eventoMockComMoedas);
-      mockCheckInRepository.buscarPorUsuarioEEvento.mockResolvedValue(
-        novoCheckInMock,
-      );
+    it("deve realizar check-in e incrementar moedas (20) para evento normal", async () => {
+      const moedasEsperadas = 20;
 
-      await expect(
-        CheckInService.realizarCheckIn(usuarioId, eventoId),
-      ).rejects.toThrow("Você já realizou o check-in neste evento.");
-
-      expect(mockPrismaClient.$transaction).not.toHaveBeenCalled();
-    });
-
-    it("deve realizar check-in, incrementar moedas (50) e usar transação", async () => {
-      const moedasEsperadas = 50;
-
-      mockEventoRepository.obterPorId.mockResolvedValue(eventoMockComMoedas);
-      mockCheckInRepository.buscarPorUsuarioEEvento.mockResolvedValue(null);
-
-      mockTransaction.checkIn.create.mockResolvedValue(novoCheckInMock);
-      mockTransaction.usuario.update.mockResolvedValue(true);
+      mockEventoService.obterPorId.mockResolvedValue(eventoMockNormal);
 
       const resultado = await CheckInService.realizarCheckIn(
         usuarioId,
-        eventoId,
+        eventoId
       );
 
-      expect(mockPrismaClient.$transaction).toHaveBeenCalledTimes(1);
+      expect(mockUsuarioService.obterPorId).toHaveBeenCalledWith(usuarioId);
+      expect(mockEventoService.obterPorId).toHaveBeenCalledWith(eventoId);
+      expect(mockConectaAPI.autenticar).toHaveBeenCalledTimes(1);
 
-      expect(mockTransaction.checkIn.create).toHaveBeenCalledWith({
-        data: { usuarioId, eventoId },
+      expect(mockConectaAPI.fazerCheckIn).toHaveBeenCalledWith({
+        userIdentifier: usuarioMock.cpf,
+        eventName: eventoMockNormal.nome,
+        cidade: "Recife",
+        bairro: "Centro",
+        rua: eventoMockNormal.local,
+        identifier: `EVENTO-${eventoId}-USER-${usuarioId}`,
+        document: usuarioMock.cpf,
+        checkInDateTime: expect.any(String),
       });
 
-      expect(mockTransaction.usuario.update).toHaveBeenCalledWith({
-        where: { id: usuarioId },
-        data: {
-          saldoMoedaCapiba: { increment: moedasEsperadas },
-        },
-      });
+      expect(mockUsuarioService.adicionarMoedas).toHaveBeenCalledWith(
+        usuarioId,
+        moedasEsperadas
+      );
 
       expect(resultado).toEqual({
-        checkIn: novoCheckInMock,
         moedasGanhas: moedasEsperadas,
+        conecta: { status: "OK" },
       });
+
+      expect(mockPrismaClient.$transaction).not.toHaveBeenCalled();
     });
 
-    it("deve realizar check-in, incrementar moedas (10) se moedasDistribuidas for nulo", async () => {
+    it("deve realizar check-in e incrementar moedas (10) para evento de pequeno porte", async () => {
       const moedasEsperadas = 10;
 
-      mockEventoRepository.obterPorId.mockResolvedValue(eventoMockSemMoedas);
-      mockCheckInRepository.buscarPorUsuarioEEvento.mockResolvedValue(null);
-
-      mockTransaction.checkIn.create.mockResolvedValue(novoCheckInMock);
-      mockTransaction.usuario.update.mockResolvedValue(true);
+      mockEventoService.obterPorId.mockResolvedValue(eventoMockPequeno);
 
       await CheckInService.realizarCheckIn(usuarioId, eventoId);
 
-      expect(mockTransaction.usuario.update).toHaveBeenCalledWith({
-        where: { id: usuarioId },
-        data: {
-          saldoMoedaCapiba: { increment: moedasEsperadas },
-        },
-      });
+      expect(mockUsuarioService.adicionarMoedas).toHaveBeenCalledWith(
+        usuarioId,
+        moedasEsperadas
+      );
     });
   });
 });

@@ -2,9 +2,9 @@
   "name": "capiba-cultural-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon app.js",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest",
@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.21.0",
+    "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
