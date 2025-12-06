@@ -12,8 +12,14 @@ class EventoService {
     descricao,
     pequenoPorte = false,
     reportadoPorUsuario = false,
-    participantesIds = [],
-    caravanasIds = [],
+    aoVivo = false,
+    moedasCapibasDestribuidas = 0,
+    ativo = true,
+    preco = "Gratuito", 
+    faixaEtaria = 0,    
+    precisaInscricao = false,
+    horario = null,
+    imagemUrl = null
   ) {
     if (!nome || !local || !data || !descricao)
       throw new Error("Todos os campos são obrigatórios");
@@ -24,7 +30,6 @@ class EventoService {
       nome,
       local,
       data,
-      descricao,
     );
     if (eventoDuplicado) {
       throw new Error(
@@ -37,10 +42,16 @@ class EventoService {
       local,
       data,
       descricao,
-      (pequenoPorte = false),
-      (reportadoPorUsuario = false),
-      (participantesIds = []),
-      (caravanasIds = []),
+      pequenoPorte,
+      reportadoPorUsuario,
+      aoVivo,
+      moedasCapibasDestribuidas,
+      ativo,
+      preco,
+      faixaEtaria,
+      precisaInscricao,
+      horario,
+      imagemUrl
     );
   }
 
