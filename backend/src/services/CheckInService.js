@@ -1,6 +1,6 @@
-const EventoService = require('./EventoService');
-const UsuarioService = require('./UsuarioService');
-const ConectaAPI = require('./ConectaAPI');
+const EventoService = require("./EventoService");
+const UsuarioService = require("./UsuarioService");
+const ConectaAPI = require("./ConectaAPI");
 
 class CheckInService {
   constructor() {
@@ -10,7 +10,6 @@ class CheckInService {
   }
 
   async realizarCheckIn(usuarioId, eventoId) {
-
     const usuario = await this.usuarioService.obterPorId(usuarioId);
     if (!usuario) throw new Error("Usuário não encontrado");
 
@@ -31,7 +30,7 @@ class CheckInService {
       bairro: "Centro",
       rua: evento.local,
       identifier: `EVENTO-${evento.id}-USER-${usuario.id}`,
-      document: usuario.cpf
+      document: usuario.cpf,
     };
 
     const respostaConecta = await this.conectaAPI.fazerCheckIn(payload);
@@ -39,9 +38,14 @@ class CheckInService {
     const moedasGanhas = evento.pequenoPorte ? 10 : 20;
     await this.usuarioService.adicionarMoedas(usuarioId, moedasGanhas);
 
+    await this.grupoService.incrementarPontuacaoGrupoPorUsuario(
+      usuarioId,
+      moedasGanhas
+    );
+
     return {
       moedasGanhas,
-      conecta: respostaConecta
+      conecta: respostaConecta,
     };
   }
 }
