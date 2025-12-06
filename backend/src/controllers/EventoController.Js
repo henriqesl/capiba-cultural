@@ -9,6 +9,14 @@ class EventoController {
       descricao,
       pequenoPorte = false,
       reportadoPorUsuario = false,
+      aoVivo = false,
+      moedasCapibasDestribuidas = 0,
+      ativo=true,
+      preco,
+      faixaEtaria,
+      precisaInscricao,
+      horario,
+      imagemUrl
     } = req.body;
 
     try {
@@ -18,7 +26,15 @@ class EventoController {
         data,
         descricao,
         pequenoPorte,
-        reportadoPorUsuario
+        reportadoPorUsuario,
+        aoVivo,
+        moedasCapibasDestribuidas,
+        ativo,
+        preco,
+        faixaEtaria,
+        precisaInscricao,
+        horario,
+        imagemUrl
       );
       res.status(201).json({
         mensagem: `Evento criado com sucesso: ${evento.nome}`,
