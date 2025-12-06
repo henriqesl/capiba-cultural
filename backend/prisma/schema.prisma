@@ -45,6 +45,12 @@
     moedasCapibasDestribuidas  Float     @default(0)
     reportadoPorUsuario       Boolean   @default(false)
     confirmacoes              Int       @default(0)
+    preco                     String? 
+    faixaEtaria               Int       @default(0)
+    precisaInscricao          Boolean   @default(false)
+    imagemUrl                 String?   
+    horario           String?
+    //=========================================
 
     checkins           CheckIn[] 
     participantes Usuario[]   @relation("ParticipantesDoEvento")

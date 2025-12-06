@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Calendar from '../../components/event/Calendar';
 import Carousel from '../../components/event/Carousel';
 import EventCard from '../../components/event/EventCard'; 
-import api from '../../services/api'; // Importar API
+import api from '../../services/api'; 
 
 const EventPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [eventos, setEventos] = useState([]); // Estado para eventos reais
+    const [eventos, setEventos] = useState([]); 
     const [loading, setLoading] = useState(true);
 
-    // Buscar eventos do Backend ao carregar a página
     useEffect(() => {
         const fetchEventos = async () => {
             try {
@@ -17,7 +16,7 @@ const EventPage = () => {
                 setEventos(response.data);
             } catch (error) {
                 console.error("Erro ao buscar eventos", error);
-                alert("Erro ao carregar eventos");
+                // Não exibe alerta intrusivo, apenas loga o erro
             } finally {
                 setLoading(false);
             }
@@ -34,17 +33,32 @@ const EventPage = () => {
         });
     };
 
-    if (loading) return <div className="p-10 text-center">Carregando eventos...</div>;
+    // Função auxiliar para formatar horário (prioriza o campo 'horario' string, senão formata a data)
+    const getHorarioEvento = (evento) => {
+        if (evento.horario) return evento.horario;
+        return new Date(evento.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    };
 
-    // Filtra eventos (Exemplo: 3 primeiros para destaque)
-    const featuredEvents = eventos.slice(0, 3);
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen bg-gray-100">
+                <div className="text-xl font-bold text-gray-500">Carregando agenda...</div>
+            </div>
+        );
+    }
+
+    // Filtra eventos para o Carrossel (Ex: não são pequeno porte)
+    const featuredEvents = eventos.filter(e => !e.pequenoPorte).slice(0, 5);
     
+    // Se não tiver destaques suficientes, pega os primeiros
+    const carouselData = featuredEvents.length > 0 ? featuredEvents : eventos.slice(0, 3);
+
     return (
         <div className="bg-gray-100 min-h-screen pb-24 md:pb-12">
             
             <div className="pt-8 pb-4">
-                {/* Passa eventos reais para o carrossel */}
-                <Carousel events={featuredEvents} />
+                {/* Carrossel com dados reais */}
+                <Carousel events={carouselData} />
             </div>
 
             <div className="max-w-6xl mx-auto border-t border-gray-200 mb-8"></div>
@@ -62,13 +76,17 @@ const EventPage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-                    {eventos.map((event) => (
+                    {eventos.map((evento) => (
                         <EventCard 
-                            key={event.id}
-                            title={event.nome} // Backend usa 'nome', não 'title'
-                            time={new Date(event.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} 
-                            location={event.local} // Backend usa 'local'
-                            href={`#/evento/${event.id}`}
+                            key={evento.id}
+                            // Mapeamento Banco -> Componente
+                            title={evento.nome} 
+                            time={getHorarioEvento(evento)} 
+                            location={evento.local} 
+                            // Passamos o link com ID para abrir os detalhes
+                            href={`#/evento/${evento.id}`}
+                            // Opcional: Se você atualizar o EventCard para aceitar imagem
+                            // image={evento.imagemUrl} 
                         />
                     ))}
                 </div>
@@ -78,13 +96,3 @@ const EventPage = () => {
 };
 
 export default EventPage;
-
-/*
-  [INTEGRAÇÃO]
-  Rota: GET /eventos (ver arquivo EventoRoutes.Js)
-  
-  Como integrar:
-  - Trocar esse `EventsData` fixo por um `fetch` nessa rota.
-  - O backend devolve lista com nome, local e data.
-  - Atenção: O backend não tem campo de "Imagem" no banco ainda. Vamos ter que usar imagens genéricas por enquanto.
-*/
