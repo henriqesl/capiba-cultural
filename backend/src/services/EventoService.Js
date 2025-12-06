@@ -1,43 +1,85 @@
-const Evento = require('../models/Evento');
+const Evento = require("../models/Evento");
 
 class EventoService {
-    constructor() {
-        this.eventos = [];
-        this.nextId = 1;
+  constructor() {
+    this.eventoRepository = new Evento();
+  }
+
+  async criarEvento(
+    nome,
+    local,
+    data,
+    descricao,
+    pequenoPorte = false,
+    reportadoPorUsuario = false,
+    participantesIds = [],
+    caravanasIds = [],
+  ) {
+    if (!nome || !local || !data || !descricao)
+      throw new Error("Todos os campos são obrigatórios");
+
+    if (isNaN(Date.parse(data))) throw new Error("Data inválida");
+
+    const eventoDuplicado = await this.eventoRepository.obterPorNomeLocalEData(
+      nome,
+      local,
+      data,
+      descricao,
+    );
+    if (eventoDuplicado) {
+      throw new Error(
+        "Um evento com o mesmo nome e local já está agendado para esta data.",
+      );
     }
 
-    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
-        if (!nome || !local || !data || !descricao)
-            throw new Error("Todos os campos são obrigatórios");
+    return await this.eventoRepository.novoEvento(
+      nome,
+      local,
+      data,
+      descricao,
+      (pequenoPorte = false),
+      (reportadoPorUsuario = false),
+      (participantesIds = []),
+      (caravanasIds = []),
+    );
+  }
 
-        if (isNaN(Date.parse(data)))
-            throw new Error("Data inválida");
+  async listarEventos() {
+    return await this.eventoRepository.listar();
+  }
 
-        if (!reportadoPorUsuario && this.eventos.some(e => e.nome === nome))
-            throw new Error("Evento já cadastrado");
+  async obterPorId(id) {
+    const evento = await this.eventoRepository.obterPorId(id);
+    if (!evento) {
+      throw new Error("Evento não encontrado");
+    }
+    return evento;
+  }
 
-        const evento = new Evento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario);
-        evento.id = this.nextId++;
-        this.eventos.push(evento);
-        return evento;
+  async obterPorNome(nome) {
+    const evento = await this.eventoRepository.obterPorNome(nome);
+    if (!evento) {
+      throw new Error("Evento não encontrado");
+    }
+    return evento;
+  }
+
+  async obterPorLocal(local) {
+    const evento = await this.eventoRepository.obterPorLocal(local);
+    if (!evento) {
+      throw new Error("Evento não encontrado");
+    }
+    return evento;
+  }
+
+  async removerEvento(id) {
+    const evento = await this.eventoRepository.obterPorId(id);
+    if (!evento) {
+      throw new Error("Evento não encontrado");
     }
 
-    listarEventos() {
-        return this.eventos;
-    }
-
-    obterPorId(id) {
-        const evento = this.eventos.find(e => e.id === id);
-        if (!evento) throw new Error("Evento não encontrado");
-        return evento;
-    }
-
-    removerEvento(id) {
-        const index = this.eventos.findIndex(e => e.id === id);
-        if (index === -1) throw new Error("Evento não encontrado");
-        const [eventoRemovido] = this.eventos.splice(index, 1);
-        return eventoRemovido;
-    }
+    return await this.eventoRepository.removerEvento(id);
+  }
 }
 
-module.exports = EventoService;
+module.exports = new EventoService();

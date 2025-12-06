@@ -1,0 +1,92 @@
+import React from 'react';
+import { Icon, InfoRow, PerfilImage } from '../../components/user/UserShared.jsx'; 
+import { ICONS } from '../../utils/icons.jsx';
+
+const ProfilePage = () => {
+  return (
+    <div className="w-full bg-gray-100 flex flex-col items-center">
+      
+      <div className="w-full max-w-md md:max-w-7xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col">
+        {/* Header Mobile */}
+        <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden ">
+          <a href="#/perfil" className="hover:opacity-80">
+            <Icon path={ICONS.arrowLeft} />
+          </a>
+          <h1 className="text-xl font-bold">Editar Perfil</h1>
+          <div className="w-6"></div>
+        </header>
+
+        <header className="hidden md:flex p-4 items-center border-b border-gray-200">
+          <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
+            <Icon path={ICONS.arrowLeft} className="w-6 h-6" />
+          </a>
+          <h1 className="text-xl font-bold text-gray-800 ml-4">Editar Perfil</h1>
+        </header>
+
+        <main className="p-6 pb-24 md:p-8 md:grid md:grid-cols-3 md:gap-12">
+
+          {/* Coluna Esquerda: Foto e Ações */}
+          <aside className="md:col-span-1 flex flex-col items-center justify-center text-center mb-8 md:mb-0">
+            {/* Foto de Perfil */}
+            <div className="relative group mb-4 cursor-pointer"> 
+              <PerfilImage />
+              
+              <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="text-white font-bold text-sm">Editar foto</span>
+              </div>
+              <button className="absolute -bottom-2 -right-2 transition hover:scale-110 bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 shadow-md">
+                <Icon path={ICONS.camera} className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Informações do Usuário */}
+            <h2 className="text-2xl font-bold text-gray-800 mt-4">Júnior Cruz</h2>
+            <p className="text-md text-gray-500">@junior.cin2007</p>
+            
+            <div className = "w-60">
+              <button className="w-full text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg py-2 px-4 mt-6 transition-colors">
+                Editar Perfil
+              </button>
+            </div>
+          </aside>
+
+          {/* Coluna Direita: Informações */}
+          <div className="md:col-span-2">
+            {/* Seção: Informações Pessoais */}
+            <section className="mb-8">
+              <h2 className="text-xl font-bold text-blue-700 mb-4 border-b pb-2">
+                Informações Pessoais
+              </h2>
+              
+              <InfoRow label="Senha" value="********" />
+              <InfoRow label="Telefone" value="(81) 9999-9999" />
+              <InfoRow label="Email" value="sjcj@cin.ufpe.br" />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InfoRow label="Data de Nascimento" value="10/05/2007" />
+                <InfoRow label="CPF" value="096.044.789-35" />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InfoRow label="CEP" value="52091-235" />
+                <InfoRow label="Endereço" value="Rua Alto Santa Luzia" />
+                <InfoRow label="No" value="460" />
+                <InfoRow label="Bairro" value="Nova Descoberta" />
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage;
+
+/*
+  [PROBLEMA]
+  O Service do backend (`UsuarioService.js`) tem a lógica de atualizar (`atualizarUsuario`), 
+  mas o arquivo de rotas (`UsuarioRoutes.js`) NÃO tem o endpoint PUT ou PATCH pra isso.
+  
+  Ação: Precisamos criar a rota `router.put('/:id')` no backend antes de fazer essa tela funcionar.
+*/

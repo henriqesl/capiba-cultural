@@ -1,52 +1,99 @@
-const EventoService = require('../services/EventoService');
+const eventoService = require("../services/EventoService");
 
 class EventoController {
-    constructor() {
-        this.eventoService = new EventoService();
-    }
+  async criarEvento(req, res) {
+    const {
+      nome,
+      local,
+      data,
+      descricao,
+      pequenoPorte = false,
+      reportadoPorUsuario = false,
+    } = req.body;
 
-    criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false) {
-        try {
-            const evento = this.eventoService.criarEvento(nome, local, data, descricao, pequenoPorte = false, reportadoPorUsuario = false);
-            console.log(`Evento criado com sucesso: ${evento.nome}`);
-            return evento;
-        } catch (error) {
-            console.error("Erro ao criar evento:", error.message);
-        }
+    try {
+      const evento = await eventoService.criarEvento(
+        nome,
+        local,
+        data,
+        descricao,
+        pequenoPorte,
+        reportadoPorUsuario
+      );
+      res.status(201).json({
+        mensagem: `Evento criado com sucesso: ${evento.nome}`,
+        evento,
+      });
+    } catch (error) {
+      res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
     }
+  }
 
-    listarEventos() {
-        try {
-            const eventos = this.eventoService.listarEventos();
-            console.log("Eventos cadastrados:");
-            eventos.forEach(e => {
-                console.log(`ID: ${e.id}, Nome: ${e.nome}, Local: ${e.local}, Data: ${e.data.toISOString().slice(0,10)}, Oficial: ${e.reportadoPorUsuario ? "❌" : "✅"}`);
-            });
-            return eventos;
-        } catch (error) {
-            console.error("Erro ao listar eventos:", error.message);
-        }
+  async listarEventos(req, res) {
+    try {
+      const eventos = await eventoService.listarEventos();
+      res.status(200).json(eventos);
+    } catch (error) {
+      res
+        .status(500)
+        .json({ erro: `Erro ao listar eventos: ${error.message}` });
     }
+  }
 
-    obterPorId(id) {
-        try {
-            const evento = this.eventoService.obterPorId(id);
-            console.log(`Procurando evento por ID: ${id}`);
-            return evento;
-        } catch (error) {
-            console.error("Erro ao procurar evento por ID:", error.message);
-        }
-    }
+  async obterPorId(req, res) {
+    const { id } = req.params;
 
-    removerEvento(id) {
-        try {
-            const evento = this.eventoService.removerEvento(id);
-            console.log(`Removendo evento ${evento.nome} pelo ID: ${evento.id}`);
-            return evento;
-        } catch (error) {
-            console.error("Erro ao remover evento por ID:", error.message);
-        }
+    try {
+      const evento = await eventoService.obterPorId(Number(id));
+      if (!evento) {
+        return res
+          .status(404)
+          .json({ erro: `Evento com ID ${id} não encontrado` });
+      }
+      res.status(200).json(evento);
+    } catch (error) {
+      res
+        .status(400)
+        .json({ erro: `Erro ao procurar evento por ID: ${error.message}` });
     }
+  }
+
+  async removerEvento(req, res) {
+    const { id } = req.params;
+
+    try {
+      const eventoRemovido = await eventoService.removerEvento(Number(id));
+      res.status(200).json({
+        mensagem: `Evento "${eventoRemovido.nome}" removido com sucesso.`,
+      });
+    } catch (error) {
+      res
+        .status(400)
+        .json({ erro: `Erro ao remover evento: ${error.message}` });
+    }
+  }
+
+  async enviarCheckInParaConecta(req, res) {
+    try {
+      await conecta.autenticar(req.body.login, req.body.senha);
+
+      const dados = {
+        userIdentifier: req.body.userIdentifier,
+        eventName: req.body.eventName,
+        checkInDateTime: new Date().toISOString(),
+        cidade: req.body.cidade,
+        bairro: req.body.bairro,
+        rua: req.body.rua,
+        identifier: req.body.identifier,
+        document: req.body.document,
+      };
+
+      const resposta = await conecta.fazerCheckIn(dados);
+      return res.json(resposta);
+    } catch (error) {
+      return res.status(500).json({ erro: error.message });
+    }
+  }
 }
 
 module.exports = EventoController;

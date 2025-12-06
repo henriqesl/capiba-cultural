@@ -1,49 +1,180 @@
-const Usuario = require('./usuario');
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const Usuario = require("./Usuario");
 
 class GrupoCompeticao {
-    constructor(nome, dataInicio, dataFim) {
-        this.id = null;
-        this.nome = nome;
-        this.membros = [];
-        this.dataInicio = dataInicio instanceof Date ? dataInicio : new Date(dataInicio);
-        this.dataFim = dataFim instanceof Date ? dataFim : new Date(dataFim);
-        this.encerrado = false;
-        this.pontuacaoTotal = 0;
-        this.vencedor = null;
-    }
+  async novoGrupoCompeticao(
+    nome,
+    dataInicio,
+    dataFim,
+    encerrado = false,
+    pontuacaoTotal = 0,
+    participantesIds = [],
+  ) {
+    return await prisma.grupoCompeticao.create({
+      data: {
+        nome,
+        dataInicio:
+          dataInicio instanceof Date ? dataInicio : new Date(dataInicio),
+        dataFim: dataFim instanceof Date ? dataFim : new Date(dataFim),
+        encerrado,
+        pontuacaoTotal,
+        vencedorId: null,
 
-    adicionarMembro(usuario) {
-        if (!usuario) throw new Error('Usuário inválido.');
-        if (this.encerrado) throw new Error('Não é possível adicionar membros a um grupo encerrado.');
-        this.membros.push(usuario);
-        this.atualizarPontuacao();
-    }
+        membros: participantesIds.length
+          ? { connect: participantesIds.map((id) => ({ id })) }
+          : undefined,
+      },
 
-    atualizarPontuacao() {
-        this.pontuacaoTotal = this.membros.reduce(
-            (total, membro) => total + (membro.saldoMoedaCapiba || 0),
-            0
-        );
-    }
+      include: {
+        membros: true,
+      },
+    });
+  }
 
-    obterVencedor() {
-        if (this.membros.length === 0) return null;
-        this.vencedor = this.membros.reduce(
-            (max, u) => (u.saldoMoedaCapiba > (max?.saldoMoedaCapiba || 0) ? u : max),
-            null
-        );
-        return this.vencedor;
-    }
+  async listar() {
+    return await prisma.grupoCompeticao.findMany({
+      include: { membros: true },
+    });
+  }
 
-    encerrarGrupo() {
-        if (this.encerrado) throw new Error('O grupo já foi encerrado.');
-        this.encerrado = true;
-        this.vencedor = this.obterVencedor();
-    }
+  async obterPorId(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      include: { membros: true },
+    });
+  }
 
-    estaExpirado() {
-        return new Date() > this.dataFim;
-    }
+  async removerGrupo(id) {
+    return await this.prisma.grupoCompeticao.delete({
+      where: { id: id },
+    });
+  }
+
+  async adicionarMembro(grupoId, usuarioId) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: grupoId },
+      data: {
+        membros: { connect: { id: usuarioId } },
+      },
+      include: { membros: true },
+    });
+  }
+
+  async getMembros(grupoId) {
+    const grupo = await prisma.grupoCompeticao.findUnique({
+      where: { id: grupoId },
+      include: { membros: true },
+    });
+    return grupo?.membros || [];
+  }
+
+  async getNome(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      select: { nome: true },
+    });
+  }
+
+  async setNome(id, value) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: id },
+      data: { nome: value },
+      select: { nome: true },
+    });
+  }
+
+  async getMembros(grupoId) {
+    const grupo = await prisma.grupoCompeticao.findUnique({
+      where: { id: grupoId },
+      include: { membros: true },
+    });
+    return grupo?.membros || [];
+  }
+
+  async setMembros(id, list) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: id },
+      data: { membros: list },
+      select: { membros: true },
+    });
+  }
+
+  async getDataInicio(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      select: { dataInicio: true },
+    });
+  }
+
+  async setDataInicio(id, value) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: id },
+      data: { dataInicio: value },
+      select: { dataInicio: true },
+    });
+  }
+
+  async getDataFim(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      select: { dataFim: true },
+    });
+  }
+
+  async setDataFim(id, value) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: id },
+      data: { dataFim: value },
+      select: { dataFim: true },
+    });
+  }
+
+  async getEncerrado(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      select: { encerrado: true },
+    });
+  }
+
+  async setEncerrado(id, value) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: id },
+      data: { encerrado: value },
+      select: { encerrado: true },
+    });
+  }
+
+  async getPontuacaoTotal(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      select: { pontuacaoTotal: true },
+    });
+  }
+
+  async setPontuacaoTotal(id, value) {
+    return await prisma.grupoCompeticao.update({
+      where: { id: id },
+      data: { pontuacaoTotal: value },
+      select: { pontuacaoTotal: true },
+    });
+  }
+
+  async getVencedor(id) {
+    return await prisma.grupoCompeticao.findUnique({
+      where: { id: id },
+      select: { vencedor: true },
+    });
+  }
+
+  async setVencedor(id, vencedorId) {
+    return await prisma.grupoCompeticao.update({
+      where: { id },
+      data: {
+        vencedorId: vencedorId,
+      },
+      include: { vencedor: true },
+    });
+  }
 }
-
 module.exports = GrupoCompeticao;

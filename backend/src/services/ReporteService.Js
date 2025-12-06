@@ -1,116 +1,160 @@
-const ReporteEvento = require('../models/ReporteEvento');
-const EventoService = require('./EventoService');
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const eventoService = require("./EventoService");
+const ReporteEvento = require("../models/ReporteEvento");
 
 class ReporteService {
-    constructor(eventoService) {
-        this.reportes = [];
-        this.nextId = 1;
-        this.eventoService = eventoService;
+  constructor() {
+    this.reporteEventoRepository = new ReporteEvento();
+    this.eventoService = eventoService;
+  }
+
+  async criarOuConfirmarReporte(reportanteId, eventoInput, descricao = "") {
+    if (!reportanteId || !eventoInput) {
+      throw new Error(
+        "Reportante e evento são obrigatórios para criar um reporte!",
+      );
     }
 
-    criarOuConfirmarReporte(reportante, eventoInput, descricao = '') {
-        if (!reportante || !eventoInput) {
-            throw new Error("Reportante e evento são obrigatórios para criar um reporte!");
-        }
+    let evento = await this.eventoService.obterPorNome(eventoInput.nome);
 
-        let evento = null;
+    if (!evento) {
+      const nome = eventoInput.nome || "Evento sem nome";
+      const local = eventoInput.local || "Local não informado";
+      const data = eventoInput.data ? new Date(eventoInput.data) : new Date();
+      const descricaoEvento =
+        eventoInput.descricao || "Evento reportado por usuário";
 
-        if (eventoInput.id) {
-            evento = this.eventoService.listarEventos().find(e => e.id === eventoInput.id);
-        } else {
-            evento = this.eventoService.listarEventos()
-                .find(e => e.nome.toLowerCase() === eventoInput.nome.toLowerCase());
-        }
+      evento = await this.eventoService.criarEvento(
+        nome,
+        local,
+        data,
+        descricaoEvento,
+        false,
+        true,
+      );
+      await evento.setReportadoPorUsuario(true);
+    }
 
-        if (!evento) {
-            const nome = eventoInput.nome || 'Evento sem nome';
-            const local = eventoInput.local || 'Local não informado';
-            const data = eventoInput.data ? new Date(eventoInput.data) : new Date();
-            const descricao = eventoInput.descricao || 'Evento reportado por usuário';
+    const existente = await prisma.reporteEvento.findFirst({
+      where: { eventoId: evento.id },
+      include: { reportantes: true },
+    });
 
-            evento = this.eventoService.criarEvento(nome, local, data, descricao);
-            evento.reportadoPorUsuario = true;
-        }
-
-        const existente = this.reportes.find(r => r.evento.id === evento.id);
-
-        if (existente) {
-            const jaConfirmou = existente.reportantes.some(u => u.id === reportante.id);
-            if (jaConfirmou) {
-                throw new Error('Usuário já reportou/confirmou esse evento.');
-            }
-
-            existente.reportantes.push(reportante);
-            existente.qtdConfirmacoes++;
-            return {
-                mensagem: 'Confirmação adicionada a um evento já reportado.',
-                reporte: existente
-            };
-        }
-
-        const agora = new Date();
-        const cincoMinutosAtras = new Date(agora.getTime() - 5 * 60 * 1000);
-
-        const existeReporteRecente = this.reportes.some(r =>
-            r.evento.id === evento.id &&
-            r.reportantes.some(u => u.id === reportante.id) &&
-            r.dataReporte > cincoMinutosAtras
-        );
-
-
-        if (existeReporteRecente) {
-            throw new Error("Você já enviou um reporte recentemente. Aguarde alguns minutos.");
-        }
-
-        const reporte = new ReporteEvento(reportante, evento, descricao);
-        reporte.id = this.nextId++;
-        reporte.reportantes = [reportante];
-        reporte.qtdConfirmacoes = 1;
-        this.reportes.push(reporte);
-
+    if (existente) {
+      const jaConfirmou = existente.reportantes.some(
+        (u) => u.id === reportanteId,
+      );
+      if (jaConfirmou) {
         return {
-            mensagem: 'Novo evento reportado com sucesso.',
-            reporte
+          mensagem: "Usuário já reportou/confirmou este evento.",
+          reporte: existente,
         };
+      }
+
+      const atualizado = await prisma.reporteEvento.update({
+        where: { id: existente.id },
+        data: {
+          reportantes: { connect: { id: reportanteId } },
+          qtdConfirmacoes: existente.qtdConfirmacoes + 1,
+        },
+        include: { evento: true, reportantes: true },
+      });
+
+      return {
+        mensagem: "Confirmação adicionada a um evento já reportado.",
+        reporte: atualizado,
+      };
     }
 
-    listarReportes() {
-        return this.reportes;
+    const agora = new Date();
+    const cincoMinutosAtras = new Date(agora.getTime() - 5 * 60 * 1000);
+
+    const existeReporteRecente = await prisma.reporteEvento.findFirst({
+      where: {
+        eventoId: evento.id,
+        reportantes: { some: { id: reportanteId } },
+        dataReporte: { gte: cincoMinutosAtras },
+      },
+    });
+
+    if (existeReporteRecente) {
+      throw new Error(
+        "Você já enviou um reporte recentemente. Aguarde alguns minutos.",
+      );
     }
 
-    listarPorEvento(eventoId) {
-        return this.reportes.filter(r => r.evento.id === eventoId);
+    const novoReporte = await prisma.reporteEvento.create({
+      data: {
+        descricao,
+        dataReporte: new Date(),
+        qtdConfirmacoes: 1,
+        evento: { connect: { id: evento.id } },
+        reportantes: { connect: { id: reportanteId } },
+        reportante: { connect: { id: reportanteId } },
+      },
+
+      include: { evento: true, reportantes: true },
+    });
+
+    return {
+      mensagem: "Novo evento reportado com sucesso.",
+      reporte: novoReporte,
+    };
+  }
+
+  listarReportes() {
+    return this.reporteEventoRepository.listar();
+  }
+
+  async listarPorEvento(eventoId) {
+    return await prisma.reporteEvento.findMany({
+      where: { eventoId },
+      include: { evento: true, reportantes: true },
+    });
+  }
+
+  async listarPorUsuario(usuarioId) {
+    return await prisma.reporteEvento.findMany({
+      where: {
+        OR: [
+          { reportanteId: usuarioId },
+          { reportantes: { some: { id: usuarioId } } },
+        ],
+      },
+      include: { evento: true, reportantes: true },
+    });
+  }
+
+  async removerReporte(id) {
+    const existe = await this.reporteEventoRepository.buscarPorId(id);
+    if (!existe) return false;
+    this.reporteEventoRepository.remover(id);
+    return true;
+  }
+
+  async listarEventosMaisReportados() {
+    const vinteQuatroHorasAtras = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const reportesRecentes = await prisma.reporteEvento.findMany({
+      where: { dataReporte: { gte: vinteQuatroHorasAtras } },
+      include: { evento: true },
+    });
+
+    const contagem = {};
+
+    for (const r of reportesRecentes) {
+      const eventoId = r.eventoId;
+      contagem[eventoId] = (contagem[eventoId] || 0) + r.qtdConfirmacoes;
     }
 
-    listarPorUsuario(usuarioId) {
-        return this.reportes.filter(r => r.reportantes.some(u => u.id === usuarioId));
-    }
-
-    removerReporte(id) {
-        const index = this.reportes.findIndex(r => r.id === id);
-        if (index === -1) return false;
-        this.reportes.splice(index, 1);
-        return true;
-    }
-
-    listarEventosMaisReportados() {
-        const agora = new Date();
-        const vinteQuatroHorasAtras = new Date(agora.getTime() - 24 * 60 * 60 * 1000);
-
-        const reportesRecentes = this.reportes.filter(r => r.dataReporte > vinteQuatroHorasAtras);
-        const contagem = {};
-
-        for (const r of reportesRecentes) {
-            contagem[r.evento.id] = (contagem[r.evento.id] || 0) + r.qtdConfirmacoes;
-        }
-
-        return Object.entries(contagem)
-            .sort((a, b) => b[1] - a[1])
-            .map(([eventoId, total]) => ({
-                eventoId: Number(eventoId),
-                totalReportes: total
-            }));
-    }
+    return Object.entries(contagem)
+      .sort((a, b) => b[1] - a[1])
+      .map(([eventoId, total]) => ({
+        eventoId: Number(eventoId),
+        totalReportes: total,
+      }));
+  }
 }
 
 module.exports = ReporteService;

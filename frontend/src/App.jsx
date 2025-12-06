@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import MainLayout from './components/layout/MainLayout.jsx';
+import LoginPage from './pages/LoginPage';
+import EventPage from './pages/event/EventPage';
+import ProfilePage from './pages/user/ProfilePage.jsx';
+import RankingPage from './pages/user/RankingPage.jsx';
+import UserPage from './pages/user/UserPage.jsx';
+import EventDetailPage from './pages/event/EventDetailPage.jsx';
+import EventsData from './components/event/EventsData.jsx';
+import CheckInPage from './pages/CheckInPage.jsx';
+import StatusPage from './pages/StatusPage.jsx';
+import CaravanaPage from './pages/user/CaravanaPage.jsx'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
+
+  useEffect(() => {
+    const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []); 
+
+  const renderPage = () => {
+    if (currentPath.startsWith('#/evento/')) {
+      const eventId = parseInt(currentPath.split('/')[2]);
+      const event = EventsData.find(e => e.id === eventId);
+      return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
+    }
+
+    switch (currentPath) {
+      case '#/eventos': return <EventPage />;
+      case '#/capiba':  return <CheckInPage />;
+      case '#/status':  return <StatusPage />;
+      case '#/perfil':  return <UserPage />;
+      case '#/perfil/editar': return <ProfilePage />;
+      case '#/perfil/ranking': return <RankingPage />;
+      case '#/perfil/caravana': return <CaravanaPage />;
+      case '#/login':
+      default: return <EventPage />;
+    }
+  };
+
+  const useMainLayout = !['#/login'].includes(currentPath);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {useMainLayout ? (
+        <MainLayout currentPath={currentPath}>
+          {renderPage()}
+        </MainLayout>
+      ) : (
+        renderPage()
+      )}
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
+
+/*
+  [NOTAS DE INTEGRAÇÃO]
+  1. Segurança: Hoje o router deixa entrar em qualquer tela.
+     Precisamos colocar um `if (!token) irParaLogin()` aqui dentro, senão o usuário vai ver a tela, 
+     mas os dados não vão carregar (erro 401 do backend).
+  
+  2. Dados Iniciais: Ali onde busco `EventsData`, o ideal é fazer uma chamada 
+     `GET /eventos` logo que o app abrir pra carregar o calendário real.
+*/

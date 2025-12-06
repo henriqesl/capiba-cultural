@@ -1,29 +1,89 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+
 class Usuario {
-    constructor(nome, email, senha) {
+  async buscarId(id) {
+    return await prisma.usuario.findUnique({
+      where: { id: id },
+      include: { caravanas_membro: true },
+    });
+  }
 
-        this.id = null;
-        this.nome = nome;
-        this.email = email;
-        this.senha = senha;
-        this.saldoMoedaCapiba = 0;
-        this.dataCadastro = new Date();
+  async buscarEmail(email) {
+    return await prisma.usuario.findUnique({
+      where: { email: email },
+    });
+  }
 
-        this.caravanas = [];
-        this.grupos = [];
-    }
+  async novoUsuario(nome, email, senha, cpf) {
+    return await prisma.usuario.create({
+      data: {
+        nome,
+        email,
+        senha,
+        cpf,
+        saldoMoedaCapiba: 0,
+        dataCadastro: new Date(),
+      },
+    });
+  }
 
-    adicionarMoedas(quantidade) {
-        if (quantidade <= 0) throw new Error("Quantidade deve ser positiva");
-        this.saldoMoedaCapiba += quantidade;
-    }
+  async removerUsuario(id) {
+    return await prisma.usuario.delete({
+      where: { id: id },
+    });
+  }
 
-    gastarMoedas(quantidade) {
-        if (quantidade <= 0) throw new Error("Quantidade deve ser positiva");
-        if (this.saldoMoedaCapiba < quantidade) return false;
+  async listar() {
+    return await prisma.usuario.findMany({
+      include: {
+        grupos_membro: true,
+        grupos_vencidos: true,
+        caravanas_membro: true,
+      },
+    });
+  }
 
-        this.saldoMoedaCapiba -= quantidade;
-        return true;
-    }
+  async atualizar(id, dados) {
+    return await prisma.usuario.update({
+      where: { id },
+      data: dados,
+    });
+  }
+
+  async getSaldo(id) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: id },
+      select: { saldoMoedaCapiba: true },
+    });
+
+    return usuario?.saldoMoedaCapiba ?? 0;
+  }
+
+  async setSaldo(id, saldo) {
+    if (saldo < 0) throw new Error("Saldo não pode ser negativo");
+    return await prisma.usuario.update({
+      where: { id },
+      data: { saldoMoedaCapiba: saldo },
+    });
+  }
+
+  async getNome(id) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: id },
+      select: { nome: true },
+    });
+
+    return usuario?.nome ?? null;
+  }
+
+  async setNome(id, nome) {
+    return await prisma.usuario.update({
+      where: { id: id },
+      data: { nome: nome },
+      select: { nome: true },
+    });
+  }
 }
 
 module.exports = Usuario;
