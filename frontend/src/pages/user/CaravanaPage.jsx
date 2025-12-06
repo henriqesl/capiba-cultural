@@ -56,7 +56,7 @@ const CaravanaPage = () => {
                   date={c.data} 
                   membersCount={c.membros}
                   isOwner={c.dono}
-                  onClick={() => alert(`Abrir detalhes da caravana: ${c.nome}`)}
+                  onClick={() => window.location.hash = `#/perfil/caravana/${c.id}`}
                 />
               ))}
             </div>
