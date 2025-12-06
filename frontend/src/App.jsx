@@ -12,10 +12,10 @@ import StatusPage from './pages/StatusPage.jsx';
 import CaravanaPage from './pages/user/CaravanaPage.jsx'
 
 const App = () => {
-  const [currentPath, setCurrentPath] = useState(window.location.hash || '#/login');
+  const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
 
   useEffect(() => {
-    const handleHashChange = () => setCurrentPath(window.location.hash || '#/login');
+    const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []); 
@@ -34,8 +34,9 @@ const App = () => {
       case '#/perfil':  return <UserPage />;
       case '#/perfil/editar': return <ProfilePage />;
       case '#/perfil/ranking': return <RankingPage />;
+      case '#/perfil/caravana': return <CaravanaPage />;
       case '#/login':
-      default: return <LoginPage />;
+      default: return <EventPage />;
     }
   };
 
