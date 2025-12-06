@@ -2,14 +2,37 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class Evento {
-  async novoEvento(nome, local, data, descricao) {
+  async novoEvento(
+    nome,
+    local,
+    data,
+    descricao,      
+    pequenoPorte,    
+    reportadoPorUsuario,
+    aoVivo,
+    moedasCapibasDestribuidas,
+    ativo,
+    preco,
+    faixaEtaria,
+    precisaInscricao,
+    horario,
+    imagemUrl) {
     return await prisma.evento.create({
       data: {
         nome,
         local,
         data: new Date(data),
-        moedasCapibasDestribuidas: 10,
         descricao,
+        pequenoPorte,
+        reportadoPorUsuario,
+        aoVivo,
+        moedasCapibasDestribuidas: parseFloat(moedasCapibasDestribuidas),
+        ativo,
+        preco,
+        faixaEtaria: parseInt(faixaEtaria),
+        precisaInscricao,
+        horario,
+        imagemUrl
       },
     });
   }

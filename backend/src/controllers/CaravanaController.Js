@@ -1,4 +1,6 @@
 const caravanaService = require("../services/CaravanaService");
+const usuarioService = require("../services/UsuarioService");
+const eventoService = require("../services/EventoService");
 
 class CaravanaController {
   async criarCaravana(req, res) {
@@ -51,7 +53,7 @@ class CaravanaController {
     const { usuarioId } = req.body;
 
     try {
-      const usuario = await usuarioController.obterPorId(Number(usuarioId));
+      const usuario = await usuarioService.obterPorId(Number(usuarioId));
       if (!usuario) {
         return res
           .status(404)
@@ -75,7 +77,7 @@ class CaravanaController {
     const { eventoId } = req.body;
 
     try {
-      const evento = await eventoController.obterPorId(Number(eventoId));
+      const evento = await eventoService.obterPorId(Number(eventoId));
       if (!evento) {
         return res
           .status(404)
@@ -99,7 +101,7 @@ class CaravanaController {
 
     try {
       const caravanaRemovida = await caravanaService.removerCaravana(
-        Number(id),
+        Number(id)
       );
       res.status(200).json({
         mensagem: `Caravana "${caravanaRemovida.nome}" removida com sucesso.`,
@@ -128,7 +130,7 @@ class CaravanaController {
         usuarioId,
         caravanaId,
         mes,
-        ano,
+        ano
       );
       res.status(200).json({ caravanaId, usuarioId, multiplicador });
     } catch (error) {
