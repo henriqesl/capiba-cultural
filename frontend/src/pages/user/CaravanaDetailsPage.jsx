@@ -1,70 +1,36 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, MapPin, Share2, Copy, Check, Crown, UserCircle2 } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Copy, Check, Crown, UserCircle2 } from 'lucide-react';
 
-const CaravanaDetailsPage = ({ id, onBack }) => {
+// Agora recebe a prop 'caravana' inteira
+const CaravanaDetailsPage = ({ caravana, onBack }) => {
   const [copied, setCopied] = useState(false);
 
-  // 1. DADOS MOCKADOS (Sincronizados com a tela de listagem)
-  const mockCaravanaData = {
-    1: { 
-      nome: "Caravana do Rock", 
-      evento: "Show de Rock Nacional", 
-      data: "15/11", 
-      local: "Allianz Parque", 
-      link: "app.com/c/rock", 
-      membrosCount: 15,
-      souDono: true // <--- ID 1: Você é o dono
-    },
-    2: { 
-      nome: "Busão do Jazz", 
-      evento: "Festival de Jazz", 
-      data: "20/11", 
-      local: "Parque Ibirapuera", 
-      link: "app.com/c/jazz", 
-      membrosCount: 42,
-      souDono: false // <--- ID 2: Você NÃO é o dono
-    },
-    3: { 
-      nome: "Van Cultural", 
-      evento: "Peça 'Auto da Compadecida'", 
-      data: "05/12", 
-      local: "Teatro Municipal", 
-      link: "app.com/c/teatro", 
-      membrosCount: 4,
-      souDono: false // <--- ID 3: Você NÃO é o dono
-    },
-  };
-
-  // Garante que pega o ID certo ou usa o 1 como fallback
-  const details = mockCaravanaData[id] || mockCaravanaData[1];
-
-  // 2. LOGICA DE MEMBROS
-  // Cria o usuário "Você" dinamicamente baseado no 'souDono'
-  const currentUser = {
-    id: 99, // ID alto para não conflitar
-    nome: "Você",
-    status: details.souDono ? "Organizador" : "Confirmado", // Se não for dono, é apenas membro
-    isOwner: details.souDono // Define se ganha a coroa
-  };
-
-  // Membros fictícios genéricos
-  const outrosMembros = [
-    { id: 2, nome: "Ana Pereira", status: "Confirmado", isOwner: false },
-    { id: 3, nome: "João Souza", status: "Pendente", isOwner: false },
-    { id: 4, nome: "Carlos Lima", status: "Pago", isOwner: false },
-  ];
-
-  // Se eu NÃO sou o dono, precisamos adicionar um dono fictício na lista para mostrar quem organiza
-  if (!details.souDono) {
-    outrosMembros.unshift({ id: 100, nome: "Organizador da Van", status: "Organizador", isOwner: true });
+  // Fallback caso a URL seja inválida ou a caravana não exista
+  if (!caravana) {
+    return <div className="p-8 text-center">Caravana não encontrada.</div>;
   }
 
-  // Junta você com os outros
+  // LOGICA DE MEMBROS
+  const currentUser = {
+    id: 99,
+    nome: "Você",
+    isOwner: caravana.souDono 
+  };
+
+  const outrosMembros = [
+    { id: 2, nome: "Ana Pereira", isOwner: false },
+    { id: 3, nome: "João Souza", isOwner: false },
+    { id: 4, nome: "Carlos Lima", isOwner: false },
+  ];
+
+  if (!caravana.souDono) {
+    outrosMembros.unshift({ id: 100, nome: "Organizador da Van", isOwner: true });
+  }
+
   const listaMembros = [currentUser, ...outrosMembros];
 
-
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(details.link);
+    navigator.clipboard.writeText(caravana.link || "link-nao-disponivel");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -85,17 +51,17 @@ const CaravanaDetailsPage = ({ id, onBack }) => {
           
           {/* Info Principal */}
           <section>
-            <h2 className="text-2xl font-bold text-blue-600 mb-1">{details.nome}</h2>
-            <p className="text-gray-700 font-medium mb-4">{details.evento}</p>
+            <h2 className="text-2xl font-bold text-blue-600 mb-1">{caravana.nome}</h2>
+            <p className="text-gray-700 font-medium mb-4">{caravana.evento}</p>
             
             <div className="space-y-3 bg-blue-50 p-4 rounded-xl border border-blue-100">
               <div className="flex items-center gap-3 text-gray-600 text-sm">
                 <Calendar className="w-5 h-5 text-blue-500" />
-                <span>{details.data} • 19:00</span>
+                <span>{caravana.data} • 19:00</span>
               </div>
               <div className="flex items-center gap-3 text-gray-600 text-sm">
                 <MapPin className="w-5 h-5 text-blue-500" />
-                <span>{details.local}</span>
+                <span>{caravana.local}</span>
               </div>
             </div>
           </section>
@@ -105,7 +71,7 @@ const CaravanaDetailsPage = ({ id, onBack }) => {
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Convidar amigos</h3>
             <div className="flex gap-2">
               <div className="grow bg-gray-100 p-3 rounded-lg text-sm text-gray-600 font-mono truncate border border-gray-200">
-                {details.link}
+                {caravana.link || "https://caravana.app/convite"}
               </div>
               <button 
                 onClick={handleCopyLink}
@@ -122,8 +88,7 @@ const CaravanaDetailsPage = ({ id, onBack }) => {
           <section className="border-t border-gray-100 pt-6">
             <div className="flex justify-between items-end mb-4">
               <h3 className="text-lg font-bold text-gray-800">Quem vai</h3>
-              {/* Usa o contador do mock */}
-              <span className="text-sm text-gray-500">{details.membrosCount} pessoas</span>
+              <span className="text-sm text-gray-500">{caravana.membrosCount} pessoas</span>
             </div>
 
             <div className="space-y-3">
@@ -136,20 +101,15 @@ const CaravanaDetailsPage = ({ id, onBack }) => {
                     <div>
                       <p className="text-sm font-bold text-gray-800 flex items-center gap-1">
                         {m.nome}
-                        {/* Renderiza coroa APENAS se isOwner for true */}
                         {m.isOwner && <Crown className="w-3 h-3 text-yellow-500 fill-yellow-500" />}
                       </p>
-                      <p className={`text-xs ${m.isOwner ? 'text-blue-600 font-semibold' : 'text-gray-500'}`}>
-                        {m.status}
-                      </p>
+                      {m.isOwner && (
+                        <p className="text-xs text-blue-600 font-semibold">Organizador</p>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
-              
-              <div className="text-center pt-2">
-                <button className="text-sm text-blue-600 hover:underline">Ver todos os membros</button>
-              </div>
             </div>
           </section>
 
