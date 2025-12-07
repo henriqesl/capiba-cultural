@@ -3,7 +3,6 @@ const GrupoService = require("../services/GrupoService");
 const conecta = require("../services/ConectaAPI");
 const jwt = require("jsonwebtoken");
 
-
 class UsuarioController {
   constructor() {
     this.usuarioService = new UsuarioService();
@@ -47,18 +46,15 @@ class UsuarioController {
 
       res.status(200).json({
         usuario,
-        token, 
-        conectaToken, 
+        token,
+        conectaToken,
       });
-
     } catch (error) {
       res.status(401).json({
         erro: `Erro no login: ${error.message}`,
       });
     }
   }
-
-  
 
   async listarUsuarios(req, res) {
     try {
@@ -83,6 +79,31 @@ class UsuarioController {
       res
         .status(404)
         .json({ erro: `Erro ao encontrar usuário: ${error.message}` });
+    }
+  }
+
+  async atualizarUsuario(req, res) {
+    const { id } = req.params;
+    const novosDados = req.body;
+
+    try {
+      const usuarioAtualizado = await this.usuarioService.atualizarUsuario(
+        Number(id),
+        novosDados
+      );
+
+      if (!usuarioAtualizado) {
+        return res.status(404).json({ erro: "Usuário não encontrado" });
+      }
+
+      res.status(200).json({
+        mensagem: "Usuário atualizado com sucesso!",
+        usuario: usuarioAtualizado,
+      });
+    } catch (error) {
+      res.status(400).json({
+        erro: `Erro ao atualizar usuário: ${error.message}`,
+      });
     }
   }
 
