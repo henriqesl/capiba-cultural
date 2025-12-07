@@ -106,6 +106,11 @@ class UsuarioService {
 
     return await this.usuarioRepository.removerUsuario(id);
   }
+
+  async atualizarUsuario(id, novosDados) {
+  return await Usuario.findByIdAndUpdate(id, novosDados, { new: true });
+  }
+  
 }
 
 module.exports = UsuarioService;
