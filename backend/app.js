@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require('path');
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
@@ -26,7 +27,7 @@ app.use(
 );
 
 app.use(bodyParser.json());
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/caravanas", caravanaRoutes);
 app.use("/api/eventos", eventoRoutes);
 app.use("/api/grupos", grupoRoutes);
