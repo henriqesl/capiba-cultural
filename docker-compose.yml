@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # --- Serviço do Backend ---
+  backend:
+    build: ./backend
+    container_name: capiba-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    # AQUI ESTÁ A MUDANÇA:
+    # Em vez de escrever a senha aqui, dizemos pro Docker ler o arquivo .env da pasta backend
+    env_file:
+      - ./backend/.env 
+    # Se preferir colocar a URL direto aqui (menos seguro), use 'environment' como antes
+    
+  # --- Serviço do Frontend ---
+  frontend:
+    build: ./frontend
+    container_name: capiba-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:3000
+
+# Não precisa mais da seção 'volumes' no final, pois o banco está na nuvem
