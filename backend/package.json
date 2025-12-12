@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
+    "seed": "node prisma/seed.js",
+    "prisma:seed": "npm run seed",
     "start": "nodemon app.js",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
