@@ -16,32 +16,51 @@ class EventoController {
       faixaEtaria,
       precisaInscricao,
       horario,
-      imagemUrl
+      imagemUrl: imagemUrlBody
     } = req.body;
+  
+    const imagemUrlFinal = (req.file && req.file.path) ? req.file.path : imagemUrlBody;
+
+    const ativoFinal = ativo === 'true';
+    const pequenoPorteFinal = pequenoPorte === 'true';
+    const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
+    const aoVivoFinal = aoVivo === 'true';
+    const precisaInscricaoFinal = precisaInscricao === 'true';
+
+
+    if (imagemUrlFinal) {
+        console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
+    } else {
+        console.log("Nenhum arquivo de imagem foi enviado.");
+    }
+
+    const moedasCapibasDestribuidasParsed = parseInt(moedasCapibasDestribuidas);
+    const faixaEtariaParsed = parseInt(faixaEtaria); 
+    
 
     try {
-      const evento = await eventoService.criarEvento(
-        nome,
-        local,
-        data,
-        descricao,
-        pequenoPorte,
-        reportadoPorUsuario,
-        aoVivo,
-        moedasCapibasDestribuidas,
-        ativo,
-        preco,
-        faixaEtaria,
-        precisaInscricao,
-        horario,
-        imagemUrl
-      );
+        const evento = await eventoService.criarEvento(
+            nome, 
+            local, 
+            data, 
+            descricao, 
+            pequenoPorteFinal, 
+            reportadoPorUsuarioFinal, 
+            aoVivoFinal, 
+            moedasCapibasDestribuidasParsed, 
+            ativoFinal, 
+            preco, 
+            faixaEtariaParsed, 
+            precisaInscricaoFinal, 
+            horario, 
+            imagemUrlFinal
+    );
       res.status(201).json({
         mensagem: `Evento criado com sucesso: ${evento.nome}`,
         evento,
       });
     } catch (error) {
-      res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
+          res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
     }
   }
 

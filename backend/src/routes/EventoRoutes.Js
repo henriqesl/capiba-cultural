@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const EventoController = require("../controllers/EventoController");
+const multer = require('multer');
+
+const upload = multer({ dest: 'uploads/' });
 
 const eventoController = new EventoController();
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single('imagemFile'), async (req, res) => {
   await eventoController.criarEvento(req, res);
 });
 

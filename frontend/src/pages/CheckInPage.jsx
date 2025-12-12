@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../services/api'; 
 import { 
     Megaphone, Camera, Plus, ScanLine, CalendarPlus, Info, 
     ArrowLeft, MapPin, DollarSign, Users, Clock, AlignLeft, 
@@ -119,13 +120,55 @@ const MenuScreen = ({ onScan, onReport, onSuggest }) => (
 
 // --- FORMULÁRIO DE REPORTAR (VERMELHO) ---
 const ReportForm = ({ onBack }) => {
+    const [local, setLocal] = useState('');
+    const [value, setValue] = useState('');
     const [noAgeLimit, setNoAgeLimit] = useState(false);
     const [unknownTime, setUnknownTime] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
+    const [imageFile, setImageFile] = useState(null); 
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if (file) setImagePreview(URL.createObjectURL(file));
+        if (file) {
+            setImageFile(file); 
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("HANDLE SUBMIT DISPAROU");
+
+    // CRIA O FORM DATA
+    const formData = new FormData();
+
+        formData.append('nome', `Reporte: Evento em ${local}`);
+        formData.append('local', local);
+        formData.append('data', new Date().toISOString());
+        formData.append('preco', value || "Gratuito");
+        formData.append('faixaEtaria', noAgeLimit ? 0 : 18);
+        formData.append('descricao', "Evento reportado pela comunidade em tempo real.");
+        formData.append('precisaInscricao', false);
+        formData.append('ativo', true);
+
+        if (imageFile) {
+            formData.append('imagemFile', imageFile); 
+            console.log("Arquivo adicionado ao FormData:", imageFile.name);
+        }
+
+
+        try {
+         const resposta = await api.post('/eventos', formData); 
+
+         console.log("RESPOSTA DA API:", resposta.data);
+         alert("Reporte enviado com sucesso!");
+         onBack();
+
+        } catch (error) {
+            console.log("CATCH PEGOU ERRO:", error);
+             alert("Erro ao enviar reporte. Verifique o console.");
+        }
     };
 
     return (
@@ -141,30 +184,45 @@ const ReportForm = ({ onBack }) => {
                     </div>
                 </header>
 
-                <form className="p-6 md:p-8 space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Enviado!"); }}>
+                <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Foto do local/evento</label>
-                        <div className="relative w-full h-48 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden">
-                            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                        <div className="relative w-full h-48 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors flex flex-col items-center justify-center overflow-hidden">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                            />
+
                             {imagePreview ? (
-                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                <img
+                                    src={imagePreview}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover"
+                                />
                             ) : (
-                                <>
-                                    <div className="bg-red-100 p-3 rounded-full mb-2"><Upload className="w-6 h-6 text-red-500" /></div>
-                                    <span className="text-gray-500 text-sm font-medium">Toque para adicionar foto</span>
-                                </>
+                                <div className="relative z-0 flex flex-col items-center">
+                                    <div className="bg-red-100 p-3 rounded-full mb-2">
+                                        <Upload className="w-6 h-6 text-red-500" />
+                                    </div>
+                                    <span className="text-gray-500 text-sm font-medium">
+                                        Toque para adicionar foto
+                                    </span>
+                                </div>
                             )}
+
                         </div>
                     </div>
                     {/* Campos de Local e Valor */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Local</label>
-                            <input type="text" placeholder="Ex: Pátio do CIn" className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none" required />
+                            <input value={local} onChange={e => setLocal(e.target.value)} type="text" placeholder="Ex: Pátio do CIn" className="w-full p-2.5 border border-gray-300 rounded-lg outline-none" required />
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Valor</label>
-                            <input type="text" placeholder="Ex: Grátis" className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 outline-none" required />
+                            <input value={value} onChange={e => setValue(e.target.value)} type="text" placeholder="Ex: Grátis" className="w-full p-2.5 border border-gray-300 rounded-lg outline-none" required/>
                         </div>
                     </div>
                     {/* Checkboxes de Controle */}
@@ -173,14 +231,16 @@ const ReportForm = ({ onBack }) => {
                              <label className="block text-sm font-bold text-gray-700">Faixa Etária</label>
                              <div className="flex gap-2">
                                 <input type="text" placeholder="+18" disabled={noAgeLimit} className={`w-full p-2.5 border rounded-lg ${noAgeLimit ? 'bg-gray-100' : ''}`} />
-                                <label className="flex items-center gap-1 cursor-pointer whitespace-nowrap"><input type="checkbox" checked={noAgeLimit} onChange={(e) => setNoAgeLimit(e.target.checked)} /> Livre</label>
+                                <label className="flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                                    <input type="checkbox" checked={noAgeLimit} onChange={(e) => setNoAgeLimit(e.target.checked)} /> Livre</label>
                              </div>
                         </div>
                         <div className="flex flex-col gap-1">
                              <label className="block text-sm font-bold text-gray-700">Horário</label>
+                             <input type="time" disabled={unknownTime} className={`w-full p-2.5 border rounded-lg ${unknownTime ? 'bg-gray-100' : ''}`} />
                              <div className="flex gap-2">
-                                <input type="time" disabled={unknownTime} className={`w-full p-2.5 border rounded-lg ${unknownTime ? 'bg-gray-100' : ''}`} />
-                                <label className="flex items-center gap-1 cursor-pointer whitespace-nowrap"><input type="checkbox" checked={unknownTime} onChange={(e) => setUnknownTime(e.target.checked)} /> Não sei</label>
+                                <label className="flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                                        <input type="checkbox" checked={unknownTime} onChange={(e) => setUnknownTime(e.target.checked)} /> Não sei</label>
                              </div>
                         </div>
                     </div>
@@ -195,11 +255,46 @@ const ReportForm = ({ onBack }) => {
 
 // --- FORMULÁRIO DE SUGERIR (VERDE) ---
 const SuggestForm = ({ onBack }) => {
+    const [name, setName] = useState('');
+    const [date, setDate] = useState('');
+    const [hour, setHour] = useState('');
+    const [local, setLocal] = useState('');
+    const [link, setLink] = useState('');
+    const [obs, setObs] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if (file) setImagePreview(URL.createObjectURL(file));
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+
+        try {
+            // Junta Data + Hora para criar um DateTime válido para o Prisma
+            const dataHour = new Date(`${date}T${hour || '00:00'}:00`);
+
+            const dadosSugestao = {
+                name,
+                local,
+                date: dataHour,
+                obs: `${obs} \n\n Link oficial: ${link}`, 
+                ativo: false, 
+            };
+
+            await api.post('/eventos', dadosSugestao);
+            alert("Sugestão enviada! Aguarde aprovação.");
+            onBack();
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao enviar sugestão.");
+        } 
     };
 
     return (
@@ -217,8 +312,7 @@ const SuggestForm = ({ onBack }) => {
                     </div>
                 </header>
 
-                <form className="p-6 md:p-8 space-y-6" onSubmit={(e) => { e.preventDefault(); alert("Sugestão enviada!"); }}>
-                    
+                <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
                     {/* 1. COMPROVANTE (Diferencial da Sugestão) */}
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -226,44 +320,50 @@ const SuggestForm = ({ onBack }) => {
                             <span className="ml-2 text-xs font-normal text-gray-500">(Post do insta, cartaz ou site)</span>
                         </label>
                         <div className="relative w-full h-48 border-2 border-dashed border-green-300 rounded-xl bg-green-50 hover:bg-green-100 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden">
-                            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" required />
-                            
-                            {imagePreview ? (
-                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                            ) : (
-                                <>
-                                    <div className="bg-green-200 p-3 rounded-full mb-2">
-                                        <Upload className="w-6 h-6 text-green-700" />
-                                    </div>
-                                    <span className="text-green-800 text-sm font-medium">Anexar imagem de comprovação do evento</span>
-                                </>
-                            )}
+                            <input type="file" accept="image/*" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />                            
+                                {imagePreview ? (
+                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                ) : (
+                                    <>
+                                        <div className="bg-green-200 p-3 rounded-full mb-2">
+                                            <Upload className="w-6 h-6 text-green-700" />
+                                        </div>
+                                        <span className="text-green-800 text-sm font-medium">
+                                            Anexar imagem de comprovação do evento
+                                        </span>
+                                    </>
+                                )}                                         
                         </div>
                     </div>
 
                     {/* 2. NOME DO EVENTO */}
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Nome do Evento</label>
-                        <input type="text" placeholder="Ex: Calourada CIn 2024" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" required />
+                        <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="Ex: Calourada CIn" className="w-full p-3 border border-gray-300 rounded-lg outline-none" required />                   
                     </div>
-
                     {/* 3. DATA E HORA (Obrigatório para sugestão) */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Data</label>
-                            <div className="relative">
-                                <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                <input type="date" className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" required />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Horário Previsto</label>
-                            <div className="relative">
-                                <Clock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                <input type="time" className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
-                            </div>
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Data</label>
+                        <div className="relative">
+                            <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                            <input
+                                value={date}
+                                onChange={e => setDate(e.target.value)}
+                                type="date"
+                                className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none"
+                                required
+                            />
                         </div>
                     </div>
+                    
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Horário Previsto</label>
+                        <div className="relative">
+                            <Clock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                            <input value={hour} onChange={e => setHour(e.target.value)} type="time" className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none" />                      
+                        </div>
+                    </div>
+                
 
                     {/* 4. LOCAL E LINK */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -271,14 +371,14 @@ const SuggestForm = ({ onBack }) => {
                             <label className="block text-sm font-bold text-gray-700 mb-1">Local</label>
                             <div className="relative">
                                 <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                <input type="text" placeholder="Local" className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" required />
+                                <input value={local} onChange={e => setLocal(e.target.value)} type="text" placeholder="Local" className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none" required />
                             </div>
                         </div>
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-1">Link Oficial (Opcional)</label>
                             <div className="relative">
                                 <LinkIcon className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                                <input type="url" placeholder="https://instagram.com/..." className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none" />
+                                <input value={link} onChange={e => setLink(e.target.value)} type="url" placeholder="https://..." className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none" />
                             </div>
                         </div>
                     </div>
@@ -286,7 +386,7 @@ const SuggestForm = ({ onBack }) => {
                     {/* 5. COMENTÁRIO */}
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Observações extras</label>
-                        <textarea rows="2" placeholder="Algo mais que devamos saber?" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none resize-none"></textarea>
+                        <textarea rows="2" value={obs} onChange={e => setObs(e.target.value)} placeholder="Algo mais que devamos saber?" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 outline-none resize-none"></textarea>
                     </div>
 
                     <button type="submit" className="w-full bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-700 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2">
