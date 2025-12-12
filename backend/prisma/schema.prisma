@@ -8,6 +8,22 @@
 
   }
 
+  enum CategoriaEvento {
+    ROCK
+    SAMBA
+    FREVO
+    ARTE_VISUAL
+    TEATRO
+    GASTRONOMIA
+    OUTRO
+  }
+
+  enum TipoMissao {
+      COUNT_CHECKINS
+      UNIQUE_LOCATIONS
+      SPECIFIC_TAG
+  }
+
 
   model Usuario {
     id               Int       @id      @default(autoincrement())
@@ -28,29 +44,30 @@
     eventos_participados Evento[]      @relation("ParticipantesDoEvento")
     reportes_feitos        ReporteEvento[] @relation("ReportesFeitos")
     reportes_confirmados   ReporteEvento[] @relation("ConfirmadoresDoReporte")
+    status_progresso        StatusUsuario[] 
 
     @@map("usuarios")
   }
 
 
   model Evento {
-    id                        Int       @id @default(autoincrement())
-    nome                      String
+    id                        Int                   @id @default(autoincrement())
+    nome                      String  
     local                     String
     data                      DateTime
     descricao                 String
-    ativo                     Boolean   @default(true)
-    aoVivo                    Boolean   @default(false)
-    pequenoPorte              Boolean   @default(true)
-    moedasCapibasDestribuidas  Float     @default(0)
-    reportadoPorUsuario       Boolean   @default(false)
-    confirmacoes              Int       @default(0)
+    categoria                 CategoriaEvento       @default(OUTRO)
+    ativo                     Boolean               @default(true)
+    aoVivo                    Boolean               @default(false)
+    pequenoPorte              Boolean               @default(true)
+    moedasCapibasDestribuidas  Float                @default(0)
+    reportadoPorUsuario       Boolean               @default(false)
+    confirmacoes              Int                   @default(0)
     preco                     String? 
-    faixaEtaria               Int       @default(0)
-    precisaInscricao          Boolean   @default(false)
+    faixaEtaria               Int                   @default(0)
+    precisaInscricao          Boolean               @default(false)
     imagemUrl                 String?   
     horario                   String?
-    //=========================================
 
     checkins           CheckIn[] 
     participantes Usuario[]   @relation("ParticipantesDoEvento")
@@ -58,6 +75,42 @@
     reportes ReporteEvento[] @relation("ReportesDoEvento")
 
     @@map("eventos")
+  }
+
+
+  model Missao {
+    id                  Int           @id @default(autoincrement())
+    titulo              String        @unique
+    descricao           String
+    recompensaCapibas   Int
+    
+    tipoRequisito       TipoMissao 
+    valorRequisito      Int 
+    tagRequisito        String?      // Usado para SPECIFIC_TAG (ex: "ROCK")
+
+    // Relação com o progresso do usuário
+    progressos          StatusUsuario[]
+
+    @@map("missoes")
+  }
+
+  model StatusUsuario {
+      id                  Int           @id @default(autoincrement()) 
+      
+      progressoAtual      Int           @default(0)
+      concluida           Boolean       @default(false)
+      dataConclusao       DateTime?
+
+      // Relações
+      usuario             Usuario       @relation(fields: [usuarioId], references: [id])
+      usuarioId           Int
+      
+      missao              Missao        @relation(fields: [missaoId], references: [id])
+      missaoId            Int
+
+      @@unique([usuarioId, missaoId]) // Um usuário só pode ter um progresso por missão
+      
+      @@map("status_usuario")
   }
 
 
