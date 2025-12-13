@@ -4,6 +4,15 @@ import Carousel from '../../components/event/Carousel';
 import EventCard from '../../components/event/EventCard'; 
 import api from '../../services/api'; 
 
+
+const getFullImageUrl = (relativePath) => {
+    if (!relativePath) {
+        return undefined; 
+    }
+    // Certifique-se de que a porta 3000 é a correta
+    return `http://localhost:3000/${relativePath}`; 
+};
+
 const EventPage = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [eventos, setEventos] = useState([]); 
@@ -53,12 +62,24 @@ const EventPage = () => {
     // Se não tiver destaques suficientes, pega os primeiros
     const carouselData = featuredEvents.length > 0 ? featuredEvents : eventos.slice(0, 3);
 
+
+   const carouselDataFinal = carouselData.map(evento => ({
+        id: evento.id,
+        // Mapeia nome do DB para title que o Carousel espera
+        title: evento.nome, 
+        time: getHorarioEvento(evento),
+        location: evento.local,
+        // Aplica a URL completa
+        image: getFullImageUrl(evento.imagemUrl), 
+    }));
+
+
     return (
         <div className="bg-gray-100 min-h-screen pb-24 md:pb-12">
             
             <div className="pt-8 pb-4">
                 {/* Carrossel com dados reais */}
-                <Carousel events={carouselData} />
+                <Carousel events={carouselDataFinal} />
             </div>
 
             <div className="max-w-6xl mx-auto border-t border-gray-200 mb-8"></div>
@@ -86,8 +107,8 @@ const EventPage = () => {
                             // Passamos o link com ID para abrir os detalhes
                             href={`#/evento/${evento.id}`}
                             // Opcional: Se você atualizar o EventCard para aceitar imagem
-                            // image={evento.imagemUrl} 
-                        />
+                            image={getFullImageUrl(evento.imagemUrl)}
+                            />
                     ))}
                 </div>
             </div>

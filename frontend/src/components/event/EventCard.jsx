@@ -1,41 +1,58 @@
 import React from 'react';
 
-const EventCard = ({ title, time, location, href, className = '', onClick, ...props }) => {
+const BASE_URL = 'http://localhost:3000'; // OU a URL do seu backend
+
+// 🚨 A prop 'image' deve ser desestruturada aqui!
+const EventCard = ({ title, time, location, href, className = '', onClick, image, ...props }) => { 
+    
     const Tag = href ? 'a' : 'div';
     
+    const imageUrl = image 
+        ? image
+        : '/placeholder-path.png'; // Caminho para um placeholder estático
+        
     const interactProps = href ? { href } : { onClick };
 
     return (
         <Tag 
             className={`
-                w-full bg-blue-600 text-white rounded-lg shadow-md 
-                p-4 px-6 
+                w-full bg-white text-gray-800 rounded-xl shadow-lg border border-gray-200 
+                p-4 
                 flex items-center justify-between
                 text-left
-                hover:bg-blue-700 transition-colors
+                hover:shadow-xl hover:scale-[1.01] transition-all duration-200
                 cursor-pointer
                 ${className}
             `}
             {...interactProps}
             {...props}
         >
-            <div className="flex flex-col">
-                <span className='font-bold text-xl'>{title}</span>
-                <span className='text-base'>{time}</span>
-                <span className='text-base opacity-80'>{location}</span>
+            {/* 1. CONTAINER DA IMAGEM (Substitui o quadrado cinza) */}
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden shrink-0 ml-0 mr-4 bg-gray-300 flex items-center justify-center">
+                {image ? (
+                    <img 
+                        src={imageUrl} 
+                        alt={title} 
+                        className="w-full h-full object-cover" 
+                    />
+                ) : (
+                    <span className="text-gray-500 text-xs">Sem Imagem</span>
+                )}
             </div>
-            {/* Placeholder de Imagem do Card */}
-            <div className="w-32 h-32 bg-gray-300 rounded-md flex items-center justify-center shrink-0 ml-4">
-                <span className="text-gray-700 text-xs">IMG</span>
+            
+            {/* 2. CONTAINER DO TEXTO */}
+            <div className="flex flex-col flex-grow min-w-0">
+                <span className='font-bold text-lg sm:text-xl truncate mb-1'>{title}</span>
+                <span className='text-sm sm:text-base text-blue-600 font-semibold mb-1'>🕒 {time}</span>
+                <span className='text-sm sm:text-base text-gray-500 truncate'>📍 {location}</span>
+            </div>
+            
+            {/* Botão de Detalhes (Opcional, para indicar clique) */}
+            <div className="shrink-0 ml-4 text-blue-500 text-2xl font-bold">
+                &rarr;
             </div>
         </Tag>
     );
 };
 
 export default EventCard;
-
-/*
-  Mesma questão das imagens: como o backend não manda URL da foto, 
-  esse quadrado cinza "IMG" vai aparecer pra todos os eventos. 
-  Ideal é usar uma biblioteca de ícones ou imagens aleatórias até o back ter suporte a upload.
-*/

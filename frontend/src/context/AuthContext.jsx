@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react'; 
 import api from '../services/api';
 
 export const AuthContext = createContext();
@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
 
         if (recoveredUser && token) {
             setUser(JSON.parse(recoveredUser));
+            api.defaults.headers.Authorization = `Bearer ${token}`;
         }
         setLoading(false);
     }, []);
@@ -28,6 +29,9 @@ export const AuthProvider = ({ children }) => {
 
             const { token, usuario } = response.data;
 
+
+            api.defaults.headers.Authorization = `Bearer ${token}`;
+
             // Salva no navegador e no estado
             localStorage.setItem('token', token);
             localStorage.setItem('usuario', JSON.stringify(usuario));
@@ -37,6 +41,7 @@ export const AuthProvider = ({ children }) => {
             return true; // Sucesso
         } catch (error) {
             console.error("Erro no login:", error);
+            localStorage.removeItem('token');
             return false; // Falha
         }
     };
@@ -54,4 +59,14 @@ export const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     );
+};
+
+export const useAuth = () => {
+     const context = useContext(AuthContext); 
+    
+     if (!context) {
+         throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+     }
+
+     return context;
 };
