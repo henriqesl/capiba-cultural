@@ -31,6 +31,8 @@ class UsuarioService {
     const usuario = await this.usuarioRepository.buscarEmail(email);
     if (!usuario) throw new Error("Credenciais inválidas");
 
+    console.log("Senha armazenada (Hash):", usuario.senha);
+
     const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
     if (!senhaCorreta) throw new Error("Credenciais inválidas");
 

@@ -1,4 +1,4 @@
-const Missao = require('../repositories/MissaoRepository');
+const Missao = require('../models/Missao');
 const { TipoMissao } = require('@prisma/client'); 
 
 class MissaoService {

@@ -12,6 +12,15 @@ class Usuario {
   async buscarEmail(email) {
     return await prisma.usuario.findUnique({
       where: { email: email },
+      select: {
+          id: true,
+          nome: true,
+          email: true,
+          cpf: true,
+          senha: true, 
+          saldoMoedaCapiba: true,
+          dataCadastro: true,
+        }
     });
   }
 

@@ -1,7 +1,7 @@
-import { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-class MissaoRepository {
+class Missao {
     async obterPorId(missaoId) {
         return prisma.missao.findUnique({
             where: { id: missaoId },
@@ -97,4 +97,4 @@ class MissaoRepository {
     }
 }
 
-export default new MissaoRepository();
+module.exports = Missao;

@@ -1,4 +1,6 @@
 const Evento = require("../models/Evento");
+const fs = require('fs').promises;
+const path = require('path');
 
 class EventoService {
   constructor() {
@@ -89,8 +91,32 @@ class EventoService {
       throw new Error("Evento não encontrado");
     }
 
-    return await this.eventoRepository.removerEvento(id);
+
+if (evento.imagemUrl) {
+        try {
+            // 1. Extrai o nome do arquivo da URL (ex: 'uploads/abc.jpg' -> 'abc.jpg')
+            const nomeDoArquivo = evento.imagemUrl.replace('uploads/', '');
+            
+            const caminhoBase = path.join(__dirname, '..', '..', 'uploads');
+            const caminhoCompleto = path.join(caminhoBase, nomeDoArquivo); 
+
+            console.log(`[DELEÇÃO DE ARQUIVO] Tentando deletar arquivo em: ${caminhoCompleto}`);
+            
+            await fs.unlink(caminhoCompleto);
+            console.log(`[DELEÇÃO DE ARQUIVO] Imagem deletada com sucesso!`);
+
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                console.warn(`[DELEÇÃO DE ARQUIVO] AVISO: Arquivo não encontrado no disco (ENOENT).`);
+            } else {
+                console.error(`[DELEÇÃO DE ARQUIVO] ERRO FATAL: Falha ao deletar arquivo. Código: ${error.code}. Mensagem: ${error.message}`);
+            }
+        }
+
+        return await this.eventoRepository.removerEvento(id);
+    }
   }
+  
 }
 
 module.exports = new EventoService();

@@ -143,7 +143,7 @@ const handleSubmit = async (e) => {
     // CRIA O FORM DATA
     const formData = new FormData();
 
-        formData.append('nome', `Reporte: Evento em ${local}`);
+        formData.append('nome', `Evento em ${local}`);
         formData.append('local', local);
         formData.append('data', new Date().toISOString());
         formData.append('preco', value || "Gratuito");

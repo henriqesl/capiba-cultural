@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
+
 const InfoItem = ({ icon, label, value }) => (
     <div className="flex items-start bg-blue-50 rounded-lg p-4">
         <span className="text-2xl mr-3 mt-1">{icon}</span>
@@ -14,6 +15,8 @@ const InfoItem = ({ icon, label, value }) => (
 const EventDetailPage = ({ eventId, onBack }) => {
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
+    const BASE_URL = 'http://localhost:3000'; 
+    const extensao = '.jpg'; 
 
     useEffect(() => {
         const fetchDetalhes = async () => {
@@ -67,8 +70,8 @@ const EventDetailPage = ({ eventId, onBack }) => {
                 <div className="w-full h-64 sm:h-96 bg-gray-300 flex items-center justify-center relative overflow-hidden">
                     {event.imagemUrl ? (
                         <img 
-                            src={event.imagemUrl} 
-                            alt={event.nome} 
+                            src={`${BASE_URL}/${event.imagemUrl}${extensao}`}
+                            alt={event.nome}
                             className="w-full h-full object-cover"
                         />
                     ) : (
