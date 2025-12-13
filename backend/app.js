@@ -10,6 +10,7 @@ const grupoRoutes = require("./src/routes/GrupoRoutes");
 const reporteRoutes = require("./src/routes/ReporteRoutes");
 const usuarioRoutes = require("./src/routes/UsuarioRoutes");
 const checkInRoutes = require("./src/routes/CheckInRoutes");
+const missaoRoutes = require("./src/routes/MissaoRoutes");
 
 const authMiddleware = require("./src/middleware/authMiddleware");
 
@@ -27,13 +28,14 @@ app.use(
 );
 
 app.use(bodyParser.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('/app/uploads'));
 app.use("/api/caravanas", caravanaRoutes);
 app.use("/api/eventos", eventoRoutes);
 app.use("/api/grupos", grupoRoutes);
 app.use("/api/reportes", reporteRoutes);
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/checkin", checkInRoutes);
+app.use("/api/missao", missaoRoutes);
 
 app.get("/", (req, res) => {
   res.send("Servidor funcionando!");

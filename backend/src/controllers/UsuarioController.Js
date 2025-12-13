@@ -32,24 +32,18 @@ class UsuarioController {
     const { email, senha } = req.body;
 
     try {
-      const usuario = await this.usuarioService.autenticarUsuario(
-        email,
-        senha
-      );
 
-      const conectaToken = await conecta.autenticar(usuario.cpf, senha);
+      const { token: usuarioToken, usuario: usuarioInfo } = await this.usuarioService.autenticarUsuario(
+                email,
+                senha
+            );
 
-      const token = jwt.sign(
-        { id: usuario.id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
 
-      res.status(200).json({
-        usuario,
-        token, 
-        conectaToken, 
-      });
+     res.status(200).json({
+        usuario: usuarioInfo, 
+        token: usuarioToken,
+
+     });
 
     } catch (error) {
       res.status(401).json({

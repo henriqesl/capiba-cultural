@@ -19,8 +19,8 @@ class EventoController {
       imagemUrl: imagemUrlBody
     } = req.body;
   
-    const imagemUrlFinal = (req.file && req.file.path) ? req.file.path : imagemUrlBody;
-
+    const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
+    
     const ativoFinal = ativo === 'true';
     const pequenoPorteFinal = pequenoPorte === 'true';
     const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
