@@ -17,6 +17,7 @@ class Usuario {
   async buscarEmail(email) {
     return await prisma.usuario.findUnique({
       where: { email: email },
+      // Adicionei os novos campos no select para virem no login se precisar
       select: {
           id: true,
           nome: true,
@@ -26,20 +27,35 @@ class Usuario {
           fotoUrl: true,
           saldoMoedaCapiba: true,
           dataCadastro: true,
+          // Novos campos
+          dataNascimento: true,
+          cep: true,
+          endereco: true,
+          numero: true,
+          bairro: true
         }
     });
   }
 
-  async novoUsuario(nome, email, senha, cpf, imagemPerfilPath) {
+  // ESTE MÉTODO JÁ ESTAVA CORRETO NO SEU ARQUIVO
+  async novoUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, fotoUrl) {
     return await prisma.usuario.create({
       data: {
         nome,
         email,
         senha,
         cpf,
-        fotoUrl: imagemPerfilPath,
+        
+        dataNascimento: dataNascimento ? new Date(dataNascimento) : null,
+        cep,
+        endereco,
+        numero,
+        bairro,
+
+        fotoUrl, 
+        
         saldoMoedaCapiba: 0,
-        dataCadastro: new Date(),
+        dataCadastro: new Date()
       },
     });
   }
@@ -60,6 +76,7 @@ class Usuario {
     });
   }
 
+  // === CORREÇÃO IMPORTANTE AQUI ===
   async atualizar(id, dados) {
     return await prisma.usuario.update({
       where: { id: id },
@@ -67,8 +84,17 @@ class Usuario {
         nome: dados.nome,
         email: dados.email,
         cpf: dados.cpf,
-        fotoUrl: dados.fotoUrl, 
-        // lógica de senha (se tiver)
+        fotoUrl: dados.fotoUrl,
+        
+        // Adicionando suporte para atualizar endereço e data
+        // Se o dado não vier (undefined), o Prisma ignora e mantém o antigo
+        cep: dados.cep,
+        endereco: dados.endereco,
+        numero: dados.numero,
+        bairro: dados.bairro,
+        dataNascimento: dados.dataNascimento ? new Date(dados.dataNascimento) : undefined,
+
+        // Lógica de senha
         ...(dados.senha ? { senha: dados.senha } : {}),
       },
     });
@@ -96,16 +122,7 @@ class Usuario {
       where: { id: id },
       select: { nome: true },
     });
-
-    return usuario?.nome ?? null;
-  }
-
-  async setNome(id, nome) {
-    return await prisma.usuario.update({
-      where: { id: id },
-      data: { nome: nome },
-      select: { nome: true },
-    });
+    return usuario?.nome;
   }
 }
 

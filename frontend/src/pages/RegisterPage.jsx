@@ -1,190 +1,207 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import CapibaLogo from '../components/CapibaLogo';
-import Button from '../components/Button';
-import { AuthContext } from '../context/AuthContext';
-import { ArrowLeft, User, Mail, Lock, Hash, Image } from 'lucide-react'; 
-
-// 🔑 Componente de Input Reutilizável com Ícone (Melhora o UX/UI)
-const InputField = ({ icon: Icon, placeholder, value, onChange, type = 'text', disabled, name, required = true }) => (
-    <div className="relative">
-        <Icon className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-        <input 
-            type={type} 
-            placeholder={placeholder} 
-            name={name}
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            required={required}
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 text-gray-800 border-2 border-transparent focus:border-yellow-400 focus:outline-none shadow-sm transition duration-200"
-        />
-    </div>
-);
-
+import { User, Mail, Lock, FileText, Calendar, MapPin, Home, CheckCircle } from 'lucide-react';
 
 const RegisterPage = () => {
-    const { register } = useContext(AuthContext); 
-
-    // Estados
-    const [nome, setNome] = useState('');
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
-    const [confirmarSenha, setConfirmarSenha] = useState('');
-    const [cpf, setCpf] = useState(''); 
-    
-    const [imagemPerfil, setImagemPerfil] = useState(null); 
+    const { register } = useAuth();
     const [loading, setLoading] = useState(false);
-    const [fileName, setFileName] = useState('Nenhuma foto selecionada');
+    
+    // Estados do Formulário
+    const [formData, setFormData] = useState({
+        nome: '',
+        email: '',
+        senha: '',
+        confirmarSenha: '', // NOVO CAMPO
+        cpf: '',
+        dataNascimento: '',
+        cep: '',
+        endereco: '',
+        bairro: '',
+        numero: ''
+    });
 
+    const [foto, setFoto] = useState(null);
+    const [preview, setPreview] = useState(null);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setImagemPerfil(file);
-        setFileName(file ? file.name : 'Nenhuma foto selecionada');
+        if (file) {
+            setFoto(file);
+            setPreview(URL.createObjectURL(file));
+        }
     };
 
-    const handleRegister = async () => {
-        const cpfLimpo = cpf.replace(/\D/g, ''); 
+    // === CEP SILENCIOSO ===
+    const handleBlurCep = async () => {
+        const cepLimpo = formData.cep.replace(/\D/g, '');
+        if (cepLimpo.length === 8) {
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+                const data = await res.json();
+                
+                // Só preenche se achar. Se der erro, não faz nada (usuário digita).
+                if (!data.erro) {
+                    setFormData(prev => ({
+                        ...prev,
+                        endereco: data.logradouro || prev.endereco, // Mantém o que estava se vier vazio
+                        bairro: data.bairro || prev.bairro
+                    }));
+                }
+            } catch (error) {
+                // Silêncio total em caso de erro de rede ou API
+                console.log("ViaCEP indisponível ou erro, preenchimento manual.");
+            }
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         
-        if (!nome || !email || !senha || !confirmarSenha || !cpfLimpo) {
-            alert("Preencha todos os campos obrigatórios!");
+        // === VALIDAÇÃO DE SENHA ===
+        if (formData.senha !== formData.confirmarSenha) {
+            alert("As senhas não coincidem!");
             return;
-        }
-        if (senha !== confirmarSenha) {
-            alert("As senhas não coincidem.");
-            return;
-        }
-        if (cpfLimpo.length !== 11) {
-            alert("O CPF deve conter 11 dígitos válidos.");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('nome', nome);
-        formData.append('email', email);
-        formData.append('senha', senha);
-        formData.append('cpf', cpfLimpo);
-
-        if (imagemPerfil) {
-            formData.append('foto', imagemPerfil);
         }
 
         setLoading(true);
-        const resultado = await register(formData);
-        setLoading(false);
 
-        if (resultado.sucesso) {
-            alert("Conta criada com sucesso! Faça login.");
-            window.location.hash = '#/login';
-        } else {
-            alert(resultado.mensagem);
+        try {
+            const data = new FormData();
+            
+            // Adiciona campos ao FormData (exceto confirmarSenha que não vai pro back)
+            Object.keys(formData).forEach(key => {
+                if (key !== 'confirmarSenha') {
+                    data.append(key, formData[key]);
+                }
+            });
+            
+            // Foto é opcional: só anexa se o usuário escolheu
+            if (foto) {
+                data.append('foto', foto);
+            }
+
+            const resultado = await register(data);
+
+            if (resultado.sucesso) {
+                alert("Conta criada com sucesso! Faça login.");
+                window.location.hash = '#/login';
+            } else {
+                alert(resultado.mensagem || "Erro ao criar conta.");
+            }
+        } catch (error) {
+            alert("Erro inesperado.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen font-sans bg-gradient-to-br from-blue-700 to-blue-900 flex justify-center items-center p-4">
-            <div className="w-full max-w-lg text-center flex flex-col items-center gap-y-6 animate-fade-in bg-white p-8 md:p-10 rounded-2xl shadow-2xl">
+        <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
+            <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
                 
-                <CapibaLogo width="120px" variant="dark" />
+                {/* Coluna Visual */}
+                <div className="bg-blue-600 p-8 flex flex-col items-center justify-center text-white md:w-2/5 text-center">
+                    <CapibaLogo />
+                    <h2 className="text-2xl font-bold mt-4">Junte-se a nós!</h2>
+                    <p className="opacity-90 mt-2 text-sm">Crie sua conta e comece a explorar o melhor da cultura pernambucana.</p>
+                    <a href="#/login" className="mt-8 text-sm underline hover:text-yellow-300">Já tem conta? Entrar</a>
+                </div>
 
-                <header className="w-full">
-                    <h1 className="text-3xl font-extrabold text-gray-800">Crie Sua Conta</h1>
-                    <p className="text-gray-500 mt-1">Insira seus dados para começar.</p>
-                </header>
-                
-                <main className="w-full flex flex-col gap-y-4">
+                {/* Formulário */}
+                <div className="p-8 md:w-3/5">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-6">Criar Conta</h1>
                     
-                    {/* 1. SEÇÃO DE IDENTIFICAÇÃO PESSOAL */}
-                    <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1">Dados Básicos</h3>
-                    <InputField 
-                        icon={User}
-                        placeholder="Nome Completo" 
-                        value={nome}
-                        onChange={(e) => setNome(e.target.value)}
-                        disabled={loading}
-                    />
-                    
-                    <InputField 
-                        icon={Mail}
-                        placeholder="Email (Usado para login)" 
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        disabled={loading}
-                    />
-
-                    {/* 2. SEÇÃO DE CREDENCIAIS (Apenas Senhas) */}
-                    <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Credenciais</h3>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                            <InputField 
-                                icon={Lock}
-                                placeholder="Senha" 
-                                type="password"
-                                value={senha}
-                                onChange={(e) => setSenha(e.target.value)}
-                                disabled={loading}
-                            />
-                            <InputField 
-                                icon={Lock}
-                                placeholder="Confirmar Senha" 
-                                type="password"
-                                value={confirmarSenha}
-                                onChange={(e) => setConfirmarSenha(e.target.value)}
-                                disabled={loading}
-                            />
-                    </div>
-                    
-                    {/* 3. SEÇÃO DE DOCUMENTO (Apenas CPF) */}
-                    <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Documento</h3>
-
-                    <InputField 
-                        icon={Hash}
-                        placeholder="CPF (apenas números)" 
-                        value={cpf}
-                        onChange={(e) => setCpf(e.target.value)}
-                        disabled={loading}
-                    />
-                    
-                    {/* 4. SEÇÃO DE IMAGEM DE PERFIL */}
-                    <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Imagem de Perfil (Opcional)</h3>
-                    
-                    <label 
-                        htmlFor="imagemPerfil"
-                        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-800 border-2 transition duration-200 cursor-pointer ${imagemPerfil ? 'border-blue-400 text-blue-600' : 'border-gray-200'}`}
-                    >
-                        <div className="flex items-center gap-2">
-                                <Image className="w-5 h-5" />
-                                <span className="truncate text-sm font-medium">{fileName}</span>
-                        </div>
-                        <span className="text-xs bg-gray-200 py-1 px-3 rounded-lg hover:bg-gray-300">Escolher Foto</span>
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         
-                        <input 
-                            id="imagemPerfil"
-                            type="file" 
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            disabled={loading}
-                            className="hidden"
-                        />
-                    </label>
+                        {/* Foto Opcional */}
+                        <div className="flex justify-center mb-4">
+                            <label className="cursor-pointer group relative">
+                                <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-2 border-dashed border-gray-400 group-hover:border-blue-500 transition-colors">
+                                    {preview ? (
+                                        <img src={preview} className="w-full h-full object-cover" alt="Preview" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center p-1">
+                                            Foto (Opcional)
+                                        </div>
+                                    )}
+                                </div>
+                                <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+                            </label>
+                        </div>
 
-                    
-                    {/* BOTÕES */}
-                    <Button variant="primary" onClick={handleRegister} disabled={loading} className="mt-4">
-                        {loading ? 'CRIANDO CONTA...' : 'CADASTRAR'}
-                    </Button>
-                    
-                    {/* CORREÇÃO: Adicionando 'opacity-100' e classes de texto para garantir que ele seja visível, sobrescrevendo qualquer estilo desabilitado oculto do componente Button. */}
-                    <Button 
-                        variant="secondary" 
-                        href="#/login" 
-                        className="opacity-100 text-gray-500 hover:text-blue-600 transition duration-150"
-                    >
-                        <ArrowLeft className="w-5 h-5 mr-2" />
-                        JÁ TENHO CONTA
-                    </Button>
-                </main>
+                        {/* Campos Pessoais */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="relative">
+                                <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                <input name="nome" placeholder="Nome Completo" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                            <div className="relative">
+                                <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                <input name="cpf" placeholder="CPF" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="relative">
+                                <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                <input type="date" name="dataNascimento" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 text-gray-500 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                        </div>
+
+                        {/* Endereço */}
+                        <div className="pt-2 border-t border-gray-100">
+                            <p className="text-xs font-bold text-gray-400 uppercase mb-2">Endereço</p>
+                            <div className="grid grid-cols-2 gap-3 mb-3">
+                                <div className="relative">
+                                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                    <input 
+                                        name="cep" 
+                                        placeholder="CEP" 
+                                        onChange={handleChange} 
+                                        onBlur={handleBlurCep} 
+                                        required 
+                                        className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" 
+                                    />
+                                </div>
+                                <div className="relative">
+                                    <Home className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                    <input name="numero" placeholder="Número" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <input name="endereco" placeholder="Rua / Logradouro" value={formData.endereco} onChange={handleChange} required className="w-full p-2 border rounded-lg text-sm bg-gray-100 text-gray-600 focus:outline-none" />
+                                <input name="bairro" placeholder="Bairro" value={formData.bairro} onChange={handleChange} required className="w-full p-2 border rounded-lg text-sm bg-gray-100 text-gray-600 focus:outline-none" />
+                            </div>
+                        </div>
+
+                        {/* Senha e Confirmação */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                <input type="password" name="senha" placeholder="Senha" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                            <div className="relative">
+                                <CheckCircle className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                                <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                            </div>
+                        </div>
+
+                        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50">
+                            {loading ? "Criando Conta..." : "Cadastrar"}
+                        </button>
+
+                    </form>
+                </div>
             </div>
         </div>
     );
