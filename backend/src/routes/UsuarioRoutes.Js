@@ -13,7 +13,7 @@ if (!fs.existsSync(uploadDir)){
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); 
+    cb(null, "uploads/perfil/"); 
   },
   filename: (req, file, cb) => {
     
@@ -27,7 +27,7 @@ const upload = multer({ storage: storage });
 
 const usuarioController = new UsuarioController();
 
-router.post("/", upload.single('imagemPerfil'), async (req, res) => {
+router.post("/", upload.single('foto'), async (req, res) => {
     try {
         // req.file contém as informações do arquivo (caminho: req.file.path)
         // req.body contém os dados de texto (nome, email, senha, etc.)

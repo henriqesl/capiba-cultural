@@ -14,25 +14,22 @@ class UsuarioController {
   async criarUsuario(req, res) {
     const { nome, email, senha, cpf, imagemUrl: imagemUrlBody } = req.body;
 
-    const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
-    const caminhoCompletoArquivo = req.file ? req.file.path : null;
-    const caminhoDB = req.file ? `uploads/perfil/${req.file.filename}` : imagemUrlBody;
-   if (caminhoDB) {
-            console.log("Caminho do DB (URL pública):", caminhoDB);
-        } else {
-            console.log("Nenhum arquivo de imagem foi enviado.");
-        }
 
-        
-
+  
     try {
+       let fotoUrl = null;
+
+      if (req.file) {
+        fotoUrl = `${req.protocol}://${req.get("host")}/uploads/perfil/${req.file.filename}`;
+      }
+
       console.log("LOG 1: TENTANDO CHAMAR O SERVICE."); // <--- NOVO
       const usuario = await this.usuarioService.criarUsuario(
         nome,
         email,
         senha,
         cpf,
-        caminhoDB
+        fotoUrl
       );
       console.log("LOG 2: SERVICE BEM-SUCEDIDO. USUARIO RETORNADO:", usuario); // <--- NOVO
 

@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import CapibaLogo from '../components/CapibaLogo';
 import Button from '../components/Button';
 import { AuthContext } from '../context/AuthContext';
-import { ArrowLeft, User, Mail, Lock, Smartphone, Calendar, Hash, Image, Key } from 'lucide-react'; // Ícones adicionais
+import { ArrowLeft, User, Mail, Lock, Hash, Image } from 'lucide-react'; 
 
 // 🔑 Componente de Input Reutilizável com Ícone (Melhora o UX/UI)
 const InputField = ({ icon: Icon, placeholder, value, onChange, type = 'text', disabled, name, required = true }) => (
@@ -31,9 +31,9 @@ const RegisterPage = () => {
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [cpf, setCpf] = useState(''); 
+    
     const [imagemPerfil, setImagemPerfil] = useState(null); 
     const [loading, setLoading] = useState(false);
-    // Estado para o nome do arquivo, para exibição no campo de upload
     const [fileName, setFileName] = useState('Nenhuma foto selecionada');
 
 
@@ -44,10 +44,8 @@ const RegisterPage = () => {
     };
 
     const handleRegister = async () => {
-        // Limpeza de CPF e Telefone
         const cpfLimpo = cpf.replace(/\D/g, ''); 
         
-        // VALIDAÇÃO: Todos os campos obrigatórios
         if (!nome || !email || !senha || !confirmarSenha || !cpfLimpo) {
             alert("Preencha todos os campos obrigatórios!");
             return;
@@ -61,7 +59,6 @@ const RegisterPage = () => {
             return;
         }
 
-        // CRIAÇÃO DO FORMDATA
         const formData = new FormData();
         formData.append('nome', nome);
         formData.append('email', email);
@@ -69,7 +66,7 @@ const RegisterPage = () => {
         formData.append('cpf', cpfLimpo);
 
         if (imagemPerfil) {
-            formData.append('imagemPerfil', imagemPerfil);
+            formData.append('foto', imagemPerfil);
         }
 
         setLoading(true);
@@ -116,70 +113,39 @@ const RegisterPage = () => {
                         disabled={loading}
                     />
 
-                    {/* 2. SEÇÃO DE CREDENCIAIS */}
+                    {/* 2. SEÇÃO DE CREDENCIAIS (Apenas Senhas) */}
                     <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Credenciais</h3>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                            <InputField 
+                                icon={Lock}
+                                placeholder="Senha" 
+                                type="password"
+                                value={senha}
+                                onChange={(e) => setSenha(e.target.value)}
+                                disabled={loading}
+                            />
+                            <InputField 
+                                icon={Lock}
+                                placeholder="Confirmar Senha" 
+                                type="password"
+                                value={confirmarSenha}
+                                onChange={(e) => setConfirmarSenha(e.target.value)}
+                                disabled={loading}
+                            />
+                    </div>
+                    
+                    {/* 3. SEÇÃO DE DOCUMENTO (Apenas CPF) */}
+                    <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Documento</h3>
 
                     <InputField 
-                        icon={Key}
-                        placeholder="Nome de Usuário (Username)" 
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        icon={Hash}
+                        placeholder="CPF (apenas números)" 
+                        value={cpf}
+                        onChange={(e) => setCpf(e.target.value)}
                         disabled={loading}
                     />
                     
-                    <div className="grid grid-cols-2 gap-4">
-                         <InputField 
-                            icon={Lock}
-                            placeholder="Senha" 
-                            type="password"
-                            value={senha}
-                            onChange={(e) => setSenha(e.target.value)}
-                            disabled={loading}
-                        />
-                        <InputField 
-                            icon={Lock}
-                            placeholder="Confirmar Senha" 
-                            type="password"
-                            value={confirmarSenha}
-                            onChange={(e) => setConfirmarSenha(e.target.value)}
-                            disabled={loading}
-                        />
-                    </div>
-                    
-                    {/* 3. SEÇÃO DE CONTATO E DOCUMENTO */}
-                    <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Contato e Documento</h3>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* CPF */}
-                        <InputField 
-                            icon={Hash}
-                            placeholder="CPF (apenas números)" 
-                            value={cpf}
-                            onChange={(e) => setCpf(e.target.value)}
-                            disabled={loading}
-                        />
-
-                        {/* TELEFONE */}
-                        <InputField 
-                            icon={Smartphone}
-                            placeholder="Telefone (apenas números)" 
-                            type="tel"
-                            value={telefone}
-                            onChange={(e) => setTelefone(e.target.value)}
-                            disabled={loading}
-                        />
-                    </div>
-
-                    {/* DATA DE NASCIMENTO */}
-                    <InputField 
-                        icon={Calendar}
-                        placeholder="Data de Nascimento (DDMMAAAA)" 
-                        value={dataNascimento}
-                        onChange={(e) => setDataNascimento(e.target.value)}
-                        disabled={loading}
-                    />
-                    
-
                     {/* 4. SEÇÃO DE IMAGEM DE PERFIL */}
                     <h3 className="text-left text-sm font-semibold text-blue-600 border-b pb-1 pt-3">Imagem de Perfil (Opcional)</h3>
                     
@@ -188,12 +154,11 @@ const RegisterPage = () => {
                         className={`w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-50 text-gray-800 border-2 transition duration-200 cursor-pointer ${imagemPerfil ? 'border-blue-400 text-blue-600' : 'border-gray-200'}`}
                     >
                         <div className="flex items-center gap-2">
-                             <Image className="w-5 h-5" />
-                            <span className="truncate text-sm font-medium">{fileName}</span>
+                                <Image className="w-5 h-5" />
+                                <span className="truncate text-sm font-medium">{fileName}</span>
                         </div>
                         <span className="text-xs bg-gray-200 py-1 px-3 rounded-lg hover:bg-gray-300">Escolher Foto</span>
                         
-                        {/* Campo de arquivo escondido */}
                         <input 
                             id="imagemPerfil"
                             type="file" 
@@ -210,7 +175,12 @@ const RegisterPage = () => {
                         {loading ? 'CRIANDO CONTA...' : 'CADASTRAR'}
                     </Button>
                     
-                    <Button variant="secondary" href="#/login" disabled={loading}>
+                    {/* CORREÇÃO: Adicionando 'opacity-100' e classes de texto para garantir que ele seja visível, sobrescrevendo qualquer estilo desabilitado oculto do componente Button. */}
+                    <Button 
+                        variant="secondary" 
+                        href="#/login" 
+                        className="opacity-100 text-gray-500 hover:text-blue-600 transition duration-150"
+                    >
                         <ArrowLeft className="w-5 h-5 mr-2" />
                         JÁ TENHO CONTA
                     </Button>

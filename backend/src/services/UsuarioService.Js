@@ -19,9 +19,6 @@ class UsuarioService {
       email,
       senhaHash,
       cpf,
-      telefone, 
-      username,
-      dataFormatada,
       imageUrl
     );
     delete novoUsuario.senha;
@@ -50,27 +47,41 @@ class UsuarioService {
     return await this.usuarioRepository.listar();
   }
 
-  async atualizarUsuario(id, dadosAtualizados) {
-    const usuario = await this.usuarioRepository.buscarId(id);
-    if (!usuario) {
-      throw new Error("Usuário não encontrado");
-    }
-
-    const camposPermitidos = ["nome", "idade", "email", "dataCadastro", "cpf"];
-    const dadosFiltrados = {};
-
-    for (const campo in dadosAtualizados) {
-      if (camposPermitidos.includes(campo)) {
-        dadosFiltrados[campo] = dadosAtualizados[campo];
-      }
-    }
-
-    if (Object.keys(dadosFiltrados).length === 0) {
-      throw new Error("Nenhum campo válido para atualização");
-    }
-
-    return await this.usuarioRepository.atualizar(id, dadosFiltrados);
+async atualizarUsuario(id, dadosAtualizados) {
+  const usuario = await this.usuarioRepository.buscarId(id);
+  if (!usuario) {
+    throw new Error("Usuário não encontrado");
   }
+
+  const camposPermitidos = [
+    "nome",
+    "email",
+    "cpf",
+    "telefone",
+    "dataNascimento"
+  ];
+
+  const dadosFiltrados = {};
+
+  for (const campo of camposPermitidos) {
+    if (dadosAtualizados[campo] !== undefined) {
+      dadosFiltrados[campo] = dadosAtualizados[campo];
+    }
+  }
+
+  // 🔐 TRATAMENTO CORRETO DA SENHA
+  if (dadosAtualizados.senha && dadosAtualizados.senha.trim() !== "") {
+    const salt = await bcrypt.genSalt(10);
+    dadosFiltrados.senha = await bcrypt.hash(dadosAtualizados.senha, salt);
+  }
+
+  if (Object.keys(dadosFiltrados).length === 0) {
+    throw new Error("Nenhum campo válido para atualização");
+  }
+
+  return await this.usuarioRepository.atualizar(id, dadosFiltrados);
+}
+
 
   async obterPorId(id) {
     const usuario = await this.usuarioRepository.buscarId(id);

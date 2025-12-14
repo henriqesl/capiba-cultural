@@ -8,8 +8,8 @@ import { NavCard } from '../../components/user/UserNavigation';
 // 1. Importando os ícones
 import { User, Star, Users } from 'lucide-react';
 
-// 🔑 DEFINIÇÕES GLOBAIS (Ajuste conforme o seu setup)
-const BASE_URL = 'http://localhost:3000'; // A URL do seu backend
+// 🔑 DEFINIÇÕES GLOBAIS
+// Removida a BASE_URL pois o backend deve fornecer o URL completo
 const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.png'; // Caminho para a pasta 'public'
 
 const UserPage = () => {
@@ -19,20 +19,17 @@ const UserPage = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     
-    // 🔑 FUNÇÃO DE BUSCA DE DADOS (Reutilizada do ProfilePage)
+    // 🔑 FUNÇÃO DE BUSCA DE DADOS
     const fetchUserData = useCallback(async () => {
         if (!userContext?.id) {
             setLoading(false);
             return;
         }
         try {
-            // Buscando os dados do usuário usando a rota que já existe
+            // Buscando os dados do usuário
             const response = await api.get(`/usuarios/${userContext.id}`);
             const data = response.data;
             setUserData(data);
-            
-            // 🚨 LOG para verificar o campo retornado (você viu 'imagemUrl' no último log)
-            // console.log("Dados do usuário para UserPage:", data); 
             
         } catch (error) {
             console.error("Erro ao carregar dados do usuário na UserPage:", error);
@@ -46,13 +43,12 @@ const UserPage = () => {
     }, [fetchUserData]);
     
     
-    // 🔑 LÓGICA DA FOTO DE PERFIL (usando o campo 'imagemUrl' que o backend envia)
-    // Se o backend enviar 'uploads/perfil/...', precisamos concatenar
-    const imagemRelativa = userData?.imagemUrl; 
+    // 🔑 LÓGICA DA FOTO DE PERFIL (SIMPLIFICADA - Pega a URL Completa do Backend)
+    const imagemCompleta = userData?.imagemUrl || userData?.fotoUrl;
     
-    const imageUrl = imagemRelativa
-        ? `${BASE_URL}/${imagemRelativa}` // Concatena BASE_URL com o caminho DB
-        : DEFAULT_PROFILE_PIC;          // Usa a foto padrão (fallback)
+    const imageUrl = imagemCompleta
+        ? imagemCompleta // Usa a URL COMPLETA fornecida pelo backend
+        : DEFAULT_PROFILE_PIC; 
 
     if (loading) {
         return <div className="w-full h-screen flex items-center justify-center bg-gray-100">Carregando...</div>;
@@ -62,15 +58,15 @@ const UserPage = () => {
     const username = userData?.username || 'username';
     const pontos = userData?.saldoMoedaCapiba || 0;
 
-
+    
     return (
         <div className="w-full bg-gray-100 flex flex-col items-center p-4 sm:p-8 pb-24 md:pb-8">
             <div className="w-full max-w-md md:max-w-4xl">
                 
                 <header className="bg-white md:rounded-2xl md:shadow-xl p-6 md:p-8 mb-8">
                     <div className="flex items-center place-content-center">
-                        {/* 🔑 PASSA A URL CONSTRUÍDA PARA O COMPONENTE PerfilImage */}
-                        <PerfilImage imageUrl={imageUrl} />
+                        {/* 🔑 PASSA A URL COMPLETA PARA O COMPONENTE PerfilImage */}
+                        <PerfilImage src={imageUrl} />
                     </div>
                     <div className="flex items-center flex-col place-content-center mt-4 md:mt-3 text-center md:text-left">
                         {/* 🔑 DADOS DINÂMICOS */}

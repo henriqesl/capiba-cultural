@@ -18,13 +18,11 @@ import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
 
 import { AuthContext, AuthProvider } from './context/AuthContext'; 
-import api from './services/api'; // 🚨 IMPORTANTE: Importe sua instância do Axios
+import api from './services/api'; 
 
 import LogoCapiba from './assets/logo_capiba.png';
 
-// 🚨 DADOS DE TESTE (MOCK DATA) PARA EVENTOS
-// Este array é apenas para que as rotas de detalhe funcionem enquanto você não implementa a busca na API
-// Você precisará substituir isso pela busca real da API no futuro.
+// DADOS DE TESTE (MOCK DATA) 
 const MOCK_EVENTS_DATA = [
     { id: 1, nome: "Show de Rock Nacional", data: "15/11/2023", local: "Allianz Parque", descricao: "Um show épico com as melhores bandas de rock nacional.", imagem: "https://via.placeholder.com/400x200?text=Rock+Show" },
     { id: 2, nome: "Festival de Jazz", data: "20/11/2023", local: "Parque Ibirapuera", descricao: "Noite de muito jazz e improviso no parque.", imagem: "https://via.placeholder.com/400x200?text=Jazz+Festival" },
@@ -37,9 +35,8 @@ const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
     
-    // 🚨 NOVO ESTADO PARA EVENTOS
-    const [events, setEvents] = useState(MOCK_EVENTS_DATA); // Inicia com os dados de teste
-    const [loadingEvents, setLoadingEvents] = useState(false); // Pode mudar para true se for carregar da API
+    const [events, setEvents] = useState(MOCK_EVENTS_DATA); 
+    const [loadingEvents, setLoadingEvents] = useState(false); 
 
     // ESTADO GLOBAL DAS CARAVANAS ---
     const [caravanas, setCaravanas] = useState([
@@ -48,7 +45,6 @@ const App = () => {
         { id: 3, nome: "Van Cultural", evento: "Peça 'Auto da Compadecida'", data: "05/12", local: "Teatro Municipal", link: "app.com/c/teatro", membrosCount: 4, souDono: false },
     ]);
 
-    // função para criar nova caravana
     const handleCreateCaravana = (newCaravana) => {
         const newId = caravanas.length > 0 ? Math.max(...caravanas.map(c => c.id)) + 1 : 1;
         
@@ -63,31 +59,6 @@ const App = () => {
         window.location.hash = '#/perfil/caravana'; 
     };
     // -------------------------------------
-
-    // 🚨 NOVO: useEffect para carregar eventos da API (opcional, pode ser movido para EventPage)
-    // Se você quiser que todos os eventos estejam disponíveis globalmente no App.jsx:
-    /*
-    useEffect(() => {
-        const fetchEvents = async () => {
-            setLoadingEvents(true);
-            try {
-                const response = await api.get('/eventos'); // Sua rota para listar eventos
-                setEvents(response.data);
-            } catch (error) {
-                console.error("Erro ao carregar eventos da API:", error);
-                // Opcional: Manter MOCK_EVENTS_DATA se a API falhar
-                setEvents(MOCK_EVENTS_DATA); 
-            } finally {
-                setLoadingEvents(false);
-            }
-        };
-
-        // Somente carrega se o usuário estiver autenticado e não estiver na tela de login/registro
-        if (authenticated && (currentPath !== '#/login' && currentPath !== '#/login/criar')) {
-             fetchEvents();
-        }
-    }, [authenticated, currentPath]); // Depende da autenticação e da rota
-    */
 
     // useEffect para lidar com mudanças de hash
     useEffect(() => {
@@ -110,7 +81,8 @@ const App = () => {
         return <div className="text-center p-20 text-xl">Carregando autenticação...</div>;
     }
 
-    if (!authenticated && mainRoute !== 'login' && mainRoute !== 'registrar') { // 🚨 Adicionado 'registrar'
+    // Se não estiver autenticado E não for login E não for registrar, redireciona para login.
+    if (!authenticated && mainRoute !== 'login' && mainRoute !== 'registrar') { 
         window.location.hash = '#/login';
         return <LoginPage />;
     }
@@ -118,16 +90,20 @@ const App = () => {
 
     const renderPage = () => {
         
-        // rota: login ou vazia (prioridade para não autenticados)
-        if (mainRoute === 'login' || mainRoute === '') {
-           const subRoute = routeParts[1];
+        // 1. ROTA DE REGISTRO
+        if (mainRoute === 'registrar') {
+            return <RegisterPage />;
+        }
 
-            // 🔑 Nova Rota: #/login/criar ou #/registrar (se você usar o link do botão)
-            if (subRoute === 'criar' || mainRoute === 'registrar') { // 🚨 Ajuste na condição
+        // 2. ROTA DE LOGIN OU VAZIA (Incluindo #/login/criar como fallback)
+        if (mainRoute === 'login' || mainRoute === '') {
+            const subRoute = routeParts[1];
+
+            if (subRoute === 'criar') { 
                 return <RegisterPage />;
             }
             
-            // Retorna o LoginPage padrão se não houver sub-rota ou se for #/login
+            // Retorna o LoginPage padrão
             return <LoginPage />;
         }
         
@@ -156,7 +132,7 @@ const App = () => {
                         />
                     );
                 }
-                // detalhes da Caravana: #/perfil/caravana/detalhes/123
+                
                 if (caravanaAction === 'detalhes' && caravanaIdParam) {
                     const caravanaId = parseInt(caravanaIdParam);
                     const caravanaEncontrada = caravanas.find(c => c.id === caravanaId);
@@ -167,36 +143,34 @@ const App = () => {
                         />
                     );
                 }
-                // listagem de Caravanas: #/perfil/caravana
+                
                 return <CaravanaPage caravanas={caravanas} />;
             }
             
             return <UserPage />; 
         }
 
-        // 🚨 Rota: detalhes de Evento (ex: #/eventos/1) - CORRIGIDO PARA USAR 'events'
+        // Rota: detalhes de Evento (ex: #/eventos/1)
         if (mainRoute === 'eventos' && routeParts.length > 1) {
             const eventId = parseInt(routeParts[1]); 
-            const event = events.find(e => e.id === eventId); // 🚨 Agora usa o estado 'events'
+            const event = events.find(e => e.id === eventId); 
             
             if (!event) {
-                // Pode retornar uma página de "não encontrado" ou redirecionar
                 return <div className="text-center p-4">Evento não encontrado ou ainda carregando.</div>;
             }
             return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
         }
 
         switch (mainRoute) {
-            case 'eventos': return <EventPage />; // Passa 'events' e 'loadingEvents' se EventPage precisar
+            case 'eventos': return <EventPage />; 
             case 'capiba': return <CheckInPage />;
-            case 'status':  return <StatusPage />;
-            case 'registrar': return <RegisterPage />; // Caso o usuário acesse diretamente #/registrar
+            case 'status':  return <StatusPage />;
             default: return <EventPage />;
         }
     };
 
-    // Use MainLayout se não estiver na rota de login ou rota vazia
-    const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar' && mainRoute !== ''; // 🚨 Adicionado 'registrar'
+    // Use MainLayout se não for uma rota de autenticação (login, registrar, ou vazia)
+    const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar' && mainRoute !== ''; 
 
     return (
         <>

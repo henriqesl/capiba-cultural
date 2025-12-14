@@ -10,7 +10,6 @@ const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async (e) => {
-        // previne o recarregamento da página padrão do formulário
         if (e) e.preventDefault(); 
 
         if (!email || !senha) {
@@ -31,13 +30,15 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen font-sans bg-linear-to-br from-blue-600 to-blue-800 flex justify-center items-center p-8">
-            <div className="w-full max-w-sm text-center flex flex-col items-center gap-y-8 animate-fade-in">
+            {/* Reduzindo o espaçamento vertical geral de gap-y-6 para gap-y-4 */}
+            <div className="w-full max-w-sm text-center flex flex-col items-center gap-y-4 animate-fade-in"> 
                 <CapibaLogo />
-                <header className="w-full">
+                <header className="w-full mb-4">
                     <h1 className="text-3xl font-bold text-white">Bem-Vindo!</h1>
                     <p className="text-blue-100 mt-1">Digite suas credenciais</p>
                 </header>
 
+                {/* Colocando o botão Criar Conta DENTRO do fluxo de layout, junto com o formulário */}
                 <form onSubmit={handleLogin} className="w-full flex flex-col gap-y-4">
                     <input 
                         type="email" 
@@ -61,9 +62,12 @@ const LoginPage = () => {
                     >
                         {isLoading ? "ENTRANDO..." : "LOGAR"}
                     </button>
+                    
+                    {/* MOVENDO o botão Criar Conta para DENTRO do fluxo vertical, usando margin-top para um pequeno espaçamento */}
+                    <div className="mt-2">
+                        <Button variant="secondary" href="#/registrar">CRIAR CONTA</Button>
+                    </div>
                 </form>
-
-                <Button variant="secondary" href="#/login">CRIAR CONTA</Button>
             </div>
         </div>
     );
