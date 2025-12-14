@@ -29,6 +29,9 @@ export const AuthProvider = ({ children }) => {
 
             const { token, usuario } = response.data;
 
+            localStorage.setItem('usuario', JSON.stringify(usuario));
+            setUser(usuario);
+
 
             api.defaults.headers.Authorization = `Bearer ${token}`;
 
@@ -53,13 +56,35 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         window.location.hash = '#/login';
     };
+// AuthContext.jsx - Apenas a função register
+
+    const register = async (userData) => {
+        try {
+            const response = await api.post('/usuarios', userData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data' // Importante para o arquivo
+                    }
+                }); 
+            return { sucesso: true }; 
+
+        } catch (error) {
+            const errorMessage = error.response?.data?.erro || 'Erro desconhecido ao cadastrar (Verifique o console do servidor).';
+            console.error('Erro de registro:', errorMessage);
+        return { sucesso: false, mensagem: errorMessage }; 
+        }
+    };
+
+
+   
 
     return (
-        <AuthContext.Provider value={{ authenticated: !!user, user, login, logout, loading }}>
+        <AuthContext.Provider value={{ authenticated: !!user, user, login, register, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );
 };
+
+
 
 export const useAuth = () => {
      const context = useContext(AuthContext); 
@@ -70,3 +95,4 @@ export const useAuth = () => {
 
      return context;
 };
+

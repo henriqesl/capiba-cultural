@@ -224,14 +224,10 @@ const ProfilePage = () => {
                         <div className="p-2 border rounded-lg bg-gray-50 text-gray-400">CEP: 00000-000</div>
                         <div className="p-2 border rounded-lg bg-gray-50 text-gray-400">Rua: ...</div>
                     </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+                </main>
+            </div>
+        </div>
+    );
 };
 
 export default ProfilePage;

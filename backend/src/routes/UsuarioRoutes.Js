@@ -27,8 +27,28 @@ const upload = multer({ storage: storage });
 
 const usuarioController = new UsuarioController();
 
-router.post("/", async (req, res) => {
-  await usuarioController.criarUsuario(req, res);
+router.post("/", upload.single('imagemPerfil'), async (req, res) => {
+    try {
+        // req.file contém as informações do arquivo (caminho: req.file.path)
+        // req.body contém os dados de texto (nome, email, senha, etc.)
+        const imagemPerfilPath = req.file ? req.file.path : null; 
+
+        // O Controller agora precisa receber o caminho do arquivo
+        await usuarioController.criarUsuario(req, res, imagemPerfilPath);
+        
+    } catch (error) {
+        // Se o Multer falhar (limite de tamanho, tipo de arquivo), ele lança um erro aqui.
+        console.error("Erro no upload ou na rota de registro:", error);
+        
+        // 🚨 Se o upload foi feito e ocorreu um erro, precisamos limpar o arquivo!
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) console.error("Erro ao deletar arquivo após falha:", err);
+            });
+        }
+        
+        res.status(400).json({ erro: error.message });
+    }
 });
 
 router.post("/login", async (req, res) => {

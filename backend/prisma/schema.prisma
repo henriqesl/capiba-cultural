@@ -58,26 +58,26 @@ generator client {
     local                     String
     data                      DateTime
     descricao                 String
+    categoria                 CategoriaEvento       @default(OUTRO)
+    ativo                     Boolean               @default(true)
+    aoVivo                    Boolean               @default(false)
+    pequenoPorte              Boolean               @default(true)
+    moedasCapibasDestribuidas  Float                @default(0)
+    reportadoPorUsuario       Boolean               @default(false)
+    confirmacoes              Int                   @default(0)
+    preco                     String? 
+    faixaEtaria               Int                   @default(0)
+    precisaInscricao          Boolean               @default(false)
+    imagemUrl                 String?   
+    horario                   String?
+    latitude                  Float    
+    longitude                 Float
     
-    // === NOVOS CAMPOS ===
-    imagemUrl                 String?  
-    faixaEtaria               Int      @default(0)
-    preco                     Float    @default(0.0) 
-    precisaInscricao          Boolean  @default(false) 
-    categoria                 String   @default("Geral")
-    // ====================
 
-    ativo                     Boolean   @default(true)
-    aoVivo                    Boolean   @default(false)
-    pequenoPorte              Boolean   @default(true)
-    moedasCapibasDestribuidas Float     @default(10)
-    reportadoPorUsuario       Boolean   @default(false)
-    confirmacoes              Int       @default(0)
-
-    checkins      CheckIn[]
-    participantes Usuario[]       @relation("ParticipantesDoEvento")
-    caravanas     Caravana[]      @relation("CaravanasNoEvento")
-    reportes      ReporteEvento[] @relation("ReportesDoEvento")
+    checkins           CheckIn[] 
+    participantes Usuario[]   @relation("ParticipantesDoEvento")
+    caravanas     Caravana[]  @relation("CaravanasNoEvento")
+    reportes ReporteEvento[] @relation("ReportesDoEvento")
 
     @@map("eventos")
   }

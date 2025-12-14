@@ -8,9 +8,22 @@ class EventoService {
   }
 
   async criarEvento(
-    nome, local, data, descricao, 
-    imagemUrl, faixaEtaria, preco, precisaInscricao, categoria, 
-    pequenoPorte = false, reportadoPorUsuario = false
+    nome,
+    local,
+    data,
+    descricao,
+    pequenoPorte = false,
+    reportadoPorUsuario = false,
+    aoVivo = false,
+    moedasCapibasDestribuidas = 0,
+    ativo = true,
+    preco = "Gratuito", 
+    faixaEtaria = 0,    
+    precisaInscricao = false,
+    horario = null,
+    imagemUrl = null,
+    latitude,
+    longitude
   ) {
     if (!nome || !local || !data || !descricao)
       throw new Error("Campos obrigatórios: nome, local, data, descricao");
@@ -27,8 +40,22 @@ class EventoService {
     }
 
     return await this.eventoRepository.novoEvento(
-      nome, local, data, descricao,
-      imagemUrl, faixaEtaria, preco, precisaInscricao, categoria 
+      nome,
+      local,
+      data,
+      descricao,
+      pequenoPorte,
+      reportadoPorUsuario,
+      aoVivo,
+      moedasCapibasDestribuidas,
+      ativo,
+      preco,
+      faixaEtaria,
+      precisaInscricao,
+      horario,
+      imagemUrl,
+      latitude,
+      longitude
     );
   }
 
