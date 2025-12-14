@@ -136,6 +136,20 @@ class UsuarioController {
         .json({ erro: `Erro ao remover usuário: ${error.message}` });
     }
   }
+
+  async atualizarUsuario(req, res) {
+    const { id } = req.params;
+    const dados = req.body;
+    try {
+      const usuario = await this.usuarioService.atualizarUsuario(Number(id), dados);
+      res.status(200).json({
+        mensagem: "Dados atualizados com sucesso!",
+        usuario,
+      });
+    } catch (error) {
+      res.status(400).json({ erro: `Erro ao atualizar: ${error.message}` });
+    }
+  }
 }
 
 module.exports = UsuarioController;

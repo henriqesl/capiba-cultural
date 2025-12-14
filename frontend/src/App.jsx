@@ -1,37 +1,38 @@
 import React, { useState, useEffect, useContext } from 'react'; // << Adicionei useContext
 import MainLayout from './components/layout/MainLayout.jsx';
 import LoginPage from './pages/LoginPage';
+
 import EventPage from './pages/event/EventPage';
-import ProfilePage from './pages/user/ProfilePage.jsx';
-import RankingPage from './pages/user/RankingPage.jsx';
-import UserPage from './pages/user/UserPage.jsx';
 import EventDetailPage from './pages/event/EventDetailPage.jsx';
-import EventsData from './components/event/EventsData.jsx';
+
 import CheckInPage from './pages/CheckInPage.jsx';
 import StatusPage from './pages/StatusPage.jsx';
 
-// Importações das páginas de Caravana
+import ProfilePage from './pages/user/ProfilePage.jsx';
+import RankingPage from './pages/user/RankingPage.jsx';
+import UserPage from './pages/user/UserPage.jsx';
+
 import CaravanaPage from './pages/user/CaravanaPage.jsx';
 import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
 
-// << NOVO: Importe o AuthContext para que useContext funcione
+// AuthContext para que useContext funcione
 import { AuthContext, AuthProvider } from './context/AuthContext'; 
 
 
 const App = () => {
-    // Adicione a desestruturação do contexto de autenticação
+    // desestruturação do contexto de autenticação
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
 
-    // --- 1. ESTADO GLOBAL DAS CARAVANAS ---
+    // ESTADO GLOBAL DAS CARAVANAS ---
     const [caravanas, setCaravanas] = useState([
         { id: 1, nome: "Caravana do Rock", evento: "Show de Rock Nacional", data: "15/11", local: "Allianz Parque", link: "app.com/c/rock", membrosCount: 15, souDono: true },
         { id: 2, nome: "Busão do Jazz", evento: "Festival de Jazz", data: "20/11", local: "Parque Ibirapuera", link: "app.com/c/jazz", membrosCount: 42, souDono: false },
         { id: 3, nome: "Van Cultural", evento: "Peça 'Auto da Compadecida'", data: "05/12", local: "Teatro Municipal", link: "app.com/c/teatro", membrosCount: 4, souDono: false },
     ]);
 
-    // Função para criar nova caravana
+    // função para criar nova caravana
     const handleCreateCaravana = (newCaravana) => {
         const newId = caravanas.length > 0 ? Math.max(...caravanas.map(c => c.id)) + 1 : 1;
         
@@ -75,22 +76,21 @@ const App = () => {
 
     const renderPage = () => {
         
-        // Rota: Login (Prioridade)
+        // rota: login (prioridade)
         if (mainRoute === 'login' || mainRoute === '') {
             return <LoginPage />;
         }
         
-        // --- ROTAS ANINHADAS DE PERFIL (Caravana e Ranking) ---
         
         if (mainRoute === 'perfil') {
             const subRoute = routeParts[1];
             
             if (subRoute === 'ranking') {
-                return <RankingPage />;
+                return <RankingPage />; // rota do ranking
             }
             
             if (subRoute === 'editar') {
-                return <ProfilePage />; // Rota de edição de perfil
+                return <ProfilePage />; // rota de edição de perfil
             }
 
             if (subRoute === 'caravana') {
@@ -105,7 +105,7 @@ const App = () => {
                         />
                     );
                 }
-                // Detalhes da Caravana: #/perfil/caravana/detalhes/123
+                // detalhes da Caravana: #/perfil/caravana/detalhes/123
                 if (caravanaAction === 'detalhes' && caravanaIdParam) {
                     const caravanaId = parseInt(caravanaIdParam);
                     const caravanaEncontrada = caravanas.find(c => c.id === caravanaId);
@@ -116,29 +116,26 @@ const App = () => {
                         />
                     );
                 }
-                // Listagem de Caravanas: #/perfil/caravana
+                // listagem de Caravanas: #/perfil/caravana
                 return <CaravanaPage caravanas={caravanas} />;
             }
             
-            // Rota: Perfil Base (Se não for sub-rota específica)
+            // Rota: Perfil Base (se não for sub-rota específica)
             return <UserPage />; 
         }
 
 
-        // --- Rota: Detalhes de Evento (ex: #/eventos/1)
+        // Rota: detalhes de Evento (ex: #/eventos/1)
         if (mainRoute === 'eventos' && routeParts.length > 1) {
-            const eventId = parseInt(routeParts[1]); // ID é o segundo item da URL
+            const eventId = parseInt(routeParts[1]); // idé o segundo item da URL
             const event = EventsData.find(e => e.id === eventId);
             return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
         }
-        
-        // --- Roteamento Principal (Rotas de Nível Superior) ---
 
         switch (mainRoute) {
             case 'eventos': return <EventPage />;
-            case 'capiba': return <CheckInPage />; // Antiga rota '#/capiba'
+            case 'capiba': return <CheckInPage />;
             case 'status':  return <StatusPage />;
-            // As rotas 'perfil', 'ranking', 'perfil/editar', 'perfil/caravana' foram tratadas acima
             default: return <EventPage />;
         }
     };

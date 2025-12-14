@@ -8,25 +8,12 @@ class EventoService {
   }
 
   async criarEvento(
-    nome,
-    local,
-    data,
-    descricao,
-    pequenoPorte = false,
-    reportadoPorUsuario = false,
-    aoVivo = false,
-    moedasCapibasDestribuidas = 0,
-    ativo = true,
-    preco = "Gratuito", 
-    faixaEtaria = 0,    
-    precisaInscricao = false,
-    horario = null,
-    imagemUrl = null
+    nome, local, data, descricao, 
+    imagemUrl, faixaEtaria, preco, precisaInscricao, categoria, 
+    pequenoPorte = false, reportadoPorUsuario = false
   ) {
     if (!nome || !local || !data || !descricao)
-      throw new Error("Todos os campos são obrigatórios");
-
-    if (isNaN(Date.parse(data))) throw new Error("Data inválida");
+      throw new Error("Campos obrigatórios: nome, local, data, descricao");
 
     const eventoDuplicado = await this.eventoRepository.obterPorNomeLocalEData(
       nome,
@@ -40,20 +27,8 @@ class EventoService {
     }
 
     return await this.eventoRepository.novoEvento(
-      nome,
-      local,
-      data,
-      descricao,
-      pequenoPorte,
-      reportadoPorUsuario,
-      aoVivo,
-      moedasCapibasDestribuidas,
-      ativo,
-      preco,
-      faixaEtaria,
-      precisaInscricao,
-      horario,
-      imagemUrl
+      nome, local, data, descricao,
+      imagemUrl, faixaEtaria, preco, precisaInscricao, categoria 
     );
   }
 

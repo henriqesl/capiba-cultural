@@ -34,6 +34,7 @@ generator client {
     senha            String             // senha que será encripitada com jwt (explicar dps)
     saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
     dataCadastro     DateTime           @default(now()) // o padrão é a data atual
+    fotoUrl              String?
 
     // Relações (O que este usuário possui?)
     grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
@@ -52,28 +53,31 @@ generator client {
 
 
   model Evento {
-    id                        Int                   @id @default(autoincrement())
-    nome                      String  
+    id                        Int      @id @default(autoincrement())
+    nome                      String
     local                     String
     data                      DateTime
     descricao                 String
-    categoria                 CategoriaEvento       @default(OUTRO)
-    ativo                     Boolean               @default(true)
-    aoVivo                    Boolean               @default(false)
-    pequenoPorte              Boolean               @default(true)
-    moedasCapibasDestribuidas  Float                @default(0)
-    reportadoPorUsuario       Boolean               @default(false)
-    confirmacoes              Int                   @default(0)
-    preco                     String? 
-    faixaEtaria               Int                   @default(0)
-    precisaInscricao          Boolean               @default(false)
-    imagemUrl                 String?   
-    horario                   String?
+    
+    // === NOVOS CAMPOS ===
+    imagemUrl                 String?  
+    faixaEtaria               Int      @default(0)
+    preco                     Float    @default(0.0) 
+    precisaInscricao          Boolean  @default(false) 
+    categoria                 String   @default("Geral")
+    // ====================
 
-    checkins           CheckIn[] 
-    participantes Usuario[]   @relation("ParticipantesDoEvento")
-    caravanas     Caravana[]  @relation("CaravanasNoEvento")
-    reportes ReporteEvento[] @relation("ReportesDoEvento")
+    ativo                     Boolean   @default(true)
+    aoVivo                    Boolean   @default(false)
+    pequenoPorte              Boolean   @default(true)
+    moedasCapibasDestribuidas Float     @default(10)
+    reportadoPorUsuario       Boolean   @default(false)
+    confirmacoes              Int       @default(0)
+
+    checkins      CheckIn[]
+    participantes Usuario[]       @relation("ParticipantesDoEvento")
+    caravanas     Caravana[]      @relation("CaravanasNoEvento")
+    reportes      ReporteEvento[] @relation("ReportesDoEvento")
 
     @@map("eventos")
   }
