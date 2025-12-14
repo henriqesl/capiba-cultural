@@ -5,7 +5,12 @@ class Usuario {
   async buscarId(id) {
     return await prisma.usuario.findUnique({
       where: { id: id },
-      include: { caravanas_membro: true },
+      include: { 
+        caravanas_membro: true, 
+        checkins: {             
+            include: { evento: true } 
+        }
+      },
     });
   }
 
@@ -59,8 +64,15 @@ class Usuario {
 
   async atualizar(id, dados) {
     return await prisma.usuario.update({
-      where: { id },
-      data: dados,
+      where: { id: id },
+      data: {
+        nome: dados.nome,
+        email: dados.email,
+        cpf: dados.cpf,
+        fotoUrl: dados.fotoUrl, 
+        // lógica de senha (se tiver)
+        ...(dados.senha ? { senha: dados.senha } : {}),
+      },
     });
   }
 

@@ -1,73 +1,93 @@
 const eventoService = require("../services/EventoService");
 
 class EventoController {
-  async criarEvento(req, res) {
-    const {
-      nome,
-      local,
-      data,
-      descricao,
-      pequenoPorte = false,
-      reportadoPorUsuario = false,
-      aoVivo = false,
-      moedasCapibasDestribuidas = 0,
-      ativo=true,
-      preco,
-      faixaEtaria,
-      precisaInscricao,
-      horario,
-      imagemUrl: imagemUrlBody,
-      latitude,
-      longitude
-    } = req.body;
-  
-    const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
+  safeParseFloat = (value, defaultValue = null) => {
+        if (value === null || value === undefined || value === "") {
+            return defaultValue;
+        }
+        const parsed = parseFloat(value);
+        return isNaN(parsed) ? defaultValue : parsed;
+    };
 
-    const ativoFinal = ativo === 'true';
-    const pequenoPorteFinal = pequenoPorte === 'true';
-    const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
-    const aoVivoFinal = aoVivo === 'true';
-    const precisaInscricaoFinal = precisaInscricao === 'true';
+    safeParseInt = (value, defaultValue = null) => {
+        if (value === null || value === undefined || value === "") {
+            return defaultValue;
+        }
+        const parsed = parseInt(value, 10);
+        return isNaN(parsed) ? defaultValue : parsed;
+    };
 
-
-    if (imagemUrlFinal) {
-        console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
-    } else {
-        console.log("Nenhum arquivo de imagem foi enviado.");
-    }
-
-    const moedasCapibasDestribuidasParsed = parseInt(moedasCapibasDestribuidas);
-    const faixaEtariaParsed = parseInt(faixaEtaria); 
-    
-
-    try {
-        const evento = await eventoService.criarEvento(
-            nome, 
-            local, 
-            data, 
-            descricao, 
-            pequenoPorteFinal, 
-            reportadoPorUsuarioFinal, 
-            aoVivoFinal, 
-            moedasCapibasDestribuidasParsed, 
-            ativoFinal, 
-            preco, 
-            faixaEtariaParsed, 
-            precisaInscricaoFinal, 
-            horario, 
-            imagemUrlFinal,
+    async criarEvento(req, res) {
+        const {
+            nome,
+            local,
+            data,
+            descricao,
+            pequenoPorte = 'false', // Definindo default como string para consistência
+            reportadoPorUsuario = 'false',
+            aoVivo = 'false',
+            moedasCapibasDestribuidas = '0', // Usando '0' como string
+            ativo = 'true',
+            preco,
+            faixaEtaria = '0',
+            precisaInscricao = 'false',
+            horario,
+            imagemUrl: imagemUrlBody,
             latitude,
             longitude
-    );
-      res.status(201).json({
-        mensagem: `Evento criado com sucesso: ${evento.nome}`,
-        evento,
-      });
-    } catch (error) {
-          res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
-    }
-  }
+        } = req.body;
 
+        const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
+
+        // Conversão de Strings para Booleanos
+        const ativoFinal = ativo === 'true';
+        const pequenoPorteFinal = pequenoPorte === 'true';
+        const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
+        const aoVivoFinal = aoVivo === 'true';
+        const precisaInscricaoFinal = precisaInscricao === 'true';
+
+        if (imagemUrlFinal) {
+            console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
+        } else {
+            console.log("Nenhum arquivo de imagem foi enviado.");
+        }
+
+        // 🚨 Conversão de Strings para Number (corrigida!)
+        const moedasCapibasDestribuidasParsed = this.safeParseFloat(moedasCapibasDestribuidas, 0); 
+        const faixaEtariaParsed = this.safeParseInt(faixaEtaria, 0); 
+        const latitudeParsed = this.safeParseFloat(latitude, null); 
+        const longitudeParsed = this.safeParseFloat(longitude, null); 
+
+        try {
+            const evento = await eventoService.criarEvento(
+                nome, 
+                local, 
+                data, 
+                descricao, 
+                pequenoPorteFinal, 
+                reportadoPorUsuarioFinal, 
+                aoVivoFinal, 
+                moedasCapibasDestribuidasParsed, // OK
+                ativoFinal, 
+                preco, 
+                faixaEtariaParsed, // OK
+                precisaInscricaoFinal, 
+                horario, 
+                imagemUrlFinal,
+                latitudeParsed, // OK
+                longitudeParsed // OK
+            );
+            res.status(201).json({
+                mensagem: `Evento criado com sucesso: ${evento.nome}`,
+                evento,
+            });
+        } catch (error) {
+            // 🚨 LOG DE ERRO CRÍTICO AQUI!
+            console.error("[ERRO NO SERVICE/PRISMA]", error.stack); 
+            res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
+        }
+    }
+  
   async listarEventos(req, res) {
     try {
       const eventos = await eventoService.listarEventos();

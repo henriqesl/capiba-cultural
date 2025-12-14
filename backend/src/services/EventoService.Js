@@ -26,9 +26,7 @@ class EventoService {
     longitude
   ) {
     if (!nome || !local || !data || !descricao)
-      throw new Error("Todos os campos são obrigatórios");
-
-    if (isNaN(Date.parse(data))) throw new Error("Data inválida");
+      throw new Error("Campos obrigatórios: nome, local, data, descricao");
 
     const eventoDuplicado = await this.eventoRepository.obterPorNomeLocalEData(
       nome,

@@ -25,8 +25,21 @@ const upload = multer({ storage: storage });
 
 const eventoController = new EventoController();
 
-router.post("/", upload.single('imagemFile'), async (req, res) => {
-  await eventoController.criarEvento(req, res);
+router.post("/", (req, res, next) => {
+    // 🚨 ESTE LOG DEVE APARECER SE A ROTA FOR ATINGIDA.
+    // Se este log NÃO aparecer, o erro é CORS ou a rota não está sendo mapeada corretamente.
+    console.log("POST /eventos ROTA ATINGIDA. Tentando Multer...");
+    next(); 
+}, upload.single('imagemFile'), async (req, res) => {
+    
+    // 🚨 Log para checar o que o Multer fez!
+    console.log("--- DEBUG APÓS MULTER ---");
+    console.log("Req.body:", req.body); // Deve conter os campos de texto
+    console.log("Req.file:", req.file); // Deve conter os dados do arquivo
+    console.log("--------------------------");
+
+    // A chamada ao Controller permanece
+    await eventoController.criarEvento(req, res);
 });
 
 router.get("/", async (req, res) => {

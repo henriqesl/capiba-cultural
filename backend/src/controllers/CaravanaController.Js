@@ -111,6 +111,7 @@ class CaravanaController {
                 erro: `Falha ao entrar na caravana: ${error.message}` 
             });
         }
+      }
 
   async removerCaravana(req, res) {
     const { id } = req.params;
