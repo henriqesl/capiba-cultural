@@ -1,25 +1,29 @@
 import React, { useState, useContext } from 'react';
 import CapibaLogo from '../components/CapibaLogo';
 import Button from '../components/Button';
-import { AuthContext } from '../context/AuthContext'; // Importar contexto
+import { AuthContext } from '../context/AuthContext';
 
 const LoginPage = () => {
-    const { login } = useContext(AuthContext); // Usar a função de login
-    
-    // Estados para guardar o que o utilizador escreve
+    const { login } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        // previne o recarregamento da página padrão do formulário
+        if (e) e.preventDefault(); 
+
         if (!email || !senha) {
             alert("Preencha todos os campos!");
             return;
         }
 
+        setIsLoading(true);
         const sucesso = await login(email, senha);
+        setIsLoading(false);
         
         if (sucesso) {
-            window.location.hash = '#/eventos'; // Redireciona APENAS se o login funcionar
+            window.location.hash = '#/eventos'; 
         } else {
             alert("Email ou senha incorretos.");
         }
@@ -33,8 +37,8 @@ const LoginPage = () => {
                     <h1 className="text-3xl font-bold text-white">Bem-Vindo!</h1>
                     <p className="text-blue-100 mt-1">Digite suas credenciais</p>
                 </header>
-                <main className="w-full flex flex-col gap-y-4">
-                    {/* Input de EMAIL (Backend pede email) */}
+
+                <form onSubmit={handleLogin} className="w-full flex flex-col gap-y-4">
                     <input 
                         type="email" 
                         placeholder="Email (ex: joao@email.com)" 
@@ -50,13 +54,16 @@ const LoginPage = () => {
                         onChange={(e) => setSenha(e.target.value)}
                     />
                     
-                    {/* Botão sem HREF, usa onClick */}
-                    <Button variant="primary" onClick={handleLogin}>
-                        LOGAR
-                    </Button>
-                    
-                    <Button variant="secondary" href="#/login/criar">CRIAR CONTA</Button>
-                </main>
+                    <button 
+                        type="submit" 
+                        disabled={isLoading}
+                        className="w-full font-bold py-3 rounded-lg transition-transform transform hover:scale-105 duration-300 shadow-md bg-white text-gray-800 hover:bg-gray-300 disabled:opacity-50"
+                    >
+                        {isLoading ? "ENTRANDO..." : "LOGAR"}
+                    </button>
+                </form>
+
+                <Button variant="secondary" href="#/login">CRIAR CONTA</Button>
             </div>
         </div>
     );

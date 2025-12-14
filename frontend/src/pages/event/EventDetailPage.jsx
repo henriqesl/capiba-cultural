@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 
-
 const InfoItem = ({ icon, label, value }) => (
     <div className="flex items-start bg-blue-50 rounded-lg p-4">
         <span className="text-2xl mr-3 mt-1">{icon}</span>
@@ -12,16 +11,21 @@ const InfoItem = ({ icon, label, value }) => (
     </div>
 );
 
-const EventDetailPage = ({ eventId, onBack }) => {
+const EventDetailPage = ({ onBack }) => { // onBack geralmente vem de props se for componente filho, ou usamos navegação
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
-    const BASE_URL = 'http://localhost:3000'; 
-    const extensao = '.jpg'; 
+    
+    // Pega o ID da URL (hash router)
+    const getEventId = () => {
+        const hash = window.location.hash;
+        const parts = hash.split('/');
+        return parts[parts.length - 1];
+    };
+    const eventId = getEventId();
 
     useEffect(() => {
         const fetchDetalhes = async () => {
             try {
-                // Busca os detalhes específicos deste ID
                 const response = await api.get(`/eventos/${eventId}`);
                 setEvent(response.data);
             } catch (error) {
@@ -36,10 +40,16 @@ const EventDetailPage = ({ eventId, onBack }) => {
         }
     }, [eventId]);
 
+    // Função de navegação manual se onBack não for fornecido
+    const handleBack = () => {
+        if (onBack) onBack();
+        else window.location.hash = '#/eventos';
+    };
+
     if (loading) {
         return (
             <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-                <span className="text-xl font-bold text-gray-500">Carregando detalhes...</span>
+                <span className="text-xl font-bold text-gray-500 animate-pulse">Carregando detalhes...</span>
             </div>
         );
     }
@@ -49,7 +59,7 @@ const EventDetailPage = ({ eventId, onBack }) => {
             <div className="bg-gray-100 min-h-screen p-8 text-center flex flex-col items-center justify-center">
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">Evento não encontrado</h1>
                 <button 
-                    onClick={onBack}
+                    onClick={handleBack}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                     &larr; Voltar para Agenda
@@ -58,28 +68,34 @@ const EventDetailPage = ({ eventId, onBack }) => {
         );
     }
 
-    // Formatações de dados vindos do Prisma
-    const horarioExibicao = event.horario || new Date(event.data).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const dataFormatada = new Date(event.data).toLocaleDateString('pt-BR');
+    // === TRATAMENTO DE DADOS ===
+    const dataObj = new Date(event.data);
+    const horarioExibicao = dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const dataFormatada = dataObj.toLocaleDateString('pt-BR');
+    
+    // Lógica para imagem (Se for URL externa ou caminho local)
+    // Se a URL começar com http, usa direto. Se não, assume que é upload local (ajustar conforme necessidade)
+    const imagemSrc = event.imagemUrl && event.imagemUrl.startsWith('http') 
+        ? event.imagemUrl 
+        : `https://picsum.photos/seed/${event.id}/800/400`; // Fallback
+
+    // Formatação de Preço
+    const precoDisplay = (!event.valor || event.valor === 0) 
+        ? "Gratuito" 
+        : `R$ ${event.valor.toFixed(2)}`;
 
     return (
         <div className="bg-gray-100 min-h-screen p-4 sm:p-8 pb-24">
             <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-4 sm:mt-8">
                 
-                {/* Imagem do Evento (Usa a URL do banco ou Placeholder) */}
-                <div className="w-full h-64 sm:h-96 bg-gray-300 flex items-center justify-center relative overflow-hidden">
-                    {event.imagemUrl ? (
-                        <img 
-                            src={`${BASE_URL}/${event.imagemUrl}${extensao}`}
-                            alt={event.nome}
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <div className="text-gray-500 flex flex-col items-center">
-                            <span className="text-4xl mb-2">📷</span>
-                            <span>Sem imagem disponível</span>
-                        </div>
-                    )}
+                {/* Imagem do Evento */}
+                <div className="w-full h-64 sm:h-96 bg-gray-300 flex items-center justify-center relative overflow-hidden group">
+                    <img 
+                        src={imagemSrc}
+                        alt={event.nome}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    
                     {/* Badge de status */}
                     <div className="absolute top-4 right-4 flex gap-2">
                         {event.aoVivo && (
@@ -87,9 +103,10 @@ const EventDetailPage = ({ eventId, onBack }) => {
                                 AO VIVO
                             </span>
                         )}
-                        {!event.ativo && (
-                            <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
-                                ENCERRADO
+                        {/* Categoria */}
+                        {event.categoria && (
+                             <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                                {event.categoria}
                             </span>
                         )}
                     </div>
@@ -97,7 +114,7 @@ const EventDetailPage = ({ eventId, onBack }) => {
 
                 <div className="p-6 sm:p-10">
                     <button 
-                        onClick={onBack} 
+                        onClick={handleBack} 
                         className="mb-6 text-blue-600 hover:text-blue-800 font-semibold text-lg flex items-center gap-2 transition-colors"
                     >
                         <span>&larr;</span> Voltar
@@ -110,29 +127,31 @@ const EventDetailPage = ({ eventId, onBack }) => {
                         <span>📅</span> {dataFormatada}
                     </p>
                     
-                    {/* Grid de Informações usando os campos novos do Schema */}
+                    {/* Grid de Informações */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                         <InfoItem icon="🕒" label="Horário" value={horarioExibicao} />
                         <InfoItem icon="📍" label="Local" value={event.local} />
+                        
+                        {/* Campos que não existem no banco ganham valores padrão */}
                         <InfoItem 
                             icon="🎂" 
                             label="Faixa Etária" 
-                            value={event.faixaEtaria === 0 ? 'Livre' : `${event.faixaEtaria}+ anos`} 
+                            value="Livre" 
                         />
                         <InfoItem 
                             icon="🎟️" 
                             label="Valor" 
-                            value={event.preco || "Gratuito"} 
+                            value={precoDisplay} 
                         />
                         <InfoItem 
-                            icon={event.precisaInscricao ? "📝" : "✅"} 
+                            icon="✅" 
                             label="Acesso" 
-                            value={event.precisaInscricao ? "Precisa de Inscrição" : "Entrada Livre"} 
+                            value="Entrada Livre" 
                         />
                         <InfoItem 
                             icon="👥" 
                             label="Confirmados" 
-                            value={`${event.confirmacoes} pessoas`} 
+                            value={`${event.confirmacoes || 0} pessoas`} 
                         />
                     </div>
 
@@ -141,10 +160,13 @@ const EventDetailPage = ({ eventId, onBack }) => {
                         {event.descricao}
                     </p>
 
-                    {/* Botão de Ação (Ex: Comprar ou Inscrever) */}
+                    {/* Botão de Ação */}
                     <div className="mt-10">
-                        <button className="w-full sm:w-auto bg-green-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-green-700 transition transform hover:scale-105 shadow-lg">
-                            {event.precisaInscricao ? "Realizar Inscrição" : "Confirmar Presença"}
+                        <button 
+                            className="w-full sm:w-auto bg-green-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-green-700 transition transform hover:scale-105 shadow-lg"
+                            onClick={() => alert("Funcionalidade de Check-in em desenvolvimento!")} // Conectar com CheckInController depois
+                        >
+                            Confirmar Presença (+10 Capibas)
                         </button>
                     </div>
                 </div>
@@ -154,23 +176,3 @@ const EventDetailPage = ({ eventId, onBack }) => {
 };
 
 export default EventDetailPage;
-
-/*
-  [INTEGRAÇÃO]
-  Rota: GET /eventos/:id
-  
-  Dados que o Backend retorna (Evento.js Model):
-  - nome -> title
-  - data -> time (precisa formatar)
-  - local -> location
-  - descricao -> description
-  
-  O QUE FALTA NO BACKEND:
-  O layout pede campos que não existem na tabela `eventos`:
-  1. `price` (Valor/Preço)
-  2. `age` (Faixa Etária)
-  3. `needsRegistration` (Se precisa de inscrição)
-  4. `imagemUrl` (Foto do evento)
-  
-  Ação: Precisamos adicionar essas colunas no `schema.prisma` ou remover esses campos da tela por enquanto.
-*/

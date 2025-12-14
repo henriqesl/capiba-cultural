@@ -1,24 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import StatusCard from '../components/status/StatusCard';
 import ConfirmedEventRow from '../components/status/ConfirmedEventRow';
+import api from '../services/api';
+import { AuthContext } from '../context/AuthContext';
 
 const StatusPage = () => {
-  // Dados simulados
+  const { user } = useContext(AuthContext);
+  const [checkins, setCheckins] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Carregar check-ins do usuário
+  useEffect(() => {
+    if (user?.id) {
+        api.get(`/usuarios/${user.id}`)
+           .then(res => {
+               // Pega os checkins que incluímos no backend
+               setCheckins(res.data.checkins || []);
+           })
+           .finally(() => setLoading(false));
+    }
+  }, [user]);
+
+  // Lógica das Missões (Calculada no Front por enquanto)
+  const totalCheckins = checkins.length;
+  
   const missoes = [
-    { id: 1, titulo: "Ir em 5 eventos", progresso: 3, total: 5, recompensa: "50 Capibas" },
-    { id: 2, titulo: "Visitar 3 lugares diferentes", progresso: 1, total: 3, recompensa: "30 Capibas" },
-    { id: 3, titulo: "Fazer check-in em evento de rock", progresso: 0, total: 1, recompensa: "20 Capibas" }
+    { 
+        id: 1, 
+        titulo: "Iniciante Cultural", 
+        progresso: totalCheckins, 
+        total: 1, 
+        recompensa: "10 Capibas" 
+    },
+    { 
+        id: 2, 
+        titulo: "Maratonista de Eventos", 
+        progresso: totalCheckins, 
+        total: 5, 
+        recompensa: "50 Capibas" 
+    },
+    { 
+        id: 3, 
+        titulo: "Explorador da Cidade", 
+        progresso: totalCheckins, // Simplificação: conta checkins como locais
+        total: 3, 
+        recompensa: "30 Capibas" 
+    }
   ];
 
+  // Conquistas baseadas no progresso
   const conquistas = [
-    { id: 1, nome: "Primeira Visita", descricao: "Visitou seu primeiro evento", conquistada: true },
-    { id: 2, nome: "Explorador", descricao: "Visitou 5 lugares diferentes", conquistada: false },
-    { id: 3, nome: "Aventureiro", descricao: "Participou de 10 eventos", conquistada: false }
-  ];
-
-  const eventosConfirmados = [
-    { id: 1, nome: "Show de Rock Nacional", data: "[DATA]" },
-    { id: 2, nome: "Festival de Jazz", data: "[DATA]" }
+    { id: 1, nome: "Primeiro Passo", descricao: "Fez seu primeiro check-in", conquistada: totalCheckins >= 1 },
+    { id: 2, nome: "Fã de Carteirinha", descricao: "Foi em 5 eventos", conquistada: totalCheckins >= 5 },
+    { id: 3, nome: "Lenda Local", descricao: "Foi em 10 eventos", conquistada: totalCheckins >= 10 }
   ];
 
   return (
@@ -40,7 +74,7 @@ const StatusPage = () => {
                 key={missao.id}
                 variant="mission"
                 title={missao.titulo}
-                progress={missao.progresso}
+                progress={missao.progresso > missao.total ? missao.total : missao.progresso}
                 total={missao.total}
                 reward={missao.recompensa}
               />
@@ -71,15 +105,20 @@ const StatusPage = () => {
           <h2 className="text-2xl font-bold mb-6 text-gray-700 border-b-2 border-blue-600 pb-2 inline-block">
             Eventos Confirmados
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {eventosConfirmados.map(evento => (
-              <ConfirmedEventRow
-                key={evento.id}
-                title={evento.nome}
-                date={evento.data}
-              />
-            ))}
-          </div>
+          
+          {loading ? <p>Carregando...</p> : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {checkins.length === 0 && <p className="text-gray-500">Nenhum check-in realizado ainda.</p>}
+                
+                {checkins.map(checkin => (
+                <ConfirmedEventRow
+                    key={checkin.id}
+                    title={checkin.evento?.nome || "Evento Desconhecido"}
+                    date={new Date(checkin.data).toLocaleDateString()}
+                />
+                ))}
+            </div>
+          )}
         </section>
 
       </div>
@@ -88,14 +127,3 @@ const StatusPage = () => {
 };
 
 export default StatusPage;
-
-/*
-  [O QUE FALTA]
-  1. O banco de dados (`schema.prisma`) tem tabela de Check-in, mas não tem tabelas para 
-     "Missões" ou "Conquistas".
-  
-  Solução Provisória:
-  - Deixa as regras das missões fixas aqui no código (ex: "Vá em 5 eventos").
-  - Puxa a lista de check-ins do usuário da API.
-  - Se a lista tiver 5 itens, a gente pinta a missão de "Concluída" aqui no front mesmo.
-*/

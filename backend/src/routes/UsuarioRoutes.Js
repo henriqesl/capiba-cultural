@@ -1,47 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const multer = require('multer');
-const path = require('path'); 
-const fs = require('fs'); 
-
 const UsuarioController = require("../controllers/UsuarioController");
 
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-const UPLOADS_DIR = path.join(process.cwd(), 'uploads', 'perfil');
-
-// Cria o diretório se ele não existir (boa prática)
-if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+const uploadDir = 'uploads/';
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir);
 }
 
-
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, UPLOADS_DIR); 
-    },
-    filename: function (req, file, cb) {
-        // Gera um nome de arquivo único
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const fileExtension = path.extname(file.originalname);
-        // Ex: 1734567890-1234-perfil.png
-        cb(null, `${uniqueSuffix}-perfil${fileExtension}`);
-    }
-}); 
-
-const upload = multer({ 
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-    fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|webp/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-        cb(new Error("Erro: O arquivo de imagem deve ser nos formatos JPG, PNG ou WEBP."), false);
-    }
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); 
+  },
+  filename: (req, file, cb) => {
+    
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, "perfil-" + uniqueSuffix + path.extname(file.originalname));
+  }
 });
+
+const upload = multer({ storage: storage });
+
 
 const usuarioController = new UsuarioController();
 
@@ -79,6 +61,10 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   await usuarioController.obterPorId(req, res);
+});
+
+router.put("/:id", upload.single('foto'), async (req, res) => {
+  await usuarioController.atualizarUsuario(req, res);
 });
 
 router.post("/:id/gastar", async (req, res) => {

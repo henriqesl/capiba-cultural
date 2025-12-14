@@ -64,7 +64,7 @@ class EventoController {
         evento,
       });
     } catch (error) {
-          res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
+      res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
     }
   }
 

@@ -34,12 +34,7 @@ generator client {
     senha            String             // senha que será encripitada com jwt (explicar dps)
     saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
     dataCadastro     DateTime           @default(now()) // o padrão é a data atual
-    telefone         String             @default("00000000000") 
-    username         String             @unique @default("temp_user")
-    dataNascimento   DateTime           @default("2000-01-01T00:00:00Z")       
-    imagemUrl        String?   
-
-
+    fotoUrl              String?
 
     // Relações (O que este usuário possui?)
     grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
@@ -58,8 +53,8 @@ generator client {
 
 
   model Evento {
-    id                        Int                   @id @default(autoincrement())
-    nome                      String  
+    id                        Int      @id @default(autoincrement())
+    nome                      String
     local                     String
     data                      DateTime
     descricao                 String

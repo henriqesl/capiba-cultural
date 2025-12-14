@@ -1,109 +1,98 @@
-import React from 'react';
-// Adicionei 'Crown' nas importações
-import { ArrowLeft, Plus, Search, Users, Calendar, ChevronRight, Crown } from 'lucide-react';
+import React, { useEffect, useState, useContext } from 'react';
+import { ArrowLeft, Plus, Search } from 'lucide-react';
+import Button from '../../components/Button.jsx';
+import { CaravanaItem } from '../../components/caravana/CaravanaItem';
+import api from '../../services/api';
+import { AuthContext } from '../../context/AuthContext';
 
-const CaravanaPage = ({ caravanas = [] }) => {
-  
-  const handleBack = () => {
-    window.location.hash = '#/perfil';
-  };
+const CaravanaPage = () => {
+  const { user } = useContext(AuthContext);
+  const [caravanas, setCaravanas] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleOpenDetails = (id) => {
-    window.location.hash = `#/perfil/caravana/${id}`;
-  };
-
-  const handleCreateNew = () => {
-    window.location.hash = '#/perfil/caravana/criar';
-  };
-
-  const handleSearch = () => {
-    alert("Funcionalidade de busca em breve!");
-  };
+  useEffect(() => {
+    if (user?.id) {
+        api.get(`/usuarios/${user.id}`)
+           .then(response => {
+               // O backend retorna as caravanas dentro do objeto do usuário
+               setCaravanas(response.data.caravanas_membro || []);
+           })
+           .catch(err => console.error("Erro ao buscar caravanas", err))
+           .finally(() => setLoading(false));
+    }
+  }, [user]);
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center pb-10">
-      <div className="w-full max-w-md bg-white min-h-screen flex flex-col">
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center">
+      
+      <div className="w-full max-w-md md:max-w-4xl bg-white md:rounded-2xl md:shadow-xl md:my-8 flex flex-col min-h-screen md:min-h-fit">
         
-        {/* Header */}
-        <header className="p-4 flex items-center border-b border-gray-100">
-          <button onClick={handleBack} className="p-2 -ml-2 hover:bg-gray-100 rounded-full text-gray-600">
+        {/* Header Desktop */}
+        <header className="hidden md:flex p-4 items-center border-b border-gray-200">
+          <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
             <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-lg font-bold text-gray-800 ml-2">Minhas Caravanas</h1>
+          </a>
+          <h1 className="text-xl font-bold text-gray-800 ml-4">Minhas Caravanas</h1>
         </header>
 
-        {/* ÁREA DE AÇÕES */}
-        <div className="p-4 grid grid-cols-2 gap-3">
-          <button 
-            onClick={handleSearch}
-            className="flex items-center justify-center gap-2 p-3 rounded-xl border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-colors"
-          >
-            <Search className="w-5 h-5" />
-            Buscar
-          </button>
+        {/* Header Mobile */}
+        <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
+          <a href="#/perfil"><ArrowLeft className="w-6 h-6" /></a>
+          <h1 className="text-xl font-bold">Minhas Caravanas</h1>
+          <div className="w-6"></div>
+        </header>
+
+        <main className="p-6 pb-24 md:p-8 flex flex-col h-full">
           
-          <button 
-            onClick={handleCreateNew}
-            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Criar Nova
-          </button>
-        </div>
-
-        {/* Lista de Caravanas */}
-        <div className="px-4 pb-4 flex flex-col gap-3">
-          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-wider mt-2 mb-1">
-            Seus Grupos
-          </h2>
-
-          {caravanas.length === 0 ? (
-            <div className="py-10 text-center bg-gray-50 rounded-xl border border-dashed border-gray-200">
-              <p className="text-gray-500 text-sm">Você não participa de nenhuma caravana.</p>
+          <section className="mb-8 grow">
+            <div className="flex justify-between items-end mb-4 border-b border-gray-200 pb-2">
+              <h2 className="text-lg font-bold text-gray-800">Próximas Viagens</h2>
+              <span className="text-sm text-gray-500">{caravanas.length} ativas</span>
             </div>
-          ) : (
-            caravanas.map((c) => (
-              <div 
-                key={c.id} 
-                onClick={() => handleOpenDetails(c.id)}
-                className="bg-white border border-gray-100 p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer flex justify-between items-center group"
-              >
-                <div>
-                  <h3 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                    {c.nome}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-2">{c.evento}</p>
-                  
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                      <Calendar className="w-3 h-3" />
-                      {c.data}
-                    </div>
-
-                    {/* Badge de ORGANIZADOR (com coroa) */}
-                    {c.souDono && (
-                      <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded border border-blue-100">
-                        <Crown className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wide">
-                          Organizador
-                        </span>
-                      </div>
-                    )}
-                  </div>
+            
+            {loading ? (
+                <p className="text-center text-gray-500">Carregando...</p>
+            ) : caravanas.length === 0 ? (
+                <div className="text-center py-10 text-gray-400">
+                    Você ainda não participa de nenhuma caravana.
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col items-center text-gray-400">
-                     <Users className="w-5 h-5 mb-1" />
-                     <span className="text-xs font-bold">{c.membrosCount}</span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-gray-300" />
+            ) : (
+                <div className="flex flex-col gap-2">
+                {caravanas.map(c => (
+                    <CaravanaItem
+                        key={c.id}
+                        name={c.nome}
+                        eventName={c.descricao || "Evento"} // Backend não tem nome do evento direto na caravana ainda, usando desc
+                        date="Em breve" // Data não vem na caravana, ideal seria popular eventoDestino
+                        membersCount={c.bonusPorParticipante} // Usando bonus como placeholder de membros se não tiver count
+                        isOwner={false} // Backend não diz quem é dono ainda
+                        onClick={() => window.location.hash = `#/caravana/${c.id}`}
+                    />
+                ))}
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+            )}
+          </section>
 
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-auto pt-4 border-t border-gray-100">
+            <Button 
+                variant="primary" 
+                className="bg-blue-600! text-white! flex justify-center gap-2"
+                href="#/caravana/criar" // Link para criar (se existir a rota)
+            >
+              <Plus className="w-5 h-5" />
+              <span>Criar Nova Caravana</span>
+            </Button>
+            
+            <Button 
+                variant="primary" 
+                className="bg-white! text-blue-600! border border-blue-600! flex justify-center gap-2"
+            >
+              <Search className="w-5 h-5" />
+              <span>Buscar Caravanas</span>
+            </Button>
+          </section>
+
+        </main>
       </div>
     </div>
   );
