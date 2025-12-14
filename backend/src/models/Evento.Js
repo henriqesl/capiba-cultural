@@ -41,9 +41,14 @@ class Evento {
     });
   }
 
-  async listar() {
-    return await prisma.evento.findMany();
-  }
+
+  async listar(filtro) {
+  return await prisma.evento.findMany({
+    where: filtro,
+    orderBy: { data: "asc" }
+  });
+}
+
 
   async obterPorNomeLocalEData(nome, local, data) {
     return await prisma.evento.findFirst({

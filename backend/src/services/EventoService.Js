@@ -59,9 +59,23 @@ class EventoService {
     );
   }
 
-  async listarEventos() {
-    return await this.eventoRepository.listar();
+   async listarEventos(data) {
+  let filtro = {};
+
+  if (data) {
+    const [ano, mes, dia] = data.split("-").map(Number);
+
+    const inicio = new Date(ano, mes - 1, dia, 0, 0, 0, 0);
+    const fim = new Date(ano, mes - 1, dia, 23, 59, 59, 999);
+
+    filtro.data = {
+      gte: inicio,
+      lte: fim,
+    };
   }
+
+  return await this.eventoRepository.listar(filtro);
+}
 
   async obterPorId(id) {
     const evento = await this.eventoRepository.obterPorId(id);

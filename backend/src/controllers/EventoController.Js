@@ -88,16 +88,16 @@ class EventoController {
         }
     }
   
-  async listarEventos(req, res) {
-    try {
-      const eventos = await eventoService.listarEventos();
-      res.status(200).json(eventos);
-    } catch (error) {
-      res
-        .status(500)
-        .json({ erro: `Erro ao listar eventos: ${error.message}` });
+    async listarEventos(req, res) {
+      try {
+        const { data } = req.query;
+        const eventos = await eventoService.listarEventos(data);
+        res.status(200).json(eventos);
+      } catch (error) {
+        res.status(500).json({ erro: error.message });
+      }
     }
-  }
+
 
   async obterPorId(req, res) {
     const { id } = req.params;
