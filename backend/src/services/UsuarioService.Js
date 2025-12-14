@@ -7,24 +7,56 @@ class UsuarioService {
     this.usuarioRepository = new Usuario();
   }
 
-  async criarUsuario(nome, email, senha, cpf) {
-    if (!nome || !email || !senha || !cpf)
+  async criarUsuario(nome, email, senha, cpf, telefone, username, dataNascimento, imageUrl = null) {
+    if (!nome || !email || !senha || !cpf || !telefone || !username || !dataNascimento)
       throw new Error("Todos os campos são obrigatórios");
-    if (await this.usuarioRepository.buscarEmail(email)) {
-      throw new Error("E-mail já cadastrado");
+
+
+    const cpfLimpo = cpf.replace(/\D/g, ''); 
+    const telefoneLimpo = telefone.replace(/\D/g, '');
+
+    if (dataNascimento.length < 6 || dataNascimento.length > 8) {
+        throw new Error("Data de nascimento inválida. Use o formato DDMMAAAA.");
     }
+    
+    let dataFormatada;
+    
+    if (dataNascimento.length === 8) {
+        const dia = dataNascimento.substring(0, 2);
+        const mes = dataNascimento.substring(2, 4);
+        const ano = dataNascimento.substring(4, 8);
+        dataFormatada = new Date(`${ano}-${mes}-${dia}`); 
+    } else {
+        throw new Error("Formato de data precisa ser DDMMAAAA (8 dígitos).");
+    }
+
+
+    if (isNaN(dataFormatada.getTime())) {
+      throw new Error("A data de nascimento fornecida não é uma data válida.");
+    }
+
+    const usernameExistente = await this.usuarioRepository.buscarEmail(email);
+    if (usernameExistente) {
+        throw new Error("Este nome de usuário já está em uso.");
+    }
+
 
     const salt = await bcrypt.genSalt(10);
     const senhaHash = await bcrypt.hash(senha, salt);
-
     const novoUsuario = await this.usuarioRepository.novoUsuario(
       nome,
       email,
       senhaHash,
       cpf,
+      telefone, 
+      username,
+      dataFormatada,
+      imageUrl,
+      latitude,
+      longitude
     );
     delete novoUsuario.senha;
-    return await novoUsuario;
+    return novoUsuario;
   }
 
   async autenticarUsuario(email, senha) {

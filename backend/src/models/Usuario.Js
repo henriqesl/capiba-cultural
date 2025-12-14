@@ -24,13 +24,17 @@ class Usuario {
     });
   }
 
-  async novoUsuario(nome, email, senha, cpf) {
+  async novoUsuario(nome, email, senha, cpf, telefone, username, dataNascimento, imagemPerfilPath) {
     return await prisma.usuario.create({
       data: {
         nome,
         email,
         senha,
         cpf,
+        telefone,
+        username,
+        dataNascimento,
+        imagemUrl: imagemPerfilPath,
         saldoMoedaCapiba: 0,
         dataCadastro: new Date(),
       },

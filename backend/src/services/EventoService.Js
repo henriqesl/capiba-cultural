@@ -21,7 +21,9 @@ class EventoService {
     faixaEtaria = 0,    
     precisaInscricao = false,
     horario = null,
-    imagemUrl = null
+    imagemUrl = null,
+    latitude,
+    longitude
   ) {
     if (!nome || !local || !data || !descricao)
       throw new Error("Todos os campos são obrigatórios");
@@ -53,7 +55,9 @@ class EventoService {
       faixaEtaria,
       precisaInscricao,
       horario,
-      imagemUrl
+      imagemUrl,
+      latitude,
+      longitude
     );
   }
 

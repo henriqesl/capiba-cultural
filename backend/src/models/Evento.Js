@@ -16,7 +16,9 @@ class Evento {
     faixaEtaria,
     precisaInscricao,
     horario,
-    imagemUrl) {
+    imagemUrl,
+    latitude,
+    longitude) {
     return await prisma.evento.create({
       data: {
         nome,
@@ -32,7 +34,9 @@ class Evento {
         faixaEtaria: parseInt(faixaEtaria),
         precisaInscricao,
         horario,
-        imagemUrl
+        imagemUrl,
+        latitude,
+        longitude
       },
     });
   }

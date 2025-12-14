@@ -16,11 +16,13 @@ class EventoController {
       faixaEtaria,
       precisaInscricao,
       horario,
-      imagemUrl: imagemUrlBody
+      imagemUrl: imagemUrlBody,
+      latitude,
+      longitude
     } = req.body;
   
     const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
-    
+
     const ativoFinal = ativo === 'true';
     const pequenoPorteFinal = pequenoPorte === 'true';
     const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
@@ -53,7 +55,9 @@ class EventoController {
             faixaEtariaParsed, 
             precisaInscricaoFinal, 
             horario, 
-            imagemUrlFinal
+            imagemUrlFinal,
+            latitude,
+            longitude
     );
       res.status(201).json({
         mensagem: `Evento criado com sucesso: ${evento.nome}`,
