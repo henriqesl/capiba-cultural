@@ -819,13 +819,14 @@ const SuggestForm = ({ onBack }) => {
                 }
             }
             
-            const dataHour = new Date(`${date}T${hour || '00:00'}:00`);
+              const finalHour = hour || '00:00';
+                const dataSemTimezone = `${date}T${finalHour}:00`;
             
             const formData = new FormData();
             
             formData.append('nome', name);
             formData.append('local', local);
-            formData.append('data', dataHour.toISOString()); 
+            formData.append('data', dataSemTimezone); 
             formData.append('descricao', `${obs} \n\n Link oficial: ${link}`);
             formData.append('preco', "A definir"); 
             formData.append('faixaEtaria', 0);
