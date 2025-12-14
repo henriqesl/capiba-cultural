@@ -19,7 +19,10 @@ class UsuarioService {
       email,
       senhaHash,
       cpf,
-      imageUrl,
+      telefone, 
+      username,
+      dataFormatada,
+      imageUrl
     );
     delete novoUsuario.senha;
     return novoUsuario;

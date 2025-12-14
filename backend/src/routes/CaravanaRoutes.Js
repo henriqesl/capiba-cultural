@@ -32,4 +32,8 @@ router.get("/:id/multiplicador", async (req, res) => {
   await caravanaController.obterMultiplicador(req, res);
 });
 
+router.post("/entrar-com-codigo", async (req, res) => {
+    await caravanaController.entrarComCodigoAcesso(req, res);
+});
+
 module.exports = router;

@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 class Caravana {
   async criarCaravana(
     nome,
+    codigoAcesso,
     eventoId = null,
     bonusPorParticipante = 10,
     descricao = "Caravana sem descrição",
@@ -12,6 +13,7 @@ class Caravana {
     return await prisma.caravana.create({
       data: {
         nome,
+        codigoAcesso,
         eventoId,
         bonusPorParticipante,
         descricao,
@@ -67,6 +69,15 @@ class Caravana {
       },
     });
   }
+
+  async obterPorCodigoAcesso(codigoAcesso) {
+    if (!codigoAcesso) throw new Error("Código de acesso é obrigatório.");
+    
+    return await prisma.caravana.findUnique({
+        where: { codigoAcesso },
+        include: { membros: true }, 
+    });
+}
 
   async getMembros(id) {
     return await prisma.grupoCompeticao.findUnique({
