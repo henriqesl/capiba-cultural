@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const path = require('path');
+const path = require("path");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
@@ -12,23 +12,38 @@ const usuarioRoutes = require("./src/routes/UsuarioRoutes");
 const checkInRoutes = require("./src/routes/CheckInRoutes");
 const missaoRoutes = require("./src/routes/MissaoRoutes");
 
-const authMiddleware = require("./src/middleware/authMiddleware");
-
 const app = express();
 
-const allowedOrigin = "http://localhost:5173";
-
+/* ===============================
+   CORS
+================================ */
 app.use(
   cors({
-    origin: allowedOrigin,
-    methods: "GET,POST,PUT,DELETE,PATCH,OPTIONS",
-    allowedHeaders: "Content-Type,Authorization",
+    origin: "http://localhost:5173",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+/* ===============================
+   PARSERS
+================================ */
 app.use(bodyParser.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+/* ===============================
+   UPLOADS (FOTOS)
+   -> ESSENCIAL pra imagem funcionar
+================================ */
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
+
+/* ===============================
+   ROTAS
+================================ */
 app.use("/api/caravanas", caravanaRoutes);
 app.use("/api/eventos", eventoRoutes);
 app.use("/api/grupos", grupoRoutes);
@@ -37,17 +52,25 @@ app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/checkin", checkInRoutes);
 app.use("/api/missao", missaoRoutes);
 
+/* ===============================
+   ROOT
+================================ */
 app.get("/", (req, res) => {
   res.send("Servidor funcionando!");
 });
 
+/* ===============================
+   ERROS GLOBAIS
+================================ */
 app.use((err, req, res, next) => {
-  console.error("Erro:", err.stack);
-  res.status(500).json({ erro: "Algo deu errado no servidor." });
+  console.error("Erro:", err);
+  res.status(500).json({
+    erro: "Erro interno do servidor",
+  });
 });
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`🚀 Servidor rodando na porta ${PORT}`);
 });
