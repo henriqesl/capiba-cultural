@@ -1,90 +1,82 @@
-const Missao = require('../models/Missao');
-const { TipoMissao } = require('@prisma/client'); 
+const Missao = require("../models/Missao");
+const { TipoMissao } = require("@prisma/client");
 
 class MissaoService {
-  constructor() {
-    this.missaoRepository = new Missao();
-  }
+     constructor() {
+         this.missaoRepository = new Missao();
+     }
 
+     // Retorna todas as missões, mostrando o status do usuário ou 0 se ainda não começou
+     async buscarStatusUsuario(userId) {
+         const missoes = await this.missaoRepository.listar();
+         const listaStatus = await this.missaoRepository.statusUsuario(userId);
 
-    async buscarStatusUsuario(userId) {
-        const missoes = await missaoRepository.listar();
-        const listaStatus = await missaoRepository.statusUsuario(userId);
-
-        const statusMissaoFormatado = missoes.map(missao => {
-            const status = statusList.find(s => s.missaoId === missao.id);
+         return missoes.map((missao) => {
+            const status = listaStatus.find((s) => s.missaoId === missao.id);
 
             return {
-                id: missao.id,
-                titulo: missao.titulo,
-                progressoAtual: status ? status.progressoAtual : 0,
-                concluida: status ? status.concluida : false,
+              id: missao.id,
+              titulo: missao.titulo,
+              progressoAtual: status ? status.progressoAtual : 0,
+              concluida: status ? status.concluida : false,
+              valorRequisito: missao.valorRequisito,
+              recompensaCapibas: missao.recompensaCapibas,
             };
-        });
+         });
+     }
 
-        return statusMissaoFormatado;
-    }
+     async atualizarProgressoMissoes(userId) {
+         const missoesAtivas = await this.missaoRepository.listar();
 
-    async atualizarProgressoMissoes(userId) {
-        console.log(`[MissaoService] Iniciando atualização para o usuário: ${userId}`);
+         let capibasAcumuladas = 0;
+         const missoesConcluidasNestaSessao = [];
 
-        const missoesAtivas = await MissaoRepository.obterMissoesAtivasUsuario(userId);
+         for (const missao of missoesAtivas) {
+            const statusExistente = (await this.missaoRepository.statusUsuario(userId))
+              .find((s) => s.missaoId === missao.id);
 
-        if (missoesAtivas.length === 0) {
-            return;
-        }
-
-        let capibasAcumuladas = 0;
-        const missoesConcluidasNestaSessao = [];
-
-        for (const missao of missoesAtivas) {
-            const statusExistente = missao.statusUsuario[0];
-            
             const progressoAtual = await this._calcularProgresso(userId, missao);
-
             const isConcluida = progressoAtual >= missao.valorRequisito;
 
             if (isConcluida && (!statusExistente || !statusExistente.concluida)) {
-                missoesConcluidasNestaSessao.push(missao);
-                capibasAcumuladas += missao.recompensaCapibas;
-                console.log(`Missão Concluída: ${missao.titulo} (+${missao.recompensaCapibas} Capibas)`);
+              missoesConcluidasNestaSessao.push(missao);
+              capibasAcumuladas += missao.recompensaCapibas;
             }
 
-            await MissaoRepository.atualizarStatus(
-                missao.id,
-                userId,
-                progressoAtual,
-                isConcluida
+            await this.missaoRepository.atualizarStatus(
+              missao.id,
+              userId,
+              progressoAtual,
+              isConcluida
             );
-        }
+         }
 
-        if (capibasAcumuladas > 0) {
-            await MissaoRepository.adicionarCapibas(userId, capibasAcumuladas);
-        }
+         if (capibasAcumuladas > 0) {
+            await this.missaoRepository.adicionarCapibas(userId, capibasAcumuladas);
+         }
 
-        return {
-            concluidas: missoesConcluidasNestaSessao.map(m => m.titulo),
-            capibasGanha: capibasAcumuladas
-        };
-    }
+         return {
+            concluidas: missoesConcluidasNestaSessao.map((m) => m.titulo),
+            capibasGanha: capibasAcumuladas,
+         };
+     }
 
-
-    async _calcularProgresso(userId, missao) {
-        switch (missao.tipoRequisito) {
+     async _calcularProgresso(userId, missao) {
+         switch (missao.tipoRequisito) {
             case TipoMissao.COUNT_CHECKINS:
-                return MissaoRepository.contarTotalCheckins(userId);
+              // CORREÇÃO: Nome do método correto, chamada com await e parâmetro
+              return await this.missaoRepository.contarTotalCheckins(userId); 
+      
+      // EXEMPLO: Outros tipos de missão
+      case TipoMissao.COUNT_UNIQUE_LOCATIONS:
+        return await this.missaoRepository.contarLocaisUnicos(userId);
 
-            case TipoMissao.UNIQUE_LOCATIONS:
-                return MissaoRepository.contaLocaisUnicos(userId);
-
-            case TipoMissao.SPECIFIC_TAG:
-                return MissaoRepository.contarCheckinsPorTag(userId, missao.tagRequisito);
-
-            default:
-                console.error(`TipoMissao não reconhecido: ${missao.tipoRequisito}`);
-                return 0;
-        }
-    }
+      default:
+        console.warn(`Tipo de requisito desconhecido ou não implementado: ${missao.tipoRequisito}`);
+        return 0;
+         }
+  }
 }
 
+// EXPORTAÇÃO CORRIGIDA: Exporta a instância
 module.exports = new MissaoService();
