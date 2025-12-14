@@ -7,13 +7,14 @@ class CaravanaService {
     this.caravanaRepository = new Caravana();
   }
 
-  async criarCaravana(nome, eventoId = null, bonusPorParticipante = 10) {
+  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10) {
     if (!nome) {
       throw new Error("Nome da caravana é obrigatório.");
     }
 
     return await this.caravanaRepository.criarCaravana(
       nome,
+      codigoAcesso,
       eventoId,
       (bonusPorParticipante = 10),
     );
@@ -46,6 +47,32 @@ class CaravanaService {
   async adicionarDestino(caravanaId, eventoId) {
     return await this.caravanaRepository.adicionarDestino(caravanaId, eventoId);
   }
+
+  async entrarComCodigoAcesso(codigoAcesso, usuarioId) {
+        if (!codigoAcesso || !usuarioId) {
+            throw new Error("Código de acesso e ID do usuário são obrigatórios.");
+        }
+        
+        // 1. Encontra a caravana pelo código
+    const caravana = await this.caravanaRepository.obterPorCodigoAcesso(codigoAcesso);
+        
+        if (!caravana) {
+            throw new Error("Caravana não encontrada ou código de acesso inválido.");
+        }
+
+        // 2. Verifica se o usuário já é membro
+        const usuarioIdNumber = Number(usuarioId);
+        const membrosIds = caravana.membros.map(m => m.id);
+
+        if (membrosIds.includes(usuarioIdNumber)) {
+            throw new Error("Você já faz parte desta caravana.");
+        }
+
+        // 3. Adiciona o usuário
+        const caravanaAtualizada = await this.adicionarMembro(caravana.id, usuarioIdNumber);
+        
+        return caravanaAtualizada;
+    }
 
   async removerCaravana(id) {
     return await this.caravanaRepository.remover(id);

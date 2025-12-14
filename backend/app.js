@@ -28,7 +28,7 @@ app.use(
 );
 
 app.use(bodyParser.json());
-app.use('/uploads', express.static('/app/uploads'));
+app.use('/uploads', express.static(path.join('/app', 'uploads')));
 app.use("/api/caravanas", caravanaRoutes);
 app.use("/api/eventos", eventoRoutes);
 app.use("/api/grupos", grupoRoutes);

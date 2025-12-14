@@ -51,9 +51,7 @@ class UsuarioService {
       telefone, 
       username,
       dataFormatada,
-      imageUrl,
-      latitude,
-      longitude
+      imageUrl
     );
     delete novoUsuario.senha;
     return novoUsuario;

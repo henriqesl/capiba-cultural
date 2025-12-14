@@ -4,10 +4,10 @@ const eventoService = require("../services/EventoService");
 
 class CaravanaController {
   async criarCaravana(req, res) {
-    const { nome } = req.body;
+    const { nome, codigoAcesso, eventoId } = req.body;
 
     try {
-      const caravana = await caravanaService.criarCaravana(nome);
+      const caravana = await caravanaService.criarCaravana(nome, codigoAcesso, eventoId);
       res.status(201).json({
         mensagem: `Caravana criada com sucesso: ${caravana.nome}`,
         caravana,
@@ -95,6 +95,22 @@ class CaravanaController {
       });
     }
   }
+
+  async entrarComCodigoAcesso(req, res) {
+        const { codigoAcesso, usuarioId } = req.body; // Recebe o código e o ID do usuário
+
+        try {
+            const caravana = await caravanaService.entrarComCodigoAcesso(codigoAcesso, usuarioId);
+            
+            res.status(200).json({
+                mensagem: `Você entrou na caravana "${caravana.nome}" com sucesso!`,
+                caravana,
+            });
+        } catch (error) {
+            res.status(400).json({ 
+                erro: `Falha ao entrar na caravana: ${error.message}` 
+            });
+        }
 
   async removerCaravana(req, res) {
     const { id } = req.params;
