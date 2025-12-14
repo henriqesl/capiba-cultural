@@ -12,7 +12,7 @@ class UsuarioController {
   }
 
   async criarUsuario(req, res) {
-    const { nome, email, senha, cpf, telefone, username, dataNascimento, imagemUrl: imagemUrlBody } = req.body;
+    const { nome, email, senha, cpf, imagemUrl: imagemUrlBody } = req.body;
 
     const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
     const caminhoCompletoArquivo = req.file ? req.file.path : null;
@@ -32,9 +32,6 @@ class UsuarioController {
         email,
         senha,
         cpf,
-        telefone,
-        username,
-        dataNascimento, 
         caminhoDB
       );
       console.log("LOG 2: SERVICE BEM-SUCEDIDO. USUARIO RETORNADO:", usuario); // <--- NOVO

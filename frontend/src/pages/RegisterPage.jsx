@@ -31,9 +31,6 @@ const RegisterPage = () => {
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [cpf, setCpf] = useState(''); 
-    const [username, setUsername] = useState('');
-    const [dataNascimento, setDataNascimento] = useState('');
-    const [telefone, setTelefone] = useState('');
     const [imagemPerfil, setImagemPerfil] = useState(null); 
     const [loading, setLoading] = useState(false);
     // Estado para o nome do arquivo, para exibição no campo de upload
@@ -49,10 +46,9 @@ const RegisterPage = () => {
     const handleRegister = async () => {
         // Limpeza de CPF e Telefone
         const cpfLimpo = cpf.replace(/\D/g, ''); 
-        const telefoneLimpo = telefone.replace(/\D/g, ''); 
         
         // VALIDAÇÃO: Todos os campos obrigatórios
-        if (!nome || !email || !senha || !confirmarSenha || !cpfLimpo || !username || !dataNascimento || !telefoneLimpo) {
+        if (!nome || !email || !senha || !confirmarSenha || !cpfLimpo) {
             alert("Preencha todos os campos obrigatórios!");
             return;
         }
@@ -71,9 +67,6 @@ const RegisterPage = () => {
         formData.append('email', email);
         formData.append('senha', senha);
         formData.append('cpf', cpfLimpo);
-        formData.append('username', username);
-        formData.append('dataNascimento', dataNascimento);
-        formData.append('telefone', telefoneLimpo);
 
         if (imagemPerfil) {
             formData.append('imagemPerfil', imagemPerfil);
