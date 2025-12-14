@@ -7,20 +7,28 @@ class UsuarioService {
     this.usuarioRepository = new Usuario();
   }
 
-  async criarUsuario(nome, email, senha, cpf, imageUrl) {
-    if (!nome || !email || !senha || !cpf)
-      throw new Error("Todos os campos são obrigatórios");
-
+  async criarUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, fotoUrl) {
+    
+    if (!nome || !email || !senha || !cpf || !dataNascimento || !cep || !endereco || !numero || !bairro) {
+      throw new Error("Todos os campos são obrigatórios (exceto foto).");
+    }
 
     const salt = await bcrypt.genSalt(10);
     const senhaHash = await bcrypt.hash(senha, salt);
+
     const novoUsuario = await this.usuarioRepository.novoUsuario(
       nome,
       email,
       senhaHash,
       cpf,
-      imageUrl
+      dataNascimento,
+      cep,
+      endereco,
+      numero,
+      bairro,
+      fotoUrl 
     );
+
     delete novoUsuario.senha;
     return novoUsuario;
   }
@@ -48,39 +56,30 @@ class UsuarioService {
   }
 
 async atualizarUsuario(id, dadosAtualizados) {
-  const usuario = await this.usuarioRepository.buscarId(id);
-  if (!usuario) {
-    throw new Error("Usuário não encontrado");
-  }
-
-  const camposPermitidos = [
-    "nome",
-    "email",
-    "cpf",
-    "telefone",
-    "dataNascimento"
-  ];
-
-  const dadosFiltrados = {};
-
-  for (const campo of camposPermitidos) {
-    if (dadosAtualizados[campo] !== undefined) {
-      dadosFiltrados[campo] = dadosAtualizados[campo];
+    const usuario = await this.usuarioRepository.buscarId(id);
+    if (!usuario) {
+      throw new Error("Usuário não encontrado");
     }
-  }
 
-  // 🔐 TRATAMENTO CORRETO DA SENHA
-  if (dadosAtualizados.senha && dadosAtualizados.senha.trim() !== "") {
-    const salt = await bcrypt.genSalt(10);
-    dadosFiltrados.senha = await bcrypt.hash(dadosAtualizados.senha, salt);
-  }
+    const dadosParaSalvar = {};
 
-  if (Object.keys(dadosFiltrados).length === 0) {
-    throw new Error("Nenhum campo válido para atualização");
-  }
+    if (dadosAtualizados.nome) dadosParaSalvar.nome = dadosAtualizados.nome;
+    if (dadosAtualizados.email) dadosParaSalvar.email = dadosAtualizados.email;
+    if (dadosAtualizados.cpf) dadosParaSalvar.cpf = dadosAtualizados.cpf;
+    
+    if (dadosAtualizados.fotoUrl) dadosParaSalvar.fotoUrl = dadosAtualizados.fotoUrl;
 
-  return await this.usuarioRepository.atualizar(id, dadosFiltrados);
-}
+    if (dadosAtualizados.senha && dadosAtualizados.senha.trim() !== "") {
+      const salt = await bcrypt.genSalt(10);
+      dadosParaSalvar.senha = await bcrypt.hash(dadosAtualizados.senha, salt);
+    }
+
+    if (Object.keys(dadosParaSalvar).length === 0) {
+      return usuario; 
+    }
+
+    return await this.usuarioRepository.atualizar(id, dadosParaSalvar);
+  }
 
 
   async obterPorId(id) {

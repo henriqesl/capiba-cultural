@@ -1,284 +1,198 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-// 🔑 Importamos o contexto para acessar o ID do usuário e a função de logout
-import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api'; 
-// Componentes
-import { InfoRow, PerfilImage } from '../../components/user/UserShared.jsx'; 
-
-// Ícones
-import { ArrowLeft, Camera, User, LogOut, Mail, Edit, Shield, Lock } from 'lucide-react'; // Lock adicionado para Senha
-
-// 🔑 DEFINIÇÕES GLOBAIS (Verifique se sua porta de backend é 3000)
-const BASE_URL = 'http://localhost:3000'; 
-const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.png'; // AJUSTE ESTE CAMINHO SE NECESSÁRIO
-
-// Removidas as funções de formatação não utilizadas
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { PerfilImage } from '../../components/user/UserShared.jsx'; 
+import { ArrowLeft, Camera, User, Save, Lock, Mail, FileText } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
+import api from '../../services/api';
 
 const ProfilePage = () => {
-    const { user: userContext, logout } = useAuth(); 
-    const fileInputRef = useRef(null); 
-    
-    // ESTADOS:
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [isEditing, setIsEditing] = useState(false);
-    // Inicializamos a senha como vazia para evitar que seja enviada se não for alterada
-    const [editFields, setEditFields] = useState({ nome: '', senha: '' }); 
-    const [fileToSend, setFileToSend] = useState(null); 
-    const [previewUrl, setPreviewUrl] = useState(DEFAULT_PROFILE_PIC); 
-    
-    // LÓGICA DE BUSCA DE DADOS
-    const fetchUserData = useCallback(async () => {
-        if (!userContext?.id) {
-            setLoading(false);
-            return;
-        }
-        try {
-            const response = await api.get(`/usuarios/${userContext.id}`);
-            const data = response.data;
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
-            if (data?.senha) {
-                delete data.senha;
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    cpf: '',
+    senha: '' 
+  });
+
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [fileToSend, setFileToSend] = useState(null);
+  
+  const BASE_URL = 'http://localhost:3000/'; 
+
+  useEffect(() => {
+    if (user?.id) {
+        api.get(`/usuarios/${user.id}`).then(res => {
+            setFormData(prev => ({
+                ...prev,
+                nome: res.data.nome || '',
+                email: res.data.email || '',
+                cpf: res.data.cpf || '',
+            }));
+
+            if (res.data.fotoUrl) {
+                const pathFixed = res.data.fotoUrl.replace(/\\/g, '/');
+                setPreviewUrl(`${BASE_URL}${pathFixed}`);
             }
-            setUserData(data);
-            
-            // Inicializamos o editFields com o nome atual, e a senha vazia
-            setEditFields({ nome: data?.nome || '', senha: '' }); 
+        });
+    }
+  }, [user]);
 
-          const imageUrl = data?.fotoUrl || DEFAULT_PROFILE_PIC;
-            setPreviewUrl(imageUrl);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-        } catch (error) {
-            console.error("Erro ao carregar dados do perfil:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, [userContext]);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        setFileToSend(file);
+        setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
 
-    useEffect(() => {
-        fetchUserData();
-    }, [fetchUserData]);
-    
-    
-    // Handler de Edição/Salvar
-    const handleChange = (e) => {
-        setEditFields({ ...editFields, [e.target.name]: e.target.value });
-    };
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+        const data = new FormData();
+        
+        if (formData.nome) data.append('nome', formData.nome);
+        if (formData.email) data.append('email', formData.email);
+        if (formData.cpf) data.append('cpf', formData.cpf);
+        if (formData.senha) data.append('senha', formData.senha);
+        if (fileToSend) data.append('foto', fileToSend);
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFileToSend(file);
-            setPreviewUrl(URL.createObjectURL(file)); // cria URL temporária
-        }
-    };
+        await api.put(`/usuarios/${user.id}`, data);
+        
+        alert("Perfil atualizado com sucesso!");
+    } catch (error) {
+        console.error("Erro no update:", error);
+        alert("Erro ao atualizar perfil. Verifique os dados.");
+    } finally {
+        setLoading(false);
+    }
+  };
 
-    const handleSave = async () => {
-        setLoading(true);
-        try {
-            const formData = new FormData();
-            
-            // Adiciona Nome
-            formData.append('nome', editFields.nome);
-            
-            // Adiciona Senha SOMENTE se o campo for preenchido
-            if (editFields.senha) {
-                formData.append('senha', editFields.senha);
-            }
+  return (
+    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center py-6">
+      <div className="w-[95%] max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+        
+        {/* === COLUNA ESQUERDA (Foto e Identidade) === */}
+        <aside className="md:w-1/3 bg-blue-600 text-white p-8 flex flex-col items-center text-center relative">
+          <a href="#/perfil" className="absolute top-6 left-6 p-2 bg-white/20 rounded-full hover:bg-white/30 transition">
+             <ArrowLeft className="w-6 h-6" />
+          </a>
 
-            // Adiciona Foto de perfil
-            if (fileToSend) {
-                formData.append('foto', fileToSend); 
-            }
-
-            await api.patch(`/usuarios/${userContext.id}`, formData); 
-            
-            alert("Perfil atualizado com sucesso!");
-            setIsEditing(false); // Sai do modo de edição
-            setFileToSend(null); // Limpa o arquivo após o envio
-            // Limpa o campo de senha após salvar, mesmo se falhar, por segurança
-            setEditFields(prev => ({ ...prev, senha: '' }));
-            await fetchUserData(); // Recarrega os dados
-        } catch (error) {
-            console.error("Erro ao salvar perfil:", error);
-            alert(`Erro ao salvar: ${error.response?.data?.erro || 'Tente novamente.'}`);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    
-    // Componente de Linha Editável SIMPLIFICADO
-    const EditableInfoRow = ({ label, name, value, type = 'text', readOnly = false, icon: IconComponent }) => (
-        <div className="flex flex-col border-b border-gray-100 py-3">
-            <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-2">
-                {IconComponent && <IconComponent className="w-4 h-4" />}
-                {label}
-            </label>
-            {isEditing && !readOnly ? (
-                <input
-                    type={type}
-                    name={name}
-                    value={value || ''}
-                    onChange={handleChange}
-                    className="mt-1 p-1 border-b-2 border-blue-200 focus:border-blue-600 transition duration-150 outline-none text-gray-800"
-                />
-            ) : (
-                <p className="text-gray-800 font-medium">{value}</p>
-            )}
-        </div>
-    );
-
-    return (
-        <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center py-4">
-            <div className="w-[95%] max-w-md md:max-w-5xl bg-white md:rounded-2xl md:shadow-xl overflow-hidden flex flex-col">
-                
-                {/* Header Mobile - Mantido na posição correta */}
-                <header className="bg-blue-600 text-white p-4 flex justify-between items-center md:hidden">
-                    <a href="#/perfil"><ArrowLeft className="w-6 h-6" /></a>
-                    <h1 className="text-xl font-bold">{isEditing ? 'EDITAR PERFIL' : 'MEU PERFIL'}</h1>
-                    <button 
-                        onClick={isEditing ? handleSave : () => setIsEditing(true)}
-                        className={`text-sm font-semibold py-1 px-3 rounded-full transition-colors ${isEditing ? 'bg-yellow-400 text-gray-900' : 'bg-blue-500 hover:bg-blue-400'}`}
-                        disabled={loading}
-                    >
-                        {loading ? '...' : (isEditing ? 'SALVAR' : <Edit className="w-5 h-5" />)}
-                    </button>
-                </header>
-                
-                {/* Header Desktop */}
-                <header className="hidden md:flex p-6 items-center justify-between border-b border-gray-200 bg-gray-50">
-                    <div className="flex items-center">
-                        <a href="#/perfil" className="text-gray-600 hover:text-blue-600 transition-colors p-2 rounded-full hover:bg-gray-100">
-                            <ArrowLeft className="w-6 h-6" />
-                        </a>
-                        <h1 className="text-xl font-bold text-gray-800 ml-4">{isEditing ? 'Editando Perfil' : 'Meu Perfil'}</h1>
-                    </div>
-                    
-                    <button 
-                        onClick={isEditing ? handleSave : () => setIsEditing(true)}
-                        className={`text-sm font-semibold py-2 px-4 rounded-lg transition-colors flex items-center gap-2 ${isEditing ? 'bg-yellow-500 text-gray-900 hover:bg-yellow-600' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
-                        disabled={loading}
-                    >
-                        {loading ? 'Salvando...' : (isEditing ? 'Salvar Alterações' : <> <Edit className="w-4 h-4" /> Editar Perfil </>)}
-                    </button>
-                </header>
-
-
-                <main className="p-6 pb-24 md:p-8 md:grid md:grid-cols-12 md:gap-8">
-                    
-                    {/* Esquerda: foto e nome */}
-                    <aside className="md:col-span-4 flex flex-col items-center text-center mb-8 md:mb-0 border-b md:border-b-0 md:border-r border-gray-100 md:pr-6">
-                        
-                        {/* Input Invisível para o Arquivo */}
-                        <input 
-                            type="file" 
-                            ref={fileInputRef} 
-                            onChange={handleFileChange} 
-                            accept="image/*"
-                            className="hidden" 
-                            disabled={!isEditing}
-                        />
-
-                        {/* Ao clicar na div ou botão, abre o input de arquivo */}
-                        <div 
-                            className={`relative group mb-4 ${isEditing ? 'cursor-pointer' : ''}`}
-                            onClick={() => isEditing && fileInputRef.current.click()}
-                        > 
-                            <PerfilImage src={previewUrl} />
-                            
-                            {isEditing && (
-                                <button className="absolute -bottom-2 -right-2 bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 shadow-md border-2 border-white transition-transform hover:scale-110">
-                                    <Camera className="w-5 h-5" />
-                                </button>
-                            )}
-                        </div>
-                        
-                        {isEditing && (
-                            <p className="text-xs text-gray-400 mb-4">Toque na foto para alterar</p>
-                        )}
-                        
-                        {/* Exibe o nome atual ou o campo de edição do Nome */}
-                        <EditableInfoRow 
-                            label="Nome Completo" 
-                            name="nome" 
-                            value={editFields?.nome || userData?.nome}
-                            readOnly={!isEditing}
-                            icon={User}
-                        />
-                        
-                        {/* Botão de Logout */}
-                        <div className="w-full mt-6 md:mt-8">
-                            <button 
-                                onClick={logout} 
-                                className="w-full text-sm font-semibold text-red-600 bg-red-100 hover:bg-red-200 rounded-lg py-2.5 px-4 transition-colors shadow-sm flex items-center justify-center gap-2"
-                            >
-                                <LogOut className="w-5 h-5" /> 
-                                Sair da Conta
-                            </button>
-                        </div>
-                    </aside>
-
-                    {/* Direita: informações e campo de senha */}
-                    <div className="md:col-span-8">
-                        <section>
-                            <h2 className="text-lg font-bold text-gray-700 mb-6 flex items-center">
-                                <span className="bg-blue-100 text-blue-600 p-2 rounded-lg mr-3">
-                                    <Shield className="w-5 h-5"/> 
-                                </span>
-                                Informações de Acesso
-                            </h2>
-                            
-                            <div className="space-y-4">
-                                
-                                {/* CAMPO EMAIL (ReadOnly) */}
-                                <EditableInfoRow 
-                                    label="Email (Login)" 
-                                    name="email" 
-                                    value={userData?.email}
-                                    type="email"
-                                    readOnly={true} 
-                                    icon={Mail}
-                                />
-                                
-                                {/* CAMPO CPF (ReadOnly) */}
-                                <EditableInfoRow 
-                                    label="CPF" 
-                                    value={userData?.cpf || 'N/A'} 
-                                    readOnly={true} 
-                                    icon={User}
-                                />
-
-                                {/* CAMPO NOVA SENHA (RE-INSERIDO E EDITÁVEL) */}
-                                {isEditing && (
-                                    <EditableInfoRow
-                                        label="Nova Senha"
-                                        name="senha"
-                                        value={editFields.senha || ''}
-                                        type="password"
-                                        icon={Lock}
-                                    />
-                                )}
-                                
-                                {/* Outras Informações (Endereço, etc.) */}
-                                <div className="pt-4 mt-4 border-t border-gray-100">
-                                    <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Outras Informações (Endereço)</h3>
-                                    
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                        <InfoRow label="CEP" value="52091-235" />
-                                        <InfoRow label="Bairro" value="Nova Descoberta" />
-                                        <InfoRow label="Rua" value="Rua Alto Santa Luzia" />
-                                        <InfoRow label="Número" value="460" />
-                                        <InfoRow label="Cidade/Estado" value="Recife/PE" />
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </main>
+          <div className="mt-12 mb-6 relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
+            <div className="rounded-full p-1 bg-white/30 backdrop-blur-md">
+                <PerfilImage src={previewUrl} className="w-40 h-40 rounded-full object-cover border-4 border-white shadow-2xl" />
             </div>
-        </div>
-    );
+            <div className="absolute bottom-2 right-2 bg-yellow-400 text-blue-900 p-2 rounded-full shadow-lg hover:scale-110 transition-transform">
+                <Camera className="w-5 h-5" />
+            </div>
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+          </div>
+
+          <h2 className="text-2xl font-bold">{formData.nome || "Usuário"}</h2>
+          <p className="text-blue-200 text-sm mt-1">{formData.email}</p>
+          
+          <div className="mt-auto w-full pt-8">
+            <p className="text-xs text-blue-200 mb-4 uppercase tracking-widest opacity-70">Ações</p>
+            <button 
+                onClick={handleSave}
+                disabled={loading}
+                className="w-full py-4 bg-white text-blue-600 font-bold rounded-xl shadow-lg hover:bg-gray-100 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+                {loading ? "Salvando..." : (
+                    <>
+                        <Save className="w-5 h-5" /> Salvar Alterações
+                    </>
+                )}
+            </button>
+          </div>
+        </aside>
+
+        {/* === COLUNA DIREITA (Formulário) === */}
+        <main className="flex-1 p-8 md:p-12 bg-white">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                <User className="w-6 h-6" />
+            </div>
+            <div>
+                <h1 className="text-2xl font-bold text-gray-800">Dados Pessoais</h1>
+                <p className="text-gray-400 text-sm">Atualize suas informações básicas</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 max-w-2xl">
+            {/* Nome */}
+            <div className="space-y-2">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wide ml-1">Nome Completo</label>
+                <div className="flex items-center bg-gray-50 rounded-xl px-4 py-3 border border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all">
+                    <User className="w-5 h-5 text-gray-400 mr-3" />
+                    <input 
+                        name="nome"
+                        value={formData.nome}
+                        onChange={handleChange}
+                        className="bg-transparent w-full outline-none text-gray-700 font-medium placeholder-gray-300"
+                        placeholder="Seu nome"
+                    />
+                </div>
+            </div>
+
+            {/* Email & CPF */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wide ml-1">Email</label>
+                    <div className="flex items-center bg-gray-100 rounded-xl px-4 py-3 border border-gray-200 cursor-not-allowed opacity-70">
+                        <Mail className="w-5 h-5 text-gray-400 mr-3" />
+                        <input 
+                            name="email"
+                            value={formData.email}
+                            readOnly
+                            className="bg-transparent w-full outline-none text-gray-500 font-medium"
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wide ml-1">CPF</label>
+                    <div className="flex items-center bg-gray-50 rounded-xl px-4 py-3 border border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all">
+                        <FileText className="w-5 h-5 text-gray-400 mr-3" />
+                        <input 
+                            name="cpf"
+                            value={formData.cpf}
+                            onChange={handleChange}
+                            className="bg-transparent w-full outline-none text-gray-700 font-medium placeholder-gray-300"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <hr className="border-gray-100 my-2" />
+
+            {/* Senha */}
+            <div className="space-y-2">
+                <label className="text-xs font-bold text-blue-500 uppercase tracking-wide ml-1">Alterar Senha</label>
+                <div className="flex items-center bg-white border-2 border-blue-50 rounded-xl px-4 py-3 focus-within:border-blue-500 transition-all">
+                    <Lock className="w-5 h-5 text-blue-300 mr-3" />
+                    <input 
+                        name="senha"
+                        type="password"
+                        placeholder="Digite apenas se quiser trocar"
+                        value={formData.senha}
+                        onChange={handleChange}
+                        className="bg-transparent w-full outline-none text-gray-700 font-medium placeholder-gray-300"
+                    />
+                </div>
+                <p className="text-xs text-gray-400 ml-1">Deixe em branco para manter a senha atual.</p>
+            </div>
+
+          </div>
+        </main>
+      </div>
+    </div>
+  );
 };
 
 export default ProfilePage;

@@ -35,7 +35,11 @@ generator client {
     saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
     dataCadastro     DateTime           @default(now()) // o padrão é a data atual
     fotoUrl              String?
-
+    dataNascimento   DateTime? 
+    cep              String?
+    endereco         String?
+    numero           String?
+    bairro           String?
     // Relações (O que este usuário possui?)
     grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
     grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
