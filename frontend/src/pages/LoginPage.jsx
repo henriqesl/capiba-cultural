@@ -55,7 +55,7 @@ const LoginPage = () => {
                         LOGAR
                     </Button>
                     
-                    <Button variant="secondary" href="#/login">CRIAR CONTA</Button>
+                    <Button variant="secondary" href="#/login/criar">CRIAR CONTA</Button>
                 </main>
             </div>
         </div>

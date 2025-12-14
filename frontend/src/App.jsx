@@ -9,6 +9,7 @@ import EventDetailPage from './pages/event/EventDetailPage.jsx';
 import EventsData from './components/event/EventsData.jsx';
 import CheckInPage from './pages/CheckInPage.jsx';
 import StatusPage from './pages/StatusPage.jsx';
+import RegisterPage from './pages/RegisterPage'; 
 
 // Importações das páginas de Caravana
 import CaravanaPage from './pages/user/CaravanaPage.jsx';
@@ -18,10 +19,12 @@ import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
 // << NOVO: Importe o AuthContext para que useContext funcione
 import { AuthContext, AuthProvider } from './context/AuthContext'; 
 
+import LogoCapiba from './assets/logo_capiba.png';
+
 
 const App = () => {
     // Adicione a desestruturação do contexto de autenticação
-    const { authenticated, loading: authLoading } = useContext(AuthContext); 
+    const { authenticated, loading: authLoading, user } = useContext(AuthContext); 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
 
     // --- 1. ESTADO GLOBAL DAS CARAVANAS ---
@@ -77,6 +80,15 @@ const App = () => {
         
         // Rota: Login (Prioridade)
         if (mainRoute === 'login' || mainRoute === '') {
+           // Se o usuário está na rota /login, o parâmetro da sub-rota pode ser 'criar'
+            const subRoute = routeParts[1];
+
+            // 🔑 Nova Rota: #/login/criar (Se você usar o link do botão)
+            if (subRoute === 'criar') {
+                 return <RegisterPage />;
+            }
+            
+            // Retorna o LoginPage padrão se não houver sub-rota ou se for #/login
             return <LoginPage />;
         }
         
@@ -90,7 +102,7 @@ const App = () => {
             }
             
             if (subRoute === 'editar') {
-                return <ProfilePage />; // Rota de edição de perfil
+              return <ProfilePage user={user} />;
             }
 
             if (subRoute === 'caravana') {
@@ -121,7 +133,7 @@ const App = () => {
             }
             
             // Rota: Perfil Base (Se não for sub-rota específica)
-            return <UserPage />; 
+            return <UserPage user = {user}/>; 
         }
 
 
