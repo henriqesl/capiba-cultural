@@ -3,7 +3,6 @@ import { useAuth } from '../../context/AuthContext';
 import { Icon } from '../user/UserShared.jsx';
 import { ICONS } from '../../utils/icons.jsx';
 
-
 const NavItem = ({ href, iconPath, label, active = false }) => {
     const activeClass = active ? 'text-blue-600' : 'text-gray-400';
     return (
@@ -15,26 +14,22 @@ const NavItem = ({ href, iconPath, label, active = false }) => {
 };
 
 const BottomNav = ({ currentPath }) => {
-// 2. OBTER O ESTADO DE AUTENTICAÇÃO (Agora a função existe)
     const { authenticated, user, loading: authLoading } = useAuth();
     
-    // 3. DEFINIR O ITEM FINAL (CONDICIONAL)
+    // Define o item do perfil/login logicamente
     let userOrLoginItem;
-    
     if (authLoading) {
         userOrLoginItem = <NavItem href="#" iconPath={ICONS.user} label="..." active={false} />;
     } else if (authenticated) {
-        // Usuário Logado: Mostra o Perfil
         userOrLoginItem = (
             <NavItem 
                 href="#/perfil" 
                 iconPath={ICONS.user} 
-                label={user?.nome || "Perfil"} 
+                label={user?.nome?.split(' ')[0] || "Perfil"} // Pega só o primeiro nome para caber melhor
                 active={currentPath.startsWith('#/perfil')} 
             />
         );
     } else {
-        // Usuário NÃO Logado: Mostra o Login
         userOrLoginItem = (
             <NavItem 
                 href="#/login" 
@@ -44,14 +39,24 @@ const BottomNav = ({ currentPath }) => {
             />
         );
     }
+
     return (
-        <nav className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] px-4 py-2 md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] px-4 py-2 md:hidden z-50">
             <div className="flex justify-around items-center">
+                {/* 1. HOME (INÍCIO) ADICIONADA AQUI */}
+                <NavItem 
+                    href="#/home" 
+                    iconPath={ICONS.home} 
+                    label="Início" 
+                    active={currentPath === '#/home'} 
+                />
+
                 <NavItem href="#/eventos" iconPath={ICONS.calendar} label="Eventos" active={currentPath.startsWith('#/eventos') && currentPath.length <= 9} />
                 <NavItem href="#/capiba" iconPath={ICONS.dollar} label="Capiba" active={currentPath.startsWith('#/capiba')} />
                 <NavItem href="#/status" iconPath={ICONS.star} label="Status" active={currentPath.startsWith('#/status')} />
-                <NavItem href="#/perfil" iconPath={ICONS.user} label="Perfil" active={currentPath.startsWith('#/perfil')} />
-             
+                
+                {/* Item dinâmico (Perfil ou Login) */}
+                {userOrLoginItem}
             </div>
         </nav>
     );
