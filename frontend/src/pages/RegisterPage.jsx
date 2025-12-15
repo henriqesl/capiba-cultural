@@ -7,12 +7,12 @@ const RegisterPage = () => {
     const { register } = useAuth();
     const [loading, setLoading] = useState(false);
     
-    // Estados do Formulário
+    // Removido 'username' do estado
     const [formData, setFormData] = useState({
         nome: '',
         email: '',
         senha: '',
-        confirmarSenha: '', // NOVO CAMPO
+        confirmarSenha: '',
         cpf: '',
         dataNascimento: '',
         cep: '',
@@ -36,7 +36,6 @@ const RegisterPage = () => {
         }
     };
 
-    // === CEP SILENCIOSO ===
     const handleBlurCep = async () => {
         const cepLimpo = formData.cep.replace(/\D/g, '');
         if (cepLimpo.length === 8) {
@@ -44,16 +43,14 @@ const RegisterPage = () => {
                 const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
                 const data = await res.json();
                 
-                // Só preenche se achar. Se der erro, não faz nada (usuário digita).
                 if (!data.erro) {
                     setFormData(prev => ({
                         ...prev,
-                        endereco: data.logradouro || prev.endereco, // Mantém o que estava se vier vazio
+                        endereco: data.logradouro || prev.endereco,
                         bairro: data.bairro || prev.bairro
                     }));
                 }
             } catch (error) {
-                // Silêncio total em caso de erro de rede ou API
                 console.log("ViaCEP indisponível ou erro, preenchimento manual.");
             }
         }
@@ -62,7 +59,6 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // === VALIDAÇÃO DE SENHA ===
         if (formData.senha !== formData.confirmarSenha) {
             alert("As senhas não coincidem!");
             return;
@@ -73,14 +69,12 @@ const RegisterPage = () => {
         try {
             const data = new FormData();
             
-            // Adiciona campos ao FormData (exceto confirmarSenha que não vai pro back)
             Object.keys(formData).forEach(key => {
                 if (key !== 'confirmarSenha') {
                     data.append(key, formData[key]);
                 }
             });
             
-            // Foto é opcional: só anexa se o usuário escolheu
             if (foto) {
                 data.append('foto', foto);
             }
@@ -94,7 +88,8 @@ const RegisterPage = () => {
                 alert(resultado.mensagem || "Erro ao criar conta.");
             }
         } catch (error) {
-            alert("Erro inesperado.");
+            alert("Erro inesperado ao tentar registrar.");
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -104,7 +99,7 @@ const RegisterPage = () => {
         <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
             <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
                 
-                {/* Coluna Visual */}
+                {/* Coluna Visual (Esquerda) */}
                 <div className="bg-blue-600 p-8 flex flex-col items-center justify-center text-white md:w-2/5 text-center">
                     <CapibaLogo />
                     <h2 className="text-2xl font-bold mt-4">Junte-se a nós!</h2>
@@ -112,13 +107,13 @@ const RegisterPage = () => {
                     <a href="#/login" className="mt-8 text-sm underline hover:text-yellow-300">Já tem conta? Entrar</a>
                 </div>
 
-                {/* Formulário */}
+                {/* Formulário (Direita) */}
                 <div className="p-8 md:w-3/5">
                     <h1 className="text-2xl font-bold text-gray-800 mb-6">Criar Conta</h1>
                     
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-3">
                         
-                        {/* Foto Opcional */}
+                        {/* Foto de Perfil */}
                         <div className="flex justify-center mb-4">
                             <label className="cursor-pointer group relative">
                                 <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-2 border-dashed border-gray-400 group-hover:border-blue-500 transition-colors">
@@ -134,26 +129,27 @@ const RegisterPage = () => {
                             </label>
                         </div>
 
-                        {/* Campos Pessoais */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="relative">
-                                <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input name="nome" placeholder="Nome Completo" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
-                            </div>
-                            <div className="relative">
-                                <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input name="cpf" placeholder="CPF" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
-                            </div>
+                        {/* Dados Pessoais: Nome (Username removido) */}
+                        <div className="relative">
+                            <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                            <input name="nome" placeholder="Nome Completo" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
                         </div>
 
+                        {/* CPF */}
+                        <div className="relative">
+                            <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                            <input name="cpf" placeholder="CPF (apenas números)" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                        </div>
+
+                        {/* Data e Email */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div className="relative">
                                 <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="date" name="dataNascimento" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 text-gray-500 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="date" name="dataNascimento" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 text-gray-500 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
                             </div>
                             <div className="relative">
                                 <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
                             </div>
                         </div>
 
@@ -169,12 +165,12 @@ const RegisterPage = () => {
                                         onChange={handleChange} 
                                         onBlur={handleBlurCep} 
                                         required 
-                                        className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" 
+                                        className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" 
                                     />
                                 </div>
                                 <div className="relative">
                                     <Home className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                    <input name="numero" placeholder="Número" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                                    <input name="numero" placeholder="Número" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
                                 </div>
                             </div>
                             
@@ -188,15 +184,15 @@ const RegisterPage = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div className="relative">
                                 <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="password" name="senha" placeholder="Senha" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="password" name="senha" placeholder="Senha" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
                             </div>
                             <div className="relative">
                                 <CheckCircle className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none" />
+                                <input type="password" name="confirmarSenha" placeholder="Confirmar" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
                             </div>
                         </div>
 
-                        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50">
+                        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 mt-4">
                             {loading ? "Criando Conta..." : "Cadastrar"}
                         </button>
 

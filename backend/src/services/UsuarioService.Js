@@ -13,6 +13,11 @@ class UsuarioService {
       throw new Error("Todos os campos são obrigatórios (exceto foto).");
     }
 
+    const usuarioExistente = await this.usuarioRepository.buscarEmail(email);
+    if (usuarioExistente) {
+      throw new Error("Este email já está cadastrado.");
+    }
+
     const salt = await bcrypt.genSalt(10);
     const senhaHash = await bcrypt.hash(senha, salt);
 
@@ -66,10 +71,15 @@ async atualizarUsuario(id, dadosAtualizados) {
     if (dadosAtualizados.nome) dadosParaSalvar.nome = dadosAtualizados.nome;
     if (dadosAtualizados.email) dadosParaSalvar.email = dadosAtualizados.email;
     if (dadosAtualizados.cpf) dadosParaSalvar.cpf = dadosAtualizados.cpf;
-    
     if (dadosAtualizados.fotoUrl) dadosParaSalvar.fotoUrl = dadosAtualizados.fotoUrl;
+    
+    if (dadosAtualizados.dataNascimento) dadosParaSalvar.dataNascimento = dadosAtualizados.dataNascimento;
+    if (dadosAtualizados.cep) dadosParaSalvar.cep = dadosAtualizados.cep;
+    if (dadosAtualizados.endereco) dadosParaSalvar.endereco = dadosAtualizados.endereco;
+    if (dadosAtualizados.numero) dadosParaSalvar.numero = dadosAtualizados.numero;
+    if (dadosAtualizados.bairro) dadosParaSalvar.bairro = dadosAtualizados.bairro;
 
-    if (dadosAtualizados.senha && dadosAtualizados.senha.trim() !== "") {
+    if (dadosAtualizados.senha) {
       const salt = await bcrypt.genSalt(10);
       dadosParaSalvar.senha = await bcrypt.hash(dadosAtualizados.senha, salt);
     }

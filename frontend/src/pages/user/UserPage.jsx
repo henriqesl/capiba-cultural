@@ -5,13 +5,11 @@ import api from '../../services/api';
 import { PerfilImage } from '../../components/user/UserShared';
 import { NavCard } from '../../components/user/UserNavigation';
 
-// Adicionei LogOut nos imports
 import { User, Star, Users, LogOut } from 'lucide-react';
 
 const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.png'; 
 
 const UserPage = () => {
-    // Pegamos o logout do contexto
     const { user: userContext, logout } = useAuth(); 
     
     const [userData, setUserData] = useState(null);
@@ -49,17 +47,14 @@ const UserPage = () => {
     }
     
     const nomeUsuario = userData?.nome || 'Usuário';
-    const username = userData?.username || 'username';
     const pontos = userData?.saldoMoedaCapiba || 0;
 
     return (
         <div className="w-full bg-gray-100 flex flex-col items-center p-4 sm:p-8 pb-24 md:pb-8">
             <div className="w-full max-w-md md:max-w-4xl">
                 
-                {/* Adicionado 'relative' para posicionar o botão de sair */}
                 <header className="relative bg-white md:rounded-2xl md:shadow-xl p-6 md:p-8 mb-8 shadow-sm rounded-xl">
                     
-                    {/* === BOTÃO DE LOGOUT (Mobile e Desktop) === */}
                     <button 
                         onClick={logout}
                         className="absolute top-4 right-4 p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
@@ -73,8 +68,12 @@ const UserPage = () => {
                     </div>
                     <div className="flex items-center flex-col place-content-center mt-4 md:mt-3 text-center md:text-left">
                         <h1 className="text-3xl font-bold text-gray-800">{nomeUsuario}</h1>
-                        <p className="text-lg text-gray-500">@{username}</p>
-                        <p className="text-md text-blue-600 font-semibold mt-2">{pontos.toLocaleString('pt-BR')} Pontos</p>
+                        
+                        {/* Removida a linha do @username */}
+                        
+                        <p className="text-md text-blue-600 font-semibold mt-2">
+                            {pontos.toLocaleString('pt-BR')} Capibas
+                        </p>
                     </div>
                 </header>
 

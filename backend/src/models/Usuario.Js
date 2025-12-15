@@ -17,7 +17,6 @@ class Usuario {
   async buscarEmail(email) {
     return await prisma.usuario.findUnique({
       where: { email: email },
-      // Adicionei os novos campos no select para virem no login se precisar
       select: {
           id: true,
           nome: true,
@@ -27,7 +26,6 @@ class Usuario {
           fotoUrl: true,
           saldoMoedaCapiba: true,
           dataCadastro: true,
-          // Novos campos
           dataNascimento: true,
           cep: true,
           endereco: true,
@@ -37,15 +35,19 @@ class Usuario {
     });
   }
 
-  // ESTE MÉTODO JÁ ESTAVA CORRETO NO SEU ARQUIVO
+  async buscarUsername(username) {
+    return await prisma.usuario.findUnique({
+      where: { username: username },
+    });
+  }
+
   async novoUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, fotoUrl) {
     return await prisma.usuario.create({
       data: {
         nome,
         email,
         senha,
-        cpf,
-        
+        cpf,     
         dataNascimento: dataNascimento ? new Date(dataNascimento) : null,
         cep,
         endereco,
@@ -76,7 +78,6 @@ class Usuario {
     });
   }
 
-  // === CORREÇÃO IMPORTANTE AQUI ===
   async atualizar(id, dados) {
     return await prisma.usuario.update({
       where: { id: id },
@@ -85,16 +86,12 @@ class Usuario {
         email: dados.email,
         cpf: dados.cpf,
         fotoUrl: dados.fotoUrl,
-        
-        // Adicionando suporte para atualizar endereço e data
-        // Se o dado não vier (undefined), o Prisma ignora e mantém o antigo
         cep: dados.cep,
         endereco: dados.endereco,
         numero: dados.numero,
         bairro: dados.bairro,
         dataNascimento: dados.dataNascimento ? new Date(dados.dataNascimento) : undefined,
 
-        // Lógica de senha
         ...(dados.senha ? { senha: dados.senha } : {}),
       },
     });
