@@ -7,8 +7,15 @@ class CaravanaController {
     const usuarioLogadoId = req.usuarioId; // ID vindo do Token JWT
 
     // 1. Pega também a descricao do corpo da requisição
-    const { nome, codigoAcesso, eventoId, descricao } = req.body;
+    const { nome, codigoAcesso, eventoId, descricao, imagemUrl: imagemUrlBody } = req.body;
     
+    const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
+
+      if (imagemUrlFinal) {
+          console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
+      } else {
+          console.log("Nenhum arquivo de imagem foi enviado.");
+      }
     // Validação Básica
     if (!nome || !codigoAcesso || !eventoId) {
         return res.status(400).json({ erro: "Nome, Código de Acesso e ID do Evento são obrigatórios." });
@@ -29,7 +36,8 @@ class CaravanaController {
             eventIdNum, 
             10, 
             descricao, 
-            usuarioLogadoId
+            usuarioLogadoId,
+            imagemUrlFinal,
         );
         
         res.status(201).json({

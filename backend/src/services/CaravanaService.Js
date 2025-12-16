@@ -7,7 +7,7 @@ class CaravanaService {
     this.caravanaRepository = new Caravana();
   }
 
-  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, descricao, usuarioId) {
+  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, descricao, usuarioId, imagemUrl) {
     if (!nome) {
       throw new Error("Nome da caravana é obrigatório.");
     }
@@ -18,7 +18,8 @@ class CaravanaService {
       eventoId,
       bonusPorParticipante,
       descricao,
-      usuarioId 
+      usuarioId,
+      imagemUrl
     );
 
     return novaCaravana;

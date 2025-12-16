@@ -6,6 +6,8 @@ generator client {
   datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
+      shadowDatabaseUrl = env("DATABASE_URL")  // usa o mesmo banco
+
 
   }
 
@@ -152,6 +154,9 @@ generator client {
 
     eventoId              Int?
     codigoAcesso          String    @unique 
+    criadorId             Int      
+    imagemUrl             String?   
+
 
     evento                Evento?   @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
     membros               Usuario[] @relation("MembrosDaCaravana")
