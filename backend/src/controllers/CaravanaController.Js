@@ -4,37 +4,43 @@ const eventoService = require("../services/EventoService");
 
 class CaravanaController {
   async criarCaravana(req, res) {
-    const usuarioLogadoId = req.usuarioId; // Obtido pelo JWT Middleware
+    const usuarioLogadoId = req.usuarioId; // ID vindo do Token JWT
 
-    const { nome, codigoAcesso, eventoId } = req.body;
+    // 1. Pega também a descricao do corpo da requisição
+    const { nome, codigoAcesso, eventoId, descricao } = req.body;
     
-    // ✅ Adicionado: Validação de campos obrigatórios
+    // Validação Básica
     if (!nome || !codigoAcesso || !eventoId) {
         return res.status(400).json({ erro: "Nome, Código de Acesso e ID do Evento são obrigatórios." });
     }
     
-    // ✅ Adicionado: Validação de autenticação
     if (!usuarioLogadoId) {
-        // Se o middleware falhou ou não foi aplicado, o ID estará vazio
-        return res.status(401).json({ erro: "Usuário não autenticado. O ID do criador é obrigatório." });
+        return res.status(401).json({ erro: "Usuário não autenticado." });
     }
 
     try {
-        // 1. Converte eventoId para garantir que é um número antes de passar
         const eventIdNum = Number(eventoId);
 
-        // 2. Chama o Service com o ID do usuário logado
-        const caravana = await caravanaService.criarCaravana(nome, codigoAcesso, eventIdNum, 10, usuarioLogadoId);
+        // 2. Chama o Service passando TUDO na ordem correta
+        // Ordem: nome, codigo, evento, bonus(10), descricao, usuarioId
+        const caravana = await caravanaService.criarCaravana(
+            nome, 
+            codigoAcesso, 
+            eventIdNum, 
+            10, 
+            descricao, 
+            usuarioLogadoId
+        );
         
-        // ... (restante do sucesso)
         res.status(201).json({
           mensagem: `Caravana criada com sucesso: ${caravana.nome}`,
           caravana,
         });
         
     } catch (error) {
-        // ... (Tratamento de erro 409 e 400 genérico)
-        if (error.message.includes("código de acesso")) { 
+        console.error("Erro no Controller criarCaravana:", error);
+        
+        if (error.message && error.message.includes("código de acesso")) { 
              return res.status(409).json({ erro: "Este Código de Acesso já está sendo usado." });
         }
 
