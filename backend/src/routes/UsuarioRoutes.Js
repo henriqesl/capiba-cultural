@@ -6,49 +6,36 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const uploadDir = 'uploads/';
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir);
-}
+
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/perfil/"); 
-  },
-  filename: (req, file, cb) => {
-    
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, "perfil-" + uniqueSuffix + path.extname(file.originalname));
-  }
+  destination: function (req, file, cb) {
+    const finalPath = path.join(__dirname, '..', '..', 'uploads');
+    console.log('Multer Destination Path:', finalPath);
+    cb(null, finalPath);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    // Corrigido para usar "caravana-" como prefixo no arquivo de imagem
+    cb(null, 'pefil-' + uniqueSuffix + path.extname(file.originalname));
+  }
+
 });
+
 
 const upload = multer({ storage: storage });
 
 
 const usuarioController = new UsuarioController();
 
-router.post("/", upload.single('foto'), async (req, res) => {
-    try {
-        // req.file contém as informações do arquivo (caminho: req.file.path)
-        // req.body contém os dados de texto (nome, email, senha, etc.)
-        const imagemPerfilPath = req.file ? req.file.path : null; 
+router.post("/", (req, res, next) => {
+    // 🚨 ESTE LOG DEVE APARECER SE A ROTA FOR ATINGIDA.
+    // Se este log NÃO aparecer, o erro é CORS ou a rota não está sendo mapeada corretamente.
+    console.log("POST /eventos ROTA ATINGIDA. Tentando Multer...");
+    next(); 
+}, upload.single('foto'), async (req, res) => {
 
-        // O Controller agora precisa receber o caminho do arquivo
-        await usuarioController.criarUsuario(req, res, imagemPerfilPath);
-        
-    } catch (error) {
-        // Se o Multer falhar (limite de tamanho, tipo de arquivo), ele lança um erro aqui.
-        console.error("Erro no upload ou na rota de registro:", error);
-        
-        // 🚨 Se o upload foi feito e ocorreu um erro, precisamos limpar o arquivo!
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) console.error("Erro ao deletar arquivo após falha:", err);
-            });
-        }
-        
-        res.status(400).json({ erro: error.message });
-    }
+    await usuarioController.criarUsuario(req, res);
 });
 
 router.post("/login", async (req, res) => {
