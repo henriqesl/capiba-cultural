@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Calendar, MapPin, Copy, Check, Crown, UserCircle2, Edit2, Camera } from 'lucide-react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import DefaultCaravanaImage from '../../assets/caravana_padrao.png'; 
 
 const CaravanaDetailsPage = ({ onBack }) => {
   const { user } = useAuth();
@@ -11,6 +12,8 @@ const CaravanaDetailsPage = ({ onBack }) => {
   const [editing, setEditing] = useState(false);
   const [newFoto, setNewFoto] = useState(null);
   const [newDescription, setNewDescription] = useState('');
+
+  const BASE_URL_BACKEND = 'http://localhost:3000';
 
   // Extrai o ID do hash da URL
   const getCaravanaIdFromHash = () => {
@@ -50,11 +53,12 @@ const CaravanaDetailsPage = ({ onBack }) => {
   }, [fetchCaravana]);
 
 const fotoPreviewUrl = newFoto 
-  ? URL.createObjectURL(newFoto) 
-  : caravana?.imagemUrl 
-    ? `${caravana.imagemUrl}?t=${Date.now()}` // 👈 CORREÇÃO AQUI
-    : null;
-  
+  ? URL.createObjectURL(newFoto) // Preview local do arquivo novo
+  : caravana?.imagemUrl // Se a URL existir no objeto da caravana
+    ? `${BASE_URL_BACKEND}/${caravana.imagemUrl}?t=${Date.now()}` // 🟢 CORREÇÃO CRÍTICA AQUI!
+    : DefaultCaravanaImage;
+
+
   if (loading) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center">

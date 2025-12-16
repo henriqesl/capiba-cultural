@@ -1,191 +1,163 @@
-const Caravana = require('../models/Caravana');
-const { PrismaClient } = require('@prisma/client');
+const Caravana = require("../models/Caravana");
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class CaravanaService {
-<<<<<<< HEAD
-  constructor() {
-    this.caravanaRepository = new Caravana();
-  }
-
-  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, descricao, usuarioId, imagemUrl) {
-    if (!nome) {
-      throw new Error("Nome da caravana é obrigatório.");
-    }
-
-    const novaCaravana = await this.caravanaRepository.criarCaravana(
-      nome,
-      codigoAcesso,
-      eventoId,
-      bonusPorParticipante,
-      descricao,
-      usuarioId,
-      imagemUrl
-    );
-
-    return novaCaravana;
-  }
+  constructor() {
+    this.caravanaRepository = new Caravana();
+  }
 
 
-  async listarCaravanas() {
-    return await this.caravanaRepository.listar();
-  }
+  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, descricao, usuarioId, imagemUrl) {
+    if (!nome) {
+      throw new Error("Nome da caravana é obrigatório.");
+    }
 
-  async obterPorId(id) {
-    const caravana = await this.caravanaRepository.obterPorId(id);
-    if (!caravana) throw new Error("Caravana não encontrada");
+    const novaCaravana = await this.caravanaRepository.criarCaravana(
+      nome,
+      codigoAcesso,
+      eventoId,
+      bonusPorParticipante,
+      descricao,
+      usuarioId,
+      imagemUrl
+    );
 
+    return novaCaravana;
+  }
+
+
+  async listarCaravanas() {
+    return await this.caravanaRepository.listar();
+  }
+
+  async obterPorId(id) {
+    const caravana = await this.caravanaRepository.obterPorId(id);
+    if (!caravana) throw new Error("Caravana não encontrada");
+
+    return caravana;
+  }
+  
+  // 🟢 NOVO MÉTODO IMPLEMENTADO PARA CORRIGIR O TypeError
+  async atualizarCaravana(id, novosDados) {
+    // É importante garantir que o ID é um número.
+    const caravana = await this.caravanaRepository.atualizar(Number(id), novosDados);
+    if (!caravana) throw new Error("Caravana não encontrada para atualização.");
     return caravana;
-  }
+  }
 
-  async adicionarMembro(caravanaId, usuarioId) {
-    const caravana = await this.caravanaRepository.obterPorId(caravanaId);
-    if (!caravana) throw new Error("Grupo não encontrado.");
+  async adicionarMembro(caravanaId, usuarioId) {
+    const caravana = await this.caravanaRepository.obterPorId(caravanaId);
+    if (!caravana) throw new Error("Grupo não encontrado.");
 
-    const membros = caravana.membros.map((m) => m.id);
-    if (membros.includes(usuarioId)) {
-      throw new Error("Usuário já faz parte da caravana.");
-=======
-    constructor() {
-        this.caravanaRepository = new Caravana();
-    }
+    const membros = caravana.membros.map((m) => m.id);
+    if (membros.includes(usuarioId)) {
+      throw new Error("Usuário já faz parte da caravana.");
+    }
 
-    async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, usuarioId) {
-        if (!nome) {
-            throw new Error('Nome da caravana é obrigatório.');
-        }
+    await this.caravanaRepository.adicionarMembro(caravanaId, usuarioId);
+    return await this.caravanaRepository.obterPorId(caravanaId);
+  }
 
-        const novaCaravana = await this.caravanaRepository.criarCaravana(
-            nome,
-            codigoAcesso,
-            eventoId,
-            bonusPorParticipante
-        );
-        if (usuarioId) {
-            const caravanaComMembro = await this.adicionarMembro(
-                novaCaravana.id,
-                Number(usuarioId)
-            );
-            return caravanaComMembro; 
-        }
+  async adicionarDestino(caravanaId, eventoId) {
+    return await this.caravanaRepository.adicionarDestino(caravanaId, eventoId);
+  }
 
-        return novaCaravana;
-    }
+  async listarPorUsuario(usuarioId) {
+      return await this.caravanaRepository.listarPorUsuario(usuarioId);
+  }
 
-    async listarCaravanas() {
-        return await this.caravanaRepository.listar();
->>>>>>> db4dcae7c81df61920856a567c93736ba3cef467
-    }
 
-    async obterPorId(id) {
-        const caravana = await this.caravanaRepository.obterPorId(id);
-        if (!caravana) throw new Error('Caravana não encontrada');
+ 
+  
+   async entrarComCodigoAcesso(codigoAcesso, usuarioId) {
+    if (!codigoAcesso || !usuarioId) {
+      throw new Error("Código de acesso e usuário são obrigatórios");
+    }
 
-        return caravana;
-    }
+    try {
+      console.log("Procurando caravana pelo código de acesso:", codigoAcesso);  
 
-    async adicionarMembro(caravanaId, usuarioId) {
-        const caravana = await this.caravanaRepository.obterPorId(caravanaId);
-        if (!caravana) throw new Error('Grupo não encontrado.');
+      const caravana = await this.caravanaRepository.obterPorCodigoAcesso(codigoAcesso);
 
-        const membros = caravana.membros.map((m) => m.id);
-        if (membros.includes(usuarioId)) {
-            throw new Error('Usuário já faz parte da caravana.');
-        }
+      if (!caravana) {
+        throw new Error("Caravana não encontrada");
+      }
 
-        await this.caravanaRepository.adicionarMembro(caravanaId, usuarioId);
-        return await this.caravanaRepository.obterPorId(caravanaId);
-    }
+      console.log("Caravana encontrada:", caravana);  
 
-    async adicionarDestino(caravanaId, eventoId) {
-        return await this.caravanaRepository.adicionarDestino(caravanaId, eventoId);
-    }
+      const jaParticipa = caravana.membros.some((m) => m.id === usuarioId);
+      if (jaParticipa) {
+        throw new Error("Usuário já participa da caravana");
+      }
 
-    async listarPorUsuario(usuarioId) {
-        return await this.caravanaRepository.listarPorUsuario(usuarioId);
-    }
+      const caravanaAtualizada = await this.caravanaRepository.adicionarMembro(caravana.id, usuarioId);
 
-    async entrarComCodigoAcesso(codigoAcesso, usuarioId) {
-        if (!codigoAcesso || !usuarioId) {
-            throw new Error('Código de acesso e usuário são obrigatórios');
-        }
+      console.log("Caravana atualizada com novo membro:", caravanaAtualizada); 
 
-        try {
-            console.log('Procurando caravana pelo código de acesso:', codigoAcesso);
+      return caravanaAtualizada;
 
-            const caravana = await this.caravanaRepository.obterPorCodigoAcesso(codigoAcesso);
+    } catch (error) {
+      console.error("Erro no service ao tentar entrar com código de acesso:", error);
+      throw error;
+    }
+  }
 
-            if (!caravana) {
-                throw new Error('Caravana não encontrada');
-            }
+  async removerCaravana(id) {
+    return await this.caravanaRepository.remover(id);
+  }
 
-            console.log('Caravana encontrada:', caravana);
-            const jaParticipa = caravana.membros.some((m) => m.id === usuarioId);
-            if (jaParticipa) {
-                throw new Error('Usuário já participa da caravana');
-            }
+  async calcularMultiplicador(
+    usuarioIdParam,
+    caravanaIdParam,
+    mesParam,
+    anoParam,
+  ) {
+    const usuarioId = Number(usuarioIdParam);
+    const caravanaId = Number(caravanaIdParam);
 
-            const caravanaAtualizada = await this.caravanaRepository.adicionarMembro(
-                caravana.id,
-                usuarioId
-            );
+    const now = new Date();
+    const mes = mesParam ? Number(mesParam) : now.getMonth() + 1;
+    const ano = anoParam ? Number(anoParam) : now.getFullYear();
 
-            console.log('Caravana atualizada com novo membro:', caravanaAtualizada);
+    if (!Number.isInteger(usuarioId) || !Number.isInteger(caravanaId)) {
+      throw new Error("usuarioId e caravanaId devem ser números inteiros.");
+    }
 
-            return caravanaAtualizada;
-        } catch (error) {
-            console.error('Erro no service ao tentar entrar com código de acesso:', error);
-            throw error;
-        }
-    }
+    const caravana = await this.caravanaRepository.obterPorId(caravanaId);
+    if (!caravana) throw new Error("Caravana não encontrada");
 
-    async removerCaravana(id) {
-        return await this.caravanaRepository.remover(id);
-    }
+    const tamanho = (caravana.membros || []).length;
+    let bonusTamanho = 0;
+    if (tamanho >= 6 && tamanho <= 10) bonusTamanho = 5;
+    else if (tamanho >= 11 && tamanho <= 15) bonusTamanho = 10;
+    else if (tamanho > 15) bonusTamanho = 12;
 
-    async calcularMultiplicador(usuarioIdParam, caravanaIdParam, mesParam, anoParam) {
-        const usuarioId = Number(usuarioIdParam);
-        const caravanaId = Number(caravanaIdParam);
+    const start = new Date(ano, mes - 1, 1);
+    const end = new Date(ano, mes, 1);
 
-        const now = new Date();
-        const mes = mesParam ? Number(mesParam) : now.getMonth() + 1;
-        const ano = anoParam ? Number(anoParam) : now.getFullYear();
+    const eventosDoMes = await prisma.evento.findMany({
+      where: {
+        data: { gte: start, lt: end },
+        caravanas: { some: { id: caravanaId } },
+      },
+      include: { participantes: true },
+    });
 
-        if (!Number.isInteger(usuarioId) || !Number.isInteger(caravanaId)) {
-            throw new Error('usuarioId e caravanaId devem ser números inteiros.');
-        }
+    let incrementoMensal = 0;
+    for (const evento of eventosDoMes) {
+      if (
+        evento.participantes &&
+        evento.participantes.some((u) => u.id === usuarioId)
+      ) {
+        incrementoMensal = 5;
+        break;
+      }
+    }
 
-        const caravana = await this.caravanaRepository.obterPorId(caravanaId);
-        if (!caravana) throw new Error('Caravana não encontrada');
-
-        const tamanho = (caravana.membros || []).length;
-        let bonusTamanho = 0;
-        if (tamanho >= 6 && tamanho <= 10) bonusTamanho = 5;
-        else if (tamanho >= 11 && tamanho <= 15) bonusTamanho = 10;
-        else if (tamanho > 15) bonusTamanho = 12;
-
-        const start = new Date(ano, mes - 1, 1);
-        const end = new Date(ano, mes, 1);
-
-        const eventosDoMes = await prisma.evento.findMany({
-            where: {
-                data: { gte: start, lt: end },
-                caravanas: { some: { id: caravanaId } },
-            },
-            include: { participantes: true },
-        });
-
-        let incrementoMensal = 0;
-        for (const evento of eventosDoMes) {
-            if (evento.participantes && evento.participantes.some((u) => u.id === usuarioId)) {
-                incrementoMensal = 5;
-                break;
-            }
-        }
-
-        const multiplicador = 100 + bonusTamanho + incrementoMensal;
-        return Math.ceil(multiplicador);
-    }
+    const multiplicador = 100 + bonusTamanho + incrementoMensal;
+    return Math.ceil(multiplicador);
+  }
 }
 
 module.exports = new CaravanaService();
