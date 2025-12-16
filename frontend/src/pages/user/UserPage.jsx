@@ -8,7 +8,7 @@ import { NavCard } from '../../components/user/UserNavigation';
 import { User, Star, Users, LogOut } from 'lucide-react';
 
 const BASE_URL_BACKEND = 'http://localhost:3000'; // ⬅️ Adicionado para consistência
-const DEFAULT_PROFILE_PIC = '/images/profile-placeholder.png'; 
+const DEFAULT_PROFILE_PIC = '../../assets/profile-placeholder.png';
 
 const UserPage = () => {
     const { user: userContext, logout } = useAuth(); 

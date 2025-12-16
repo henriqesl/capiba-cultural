@@ -4,11 +4,13 @@ import { geocodeLocation, reverseGeocodeLocation } from '../../services/mapbox';
 import LocationMap, { RECIFE_BOUNDS, isInsideBounds } from './LocationMap.jsx';
 
 import { 
-    ArrowLeft, Camera, StopCircle, Video, Megaphone, 
+    ArrowLeft, Camera, StopCircle, Video, Megaphone, // Megaphone será usado para o ícone de título
     MapPin, Loader2, CheckCircle 
 } from 'lucide-react';
 
 const ReportForm = ({ onBack }) => {
+    // 🌟 CORRIGIDO: Variável de estado para o Título/Nome do Evento
+    const [nome, setNome] = useState('');
     const [local, setLocal] = useState('');
     const [value, setValue] = useState('');
     const [noAgeLimit, setNoAgeLimit] = useState(false);
@@ -158,6 +160,13 @@ const ReportForm = ({ onBack }) => {
             setIsLoading(false);
             return;
         }
+        
+        // 🌟 VALIDAÇÃO DO NOME/TÍTULO
+        if (!nome.trim()) {
+            alert("Por favor, insira um Título para o evento.");
+            setIsLoading(false);
+            return;
+        }
 
         try {
             let finalLatitude = coords ? coords.latitude : null;
@@ -172,7 +181,7 @@ const ReportForm = ({ onBack }) => {
             }
 
             const formData = new FormData();
-            formData.append('nome', `Evento em ${local || "Local Desconhecido"}`);
+            formData.append('nome', nome); // 🌟 CORRIGIDO: Usando a variável de estado `nome`
             formData.append('local', local);
             formData.append('data', new Date().toISOString());
             formData.append('preco', value || "Gratuito");
@@ -213,6 +222,23 @@ const ReportForm = ({ onBack }) => {
 
                 <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
                     
+                    {/* 🌟 CAMPO TÍTULO CORRIGIDO/REINTRODUZIDO */}
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Título do Evento</label>
+                        <div className="relative">
+                            <input 
+                                value={nome} // 🌟 VINCULADO AO ESTADO 'nome'
+                                onChange={e => setNome(e.target.value)} // 🌟 VINCULADO AO SETTER 'setNome'
+                                type="text" 
+                                placeholder="Ex: Show de Maracatu na Praça" 
+                                className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none" 
+                                required 
+                            />
+                            {/* 🌟 Substituído o ícone <Type> não importado por <Megaphone> */}
+                            <Megaphone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        </div>
+                    </div>
+
                     {/* FOTO */}
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Foto do local/evento</label>
