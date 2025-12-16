@@ -175,6 +175,36 @@ async entrarComCodigoAcesso(req, res) {
   }
 }
 
+ async atualizarCaravana(req, res, caminhoArquivo = null) {
+  const { id } = req.params;
+  const dados = req.body;
+
+  try {
+
+      if (req.file) {
+  
+        const fotoUrl = `${req.protocol}://${req.get("host")}/uploads/perfil/${req.file.filename}`;
+        
+        dados.fotoUrl = fotoUrl;
+      }
+
+
+    console.log("Atualizando caravana:", id, dados);
+
+    const caravana = await caravanaService.atualizarCaravana(Number(id), dados);
+
+    res.status(200).json({
+      mensagem: "Caravana atualizada com sucesso!",
+      caravana,
+    });
+  } catch (error) {
+    console.error("Erro no update da caravana:", error);
+    res.status(400).json({ erro: `Erro ao atualizar: ${error.message}` });
+  }
+}
+
+
+
   async removerCaravana(req, res) {
     const { id } = req.params;
 

@@ -24,7 +24,7 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
-    "@prisma/client": "^4.15.0",
+    "@prisma/client": "^6.16.0",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
@@ -32,6 +32,6 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
-    "prisma": "^4.15.0"
+    "prisma": "^6.16.0"
   }
 }

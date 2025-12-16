@@ -4,20 +4,26 @@ const CaravanaController = require("../controllers/CaravanaController");
 const authMiddleware = require("../middleware/authMiddleware"); 
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const finalPath = path.join(__dirname, '..', '..', 'uploads');
-    console.log('Multer Destination Path:', finalPath);
-    cb(null, finalPath);
+const caravanaUploadDir = 'uploads/caravanas/';
+
+// Cria a pasta se não existir
+if (!fs.existsSync(caravanaUploadDir)) {
+  fs.mkdirSync(caravanaUploadDir, { recursive: true });
+}
+
+const storageCaravana = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, caravanaUploadDir);
   },
-  filename: function (req, file, cb) {
+  filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    cb(null, 'caravana-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-const upload = multer({ storage });
+const uploadCaravana = multer({ storage: storageCaravana });
 
 
 const caravanaController = new CaravanaController();
@@ -58,6 +64,32 @@ router.post("/:id/destinos", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   await caravanaController.removerCaravana(req, res);
+});
+
+router.put("/:id", upload.single('foto'), async (req, res) => {
+try {
+    if (!req.file) {
+      return res.status(400).json({ erro: "Nenhum arquivo enviado." });
+    }
+
+    // Caminho do arquivo
+    const fotoPath = req.file.path;
+
+    // Passa para o controller
+    await caravanaController.atualizarCaravana(req, res, fotoPath);
+
+  } catch (error) {
+    console.error("Erro no upload de foto da caravana:", error);
+
+    // Limpa arquivo em caso de erro
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Erro ao deletar arquivo após falha:", err);
+      });
+    }
+
+    res.status(400).json({ erro: error.message });
+  }
 });
 
 
