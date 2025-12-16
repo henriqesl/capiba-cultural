@@ -3,32 +3,35 @@ const prisma = new PrismaClient();
 
 class Caravana {
 async criarCaravana(
-  nome,
-  codigoAcesso,
-  eventoId,
-  bonusPorParticipante,
-  descricao,
-  usuarioId
-) {
-  return await prisma.caravana.create({
-    data: {
-      nome,
-      codigoAcesso,
-      descricao,
-      bonusPorParticipante,
-      membros: {
-        connect: { id: usuarioId }
+    nome,
+    codigoAcesso,
+    eventoId,
+    bonusPorParticipante,
+    descricao,
+    usuarioId  
+  ) {
+
+    return await prisma.caravana.create({
+      data: {
+        nome,
+        codigoAcesso,
+        bonusPorParticipante,
+        descricao, 
+
+        membros: {
+          connect: { id: usuarioId }
+        },
+        
+        ...(eventoId && {
+          evento: { connect: { id: eventoId } }
+        })
       },
-      ...(eventoId && {
-        evento: { connect: { id: eventoId } }
-      })
-    },
-    include: {
-      membros: true,
-      evento: true
-    }
-  });
-}
+      include: {
+        membros: true,
+        evento: true
+      }
+    });
+  }
 
 
   async listar() {

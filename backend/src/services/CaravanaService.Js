@@ -7,7 +7,7 @@ class CaravanaService {
     this.caravanaRepository = new Caravana();
   }
 
-  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, usuarioId) {
+  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, descricao, usuarioId) {
     if (!nome) {
       throw new Error("Nome da caravana é obrigatório.");
     }
@@ -17,17 +17,11 @@ class CaravanaService {
       codigoAcesso,
       eventoId,
       bonusPorParticipante,
+      descricao,
+      usuarioId 
     );
-    // 2. ADICIONA O CRIADOR COMO O PRIMEIRO MEMBRO
-    // Reutiliza o método existente que já adiciona membros.
-    if (usuarioId) {
-        // O método adicionarMembro já existe, mas vamos garantir que ele aceita Number(usuarioId)
-        const caravanaComMembro = await this.adicionarMembro(novaCaravana.id, Number(usuarioId));
-        return caravanaComMembro; // Retorna a caravana já com o membro
-    }
 
     return novaCaravana;
-    
   }
 
 
