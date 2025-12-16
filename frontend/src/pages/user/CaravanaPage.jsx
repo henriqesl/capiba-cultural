@@ -30,8 +30,8 @@ const CaravanaPage = () => {
         fetchCaravanas();
     }, [fetchCaravanas]);
 
-    const handleSuccess = (caravanaCriadaOuEntrada) => {
-        alert(`Sucesso! Você está na caravana: ${caravanaCriadaOuEntrada.nome}`);
+    const handleSuccess = (caravana) => {
+        alert(`Sucesso! Você está na caravana: ${caravana.nome}`);
         setView('landing');
         fetchCaravanas(); 
     };
@@ -44,7 +44,6 @@ const CaravanaPage = () => {
         return <JoinCaravanaPage onBack={() => setView('landing')} onJoin={handleSuccess} />;
     }
 
-    // Tela Principal (Landing)
     return (
         <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center p-4 pb-24">
             <div className="w-full max-w-2xl space-y-6">
@@ -79,11 +78,11 @@ const CaravanaPage = () => {
                                 <CaravanaItem
                                     key={caravana.id}
                                     name={caravana.nome}
-                                    eventName={caravana.evento ? caravana.evento.nome : "Evento não definido"}
-                                    date={caravana.evento ? new Date(caravana.evento.data).toLocaleDateString() : "--/--"}
-                                    membersCount={caravana.membros ? caravana.membros.length : 0}
+                                    eventName={caravana.evento?.nome || "Evento não definido"}
+                                    date={caravana.evento?.data ? new Date(caravana.evento.data).toLocaleDateString() : "--/--"}
+                                    membersCount={caravana.membros?.length || 0}
                                     isOwner={caravana.criadorId === user.id}
-                                    onClick={() => alert(`Detalhes da caravana: ${caravana.nome}`)}
+                                    onClick={() => window.location.hash = `#/perfil/caravana/detalhes/${caravana.id}`}
                                 />
                             ))}
                         </div>

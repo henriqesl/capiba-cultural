@@ -12,10 +12,9 @@ const CreateCaravanaPage = ({ onBack, onCreate }) => {
     const [formData, setFormData] = useState({
         nome: '',
         codigoAcesso: '',
-        descricao: '' // ✅ Novo campo
+        descricao: '' 
     });
 
-    // Carrega eventos reais
     useEffect(() => {
         api.get('/eventos')
             .then(response => {
