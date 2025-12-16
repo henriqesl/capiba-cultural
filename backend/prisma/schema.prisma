@@ -30,10 +30,10 @@ generator client {
     id               Int       @id      @default(autoincrement())
     cpf              String    @unique  @db.VarChar(11)
     nome             String
-    email            String             @unique // um valor único, ou seja só podera existir 1 na tabela
-    senha            String             // senha que será encripitada com jwt (explicar dps)
-    saldoMoedaCapiba Int                @default(0) // o valor padrão é 0 (inicial)
-    dataCadastro     DateTime           @default(now()) // o padrão é a data atual
+    email            String             @unique  
+    senha            String           
+    saldoMoedaCapiba Int                @default(0)
+    dataCadastro     DateTime           @default(now()) 
     fotoUrl              String?
 
     dataNascimento   DateTime? 
@@ -42,16 +42,14 @@ generator client {
     numero           String?
     bairro           String?
 
-    // Relações (O que este usuário possui?)
-    grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo") // um item da tabela GrupoCompeticao pode ter vários usuários nela
+    grupos_membro    GrupoCompeticao[]  @relation("MembrosDoGrupo")
     grupos_vencidos  GrupoCompeticao[]  @relation("VencedorDoGrupo") 
-    caravanas_membro Caravana[]         @relation("MembrosDaCaravana") // Modelo de Caravana
+    caravanas_membro Caravana[]         @relation("MembrosDaCaravana") 
     
-    // Histórico de Check-ins do usuário
-    checkins         CheckIn[]
-    eventos_participados Evento[]      @relation("ParticipantesDoEvento")
-    reportes_feitos        ReporteEvento[] @relation("ReportesFeitos")
-    reportes_confirmados   ReporteEvento[] @relation("ConfirmadoresDoReporte")
+    checkins                CheckIn[]
+    eventos_participados    Evento[]            @relation("ParticipantesDoEvento")
+    reportes_feitos         ReporteEvento[]     @relation("ReportesFeitos")
+    reportes_confirmados    ReporteEvento[]     @relation("ConfirmadoresDoReporte")
     status_progresso        StatusUsuario[] 
 
     @@map("usuarios")
@@ -97,9 +95,8 @@ generator client {
     
     tipoRequisito       TipoMissao 
     valorRequisito      Int 
-    tagRequisito        String?      // Usado para SPECIFIC_TAG (ex: "ROCK")
+    tagRequisito        String?     
 
-    // Relação com o progresso do usuário
     progressos          StatusUsuario[]
 
     @@map("missoes")
@@ -112,14 +109,13 @@ generator client {
       concluida           Boolean       @default(false)
       dataConclusao       DateTime?
 
-      // Relações
       usuario             Usuario       @relation(fields: [usuarioId], references: [id])
       usuarioId           Int
       
       missao              Missao        @relation(fields: [missaoId], references: [id])
       missaoId            Int
 
-      @@unique([usuarioId, missaoId]) // Um usuário só pode ter um progresso por missão
+      @@unique([usuarioId, missaoId]) 
       
       @@map("status_usuario")
   }
@@ -161,21 +157,16 @@ generator client {
 
 
 
-  // Controle de presença e fraudes
   model CheckIn {
     id        Int      @id @default(autoincrement())
-    data      DateTime @default(now()) // Data exata que leu o QR Code
+    data      DateTime @default(now()) 
 
-    // Quem fez?
     usuario   Usuario @relation(fields: [usuarioId], references: [id])
     usuarioId Int
 
-    // Em qual evento?
     evento    Evento  @relation(fields: [eventoId], references: [id])
     eventoId  Int
 
-
-    // impede que o mesmo usuário (usuarioId) faça check-in no mesmo evento (eventoId) mais de uma vez.
     @@unique([usuarioId, eventoId]) 
     
     @@map("checkins")

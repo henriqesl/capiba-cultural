@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class CheckIn {
@@ -6,33 +6,32 @@ class CheckIn {
         return await prisma.checkIn.create({
             data: {
                 usuarioId,
-                eventoId
-            }
+                eventoId,
+            },
         });
     }
-
 
     async buscarPorUsuarioEEvento(usuarioId, eventoId) {
         return await prisma.checkIn.findUnique({
             where: {
-                usuarioId_eventoId: { usuarioId, eventoId }
-            }
+                usuarioId_eventoId: { usuarioId, eventoId },
+            },
         });
     }
 
-  async listarPorUsuario(usuarioId) {
-    return await prisma.checkIn.findMany({
-      where: { usuarioId },
-      include: { evento: true },
-      orderBy: { data: "desc" },
-    });
-  }
+    async listarPorUsuario(usuarioId) {
+        return await prisma.checkIn.findMany({
+            where: { usuarioId },
+            include: { evento: true },
+            orderBy: { data: 'desc' },
+        });
+    }
 
-  async criar(usuarioId, eventoId) {
-    return await prisma.checkIn.create({
-      data: { usuarioId, eventoId },
-    });
-  }
+    async criar(usuarioId, eventoId) {
+        return await prisma.checkIn.create({
+            data: { usuarioId, eventoId },
+        });
+    }
 }
 
 module.exports = CheckIn;

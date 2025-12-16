@@ -47,7 +47,7 @@ async function main() {
             tipoRequisito: TipoMissao.SPECIFIC_TAG,
             valorRequisito: 1,
             tagRequisito: CategoriaEvento.SAMBA,
-        }
+        },
     ];
 
     // Loop para inserir ou atualizar as missões
