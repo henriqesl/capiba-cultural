@@ -63,6 +63,8 @@ app.get("/", (req, res) => {
    ERROS GLOBAIS
 ================================ */
 app.use((err, req, res, next) => {
+    console.log(`${req.method} ${req.url} - body:`, req.body);
+
   console.error("Erro:", err);
   res.status(500).json({
     erro: "Erro interno do servidor",

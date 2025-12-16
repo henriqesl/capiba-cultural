@@ -7,18 +7,29 @@ class CaravanaService {
     this.caravanaRepository = new Caravana();
   }
 
-  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10) {
+  async criarCaravana(nome, codigoAcesso, eventoId = null, bonusPorParticipante = 10, usuarioId) {
     if (!nome) {
       throw new Error("Nome da caravana é obrigatório.");
     }
 
-    return await this.caravanaRepository.criarCaravana(
+    const novaCaravana = await this.caravanaRepository.criarCaravana(
       nome,
       codigoAcesso,
       eventoId,
-      (bonusPorParticipante = 10),
+      bonusPorParticipante,
     );
+    // 2. ADICIONA O CRIADOR COMO O PRIMEIRO MEMBRO
+    // Reutiliza o método existente que já adiciona membros.
+    if (usuarioId) {
+        // O método adicionarMembro já existe, mas vamos garantir que ele aceita Number(usuarioId)
+        const caravanaComMembro = await this.adicionarMembro(novaCaravana.id, Number(usuarioId));
+        return caravanaComMembro; // Retorna a caravana já com o membro
+    }
+
+    return novaCaravana;
+    
   }
+
 
   async listarCaravanas() {
     return await this.caravanaRepository.listar();
@@ -48,31 +59,45 @@ class CaravanaService {
     return await this.caravanaRepository.adicionarDestino(caravanaId, eventoId);
   }
 
-  async entrarComCodigoAcesso(codigoAcesso, usuarioId) {
-        if (!codigoAcesso || !usuarioId) {
-            throw new Error("Código de acesso e ID do usuário são obrigatórios.");
-        }
-        
-        // 1. Encontra a caravana pelo código
-    const caravana = await this.caravanaRepository.obterPorCodigoAcesso(codigoAcesso);
-        
-        if (!caravana) {
-            throw new Error("Caravana não encontrada ou código de acesso inválido.");
-        }
+  async listarPorUsuario(usuarioId) {
+      return await this.caravanaRepository.listarPorUsuario(usuarioId);
+  }
 
-        // 2. Verifica se o usuário já é membro
-        const usuarioIdNumber = Number(usuarioId);
-        const membrosIds = caravana.membros.map(m => m.id);
 
-        if (membrosIds.includes(usuarioIdNumber)) {
-            throw new Error("Você já faz parte desta caravana.");
-        }
-
-        // 3. Adiciona o usuário
-        const caravanaAtualizada = await this.adicionarMembro(caravana.id, usuarioIdNumber);
-        
-        return caravanaAtualizada;
+ 
+  
+   async entrarComCodigoAcesso(codigoAcesso, usuarioId) {
+    if (!codigoAcesso || !usuarioId) {
+      throw new Error("Código de acesso e usuário são obrigatórios");
     }
+
+    try {
+      console.log("Procurando caravana pelo código de acesso:", codigoAcesso);  // Log de entrada
+
+      const caravana = await this.caravanaRepository.obterPorCodigoAcesso(codigoAcesso);
+
+      if (!caravana) {
+        throw new Error("Caravana não encontrada");
+      }
+
+      console.log("Caravana encontrada:", caravana);  // Log de sucesso
+
+      const jaParticipa = caravana.membros.some((m) => m.id === usuarioId);
+      if (jaParticipa) {
+        throw new Error("Usuário já participa da caravana");
+      }
+
+      const caravanaAtualizada = await this.caravanaRepository.adicionarMembro(caravana.id, usuarioId);
+
+      console.log("Caravana atualizada com novo membro:", caravanaAtualizada); // Log de sucesso
+
+      return caravanaAtualizada;
+
+    } catch (error) {
+      console.error("Erro no service ao tentar entrar com código de acesso:", error);
+      throw error;
+    }
+  }
 
   async removerCaravana(id) {
     return await this.caravanaRepository.remover(id);

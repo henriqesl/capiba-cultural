@@ -4,18 +4,43 @@ const eventoService = require("../services/EventoService");
 
 class CaravanaController {
   async criarCaravana(req, res) {
+    const usuarioLogadoId = req.usuarioId; // Obtido pelo JWT Middleware
+
     const { nome, codigoAcesso, eventoId } = req.body;
+    
+    // ✅ Adicionado: Validação de campos obrigatórios
+    if (!nome || !codigoAcesso || !eventoId) {
+        return res.status(400).json({ erro: "Nome, Código de Acesso e ID do Evento são obrigatórios." });
+    }
+    
+    // ✅ Adicionado: Validação de autenticação
+    if (!usuarioLogadoId) {
+        // Se o middleware falhou ou não foi aplicado, o ID estará vazio
+        return res.status(401).json({ erro: "Usuário não autenticado. O ID do criador é obrigatório." });
+    }
 
     try {
-      const caravana = await caravanaService.criarCaravana(nome, codigoAcesso, eventoId);
-      res.status(201).json({
-        mensagem: `Caravana criada com sucesso: ${caravana.nome}`,
-        caravana,
-      });
+        // 1. Converte eventoId para garantir que é um número antes de passar
+        const eventIdNum = Number(eventoId);
+
+        // 2. Chama o Service com o ID do usuário logado
+        const caravana = await caravanaService.criarCaravana(nome, codigoAcesso, eventIdNum, 10, usuarioLogadoId);
+        
+        // ... (restante do sucesso)
+        res.status(201).json({
+          mensagem: `Caravana criada com sucesso: ${caravana.nome}`,
+          caravana,
+        });
+        
     } catch (error) {
-      res
-        .status(400)
-        .json({ erro: `Erro ao criar caravana: ${error.message}` });
+        // ... (Tratamento de erro 409 e 400 genérico)
+        if (error.message.includes("código de acesso")) { 
+             return res.status(409).json({ erro: "Este Código de Acesso já está sendo usado." });
+        }
+
+        res.status(400).json({ 
+             erro: `Erro ao criar caravana: ${error.message}` 
+        });
     }
   }
 
@@ -96,22 +121,45 @@ class CaravanaController {
     }
   }
 
-  async entrarComCodigoAcesso(req, res) {
-        const { codigoAcesso, usuarioId } = req.body; // Recebe o código e o ID do usuário
 
-        try {
-            const caravana = await caravanaService.entrarComCodigoAcesso(codigoAcesso, usuarioId);
-            
-            res.status(200).json({
-                mensagem: `Você entrou na caravana "${caravana.nome}" com sucesso!`,
-                caravana,
-            });
-        } catch (error) {
-            res.status(400).json({ 
-                erro: `Falha ao entrar na caravana: ${error.message}` 
-            });
-        }
-      }
+
+  async listarPorUsuario(req, res) {
+  try {
+    const { usuarioId } = req.params;
+
+    const caravanas = await caravanaService.listarPorUsuario(
+      Number(usuarioId)
+    );
+
+    return res.json(caravanas);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ erro: "Erro ao buscar caravanas do usuário" });
+  }
+}
+async entrarComCodigoAcesso(req, res) {
+  const { codigoAcesso, usuarioId } = req.body;
+
+  try {
+    const caravana = await caravanaService.entrarComCodigoAcesso(
+      codigoAcesso,
+      Number(usuarioId)
+    );
+
+    return res.status(200).json({
+      mensagem: `Você entrou na caravana "${caravana.nome}" com sucesso!`,
+      caravana
+    });
+
+  } catch (error) {
+    // 🔹 Aqui você imprime o erro no console do Node
+    console.error("Erro ao entrar na caravana:", error);
+
+    return res.status(400).json({
+      erro: error.message
+    });
+  }
+}
 
   async removerCaravana(req, res) {
     const { id } = req.params;
