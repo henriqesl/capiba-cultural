@@ -3,6 +3,8 @@ import { PerfilImage } from '../../components/user/UserShared.jsx';
 import { ArrowLeft, Camera, User, Save, Lock, Mail, MapPin, Home, Calendar, Edit2, X } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 import api from '../../services/api';
+const BASE_URL_BACKEND = 'http://localhost:3000'; 
+
 
 const ProfilePage = () => {
   const { user } = useContext(AuthContext);
@@ -24,6 +26,8 @@ const ProfilePage = () => {
     numero: '',
     bairro: ''
   });
+
+  
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [fileToSend, setFileToSend] = useState(null);
@@ -56,8 +60,14 @@ const ProfilePage = () => {
             bairro: data.bairro || ''
         });
 
+     
         if (data.fotoUrl) {
-            setPreviewUrl(data.fotoUrl); 
+            // Adiciona o prefixo do backend E o cache-busting (timestamp)
+            const fullUrl = `${BASE_URL_BACKEND}/${data.fotoUrl}?t=${Date.now()}`;
+            setPreviewUrl(fullUrl); 
+        } else {
+            // Garante que o preview está nulo se não houver foto
+            setPreviewUrl(null);
         }
     });
   };

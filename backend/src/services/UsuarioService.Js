@@ -7,7 +7,7 @@ class UsuarioService {
     this.usuarioRepository = new Usuario();
   }
 
-  async criarUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, fotoUrl) {
+  async criarUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, imagemUrl) {
     
     if (!nome || !email || !senha || !cpf || !dataNascimento || !cep || !endereco || !numero || !bairro) {
       throw new Error("Todos os campos são obrigatórios (exceto foto).");
@@ -31,7 +31,7 @@ class UsuarioService {
       endereco,
       numero,
       bairro,
-      fotoUrl 
+      imagemUrl 
     );
 
     delete novoUsuario.senha;

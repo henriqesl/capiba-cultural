@@ -29,11 +29,8 @@ class UsuarioController {
 
     try {
 
-      if (req.file) {
-        fotoUrl = `${req.protocol}://${req.get("host")}/uploads/perfil/${req.file.filename}`;
-        
-        caminhoFisicoArquivo = req.file.path;
-      }
+      const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
+
 
       console.log("LOG 1: Controller iniciou criação do usuário:", nome);
       
@@ -47,7 +44,7 @@ class UsuarioController {
         endereco,
         numero,
         bairro,
-        fotoUrl 
+        imagemUrlFinal 
       );
 
       console.log("LOG 2: Service retornou sucesso. Usuário criado com ID:", usuario.id);
@@ -59,14 +56,6 @@ class UsuarioController {
 
     } catch (error) {
       console.log("LOG 3: Erro capturado no Controller:", error.message);
-
-      if (caminhoFisicoArquivo && fs.existsSync(caminhoFisicoArquivo)) {
-        fs.unlink(caminhoFisicoArquivo, (err) => {
-          if (err) console.error("Erro ao limpar arquivo de foto após falha:", err);
-          else console.log("Arquivo de foto limpo com sucesso.");
-        });
-      }
-
       console.error("Stack do erro:", error);
       return res.status(400).json({ erro: error.message });
     }
@@ -190,10 +179,9 @@ class UsuarioController {
 
       if (req.file) {
   
-        const fotoUrl = `${req.protocol}://${req.get("host")}/uploads/perfil/${req.file.filename}`;
-        
-        dados.fotoUrl = fotoUrl;
-      }
+          const caminhoFoto = `uploads/${req.file.filename}`;        
+          dados.fotoUrl = caminhoFoto;
+        }
 
       console.log("Atualizando usuário:", id, dados); 
 
