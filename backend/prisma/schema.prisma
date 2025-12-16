@@ -148,8 +148,11 @@ generator client {
     descricao             String    @default("Caravana sem descrição")
     ativo                 Boolean   @default(true)
     bonusPorParticipante  Int       @default(10)
+    
 
     eventoId              Int?
+    codigoAcesso          String    @unique 
+
     evento                Evento?   @relation("CaravanasNoEvento", fields: [eventoId], references: [id])
     membros               Usuario[] @relation("MembrosDaCaravana")
 

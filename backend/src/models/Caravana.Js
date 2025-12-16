@@ -2,35 +2,45 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 class Caravana {
-  async criarCaravana(
-    nome,
-    codigoAcesso,
-    eventoId = null,
-    bonusPorParticipante = 10,
-    descricao = "Caravana sem descrição",
-  ) {
-    if (!nome) throw new Error("Nome da caravana é obrigatório");
-    return await prisma.caravana.create({
-      data: {
-        nome,
-        codigoAcesso,
-        eventoId,
-        bonusPorParticipante,
-        descricao,
+async criarCaravana(
+  nome,
+  codigoAcesso,
+  eventoId,
+  bonusPorParticipante,
+  descricao,
+  usuarioId
+) {
+  return await prisma.caravana.create({
+    data: {
+      nome,
+      codigoAcesso,
+      descricao,
+      bonusPorParticipante,
+      membros: {
+        connect: { id: usuarioId }
       },
-    });
-  }
+      ...(eventoId && {
+        evento: { connect: { id: eventoId } }
+      })
+    },
+    include: {
+      membros: true,
+      evento: true
+    }
+  });
+}
+
 
   async listar() {
     return await prisma.caravana.findMany({
-      include: { membros: true, eventoDestino: true },
+      include: { membros: true, evento: true },
     });
   }
 
   async obterPorId(id) {
     return await prisma.caravana.findUnique({
       where: { id },
-      include: { membros: true, eventoDestino: true },
+      include: { membros: true, evento: true },
     });
   }
 
@@ -41,15 +51,24 @@ class Caravana {
     });
   }
 
-  async adicionarMembro(caravanaId, usuarioId) {
-    return await prisma.caravana.update({
-      where: { id: caravanaId },
-      data: {
-        membros: { connect: { id: usuarioId } },
-      },
-      include: { membros: true },
-    });
-  }
+
+
+
+  async listarPorUsuario(usuarioId) {
+  return await prisma.caravana.findMany({
+    where: {
+      membros: {
+        some: {
+          id: usuarioId
+        }
+      }
+    },
+    include: {
+      membros: true,
+      evento: true
+    }
+  });
+}
 
   async remover(id) {
     return await prisma.caravana.delete({
@@ -70,14 +89,47 @@ class Caravana {
     });
   }
 
-  async obterPorCodigoAcesso(codigoAcesso) {
+ async obterPorCodigoAcesso(codigoAcesso) {
     if (!codigoAcesso) throw new Error("Código de acesso é obrigatório.");
-    
-    return await prisma.caravana.findUnique({
+
+    try {
+      console.log("Consultando caravana com código:", codigoAcesso);  // Log de busca
+
+      const caravana = await prisma.caravana.findUnique({
         where: { codigoAcesso },
-        include: { membros: true }, 
-    });
-}
+        include: { membros: true },
+      });
+
+      if (!caravana) {
+        console.log("Caravana não encontrada com esse código:", codigoAcesso); // Log de erro
+      }
+
+      return caravana;
+
+    } catch (error) {
+      console.error("Erro ao consultar caravana por código de acesso:", error);
+      throw error;
+    }
+  }
+
+  async adicionarMembro(caravanaId, usuarioId) {
+    try {
+      console.log(`Adicionando usuário ${usuarioId} à caravana ${caravanaId}`); // Log de adição de membro
+
+      return await prisma.caravana.update({
+        where: { id: caravanaId },
+        data: {
+          membros: { connect: { id: usuarioId } },
+        },
+        include: { membros: true },
+      });
+    } catch (error) {
+      console.error("Erro ao adicionar membro:", error);
+      throw error;
+    }
+  }
+
+
 
   async getMembros(id) {
     return await prisma.grupoCompeticao.findUnique({

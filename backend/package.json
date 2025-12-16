@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-
   "prisma": {
     "seed": "node prisma/seed.js"
   },
@@ -22,17 +21,17 @@
   "devDependencies": {
     "jest": "^29.6.2",
     "nodemon": "^3.1.0",
-    "prettier": "^3.6.2",
-    "prisma": "^5.22.0"
+    "prettier": "^3.6.2"
   },
   "dependencies": {
-    "@prisma/client": "5.22.0",
+    "@prisma/client": "^6.16.0",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "prisma": "^6.16.0"
   }
 }
