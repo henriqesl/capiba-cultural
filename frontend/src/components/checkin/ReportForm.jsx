@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import api from '../../services/api'; // Ajuste o caminho se necessário
+import api from '../../services/api'; 
 import { geocodeLocation, reverseGeocodeLocation } from '../../services/mapbox';
-import LocationMap, { RECIFE_BOUNDS, isInsideBounds } from './LocationMap'; // Importa do arquivo vizinho
+import LocationMap, { RECIFE_BOUNDS, isInsideBounds } from './LocationMap.jsx';
 
 import { 
     ArrowLeft, Camera, StopCircle, Video, Megaphone, 
