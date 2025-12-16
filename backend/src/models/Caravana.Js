@@ -8,7 +8,8 @@ async criarCaravana(
     eventoId,
     bonusPorParticipante,
     descricao,
-    usuarioId  
+    usuarioId,
+    imagemUrl
   ) {
 
     return await prisma.caravana.create({
@@ -17,6 +18,8 @@ async criarCaravana(
         codigoAcesso,
         bonusPorParticipante,
         descricao, 
+        criadorId: usuarioId,
+        imagemUrl: "",
 
         membros: {
           connect: { id: usuarioId }
@@ -132,6 +135,23 @@ async criarCaravana(
     }
   }
 
+  
+async atualizar(id, dados) {
+  return await prisma.caravana.update({
+    where: { id },
+    data: {
+      nome: dados.nome,
+      descricao: dados.descricao,
+      imagemUrl: dados.imagemUrl,
+      ativo: dados.ativo,
+      bonusPorParticipante: dados.bonusPorParticipante,
+    },
+    include: {
+      membros: true,
+      evento: true
+    }
+  });
+}
 
 
   async getMembros(id) {

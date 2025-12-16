@@ -7,8 +7,15 @@ class CaravanaController {
     const usuarioLogadoId = req.usuarioId; // ID vindo do Token JWT
 
     // 1. Pega também a descricao do corpo da requisição
-    const { nome, codigoAcesso, eventoId, descricao } = req.body;
+    const { nome, codigoAcesso, eventoId, descricao, imagemUrl: imagemUrlBody } = req.body;
     
+    const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
+
+      if (imagemUrlFinal) {
+          console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
+      } else {
+          console.log("Nenhum arquivo de imagem foi enviado.");
+      }
     // Validação Básica
     if (!nome || !codigoAcesso || !eventoId) {
         return res.status(400).json({ erro: "Nome, Código de Acesso e ID do Evento são obrigatórios." });
@@ -29,7 +36,8 @@ class CaravanaController {
             eventIdNum, 
             10, 
             descricao, 
-            usuarioLogadoId
+            usuarioLogadoId,
+            imagemUrlFinal,
         );
         
         res.status(201).json({
@@ -166,6 +174,36 @@ async entrarComCodigoAcesso(req, res) {
     });
   }
 }
+
+ async atualizarCaravana(req, res, caminhoArquivo = null) {
+  const { id } = req.params;
+  const dados = req.body;
+
+  try {
+
+      if (req.file) {
+  
+        const fotoUrl = `${req.protocol}://${req.get("host")}/uploads/perfil/${req.file.filename}`;
+        
+        dados.fotoUrl = fotoUrl;
+      }
+
+
+    console.log("Atualizando caravana:", id, dados);
+
+    const caravana = await caravanaService.atualizarCaravana(Number(id), dados);
+
+    res.status(200).json({
+      mensagem: "Caravana atualizada com sucesso!",
+      caravana,
+    });
+  } catch (error) {
+    console.error("Erro no update da caravana:", error);
+    res.status(400).json({ erro: `Erro ao atualizar: ${error.message}` });
+  }
+}
+
+
 
   async removerCaravana(req, res) {
     const { id } = req.params;

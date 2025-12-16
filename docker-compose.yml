@@ -10,6 +10,7 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - ./uploads:/app/uploads
     # AQUI ESTÁ A MUDANÇA:
     # Em vez de escrever a senha aqui, dizemos pro Docker ler o arquivo .env da pasta backend
     env_file:
