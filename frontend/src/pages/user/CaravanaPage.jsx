@@ -1,81 +1,97 @@
-import React, { useState } from 'react';
-import CreateCaravanaPage from './CreateCaravanaPage'; // Ajuste o caminho conforme necessário
-import JoinCaravanaPage from './JoinCaravanaPage';   // Ajuste o caminho conforme necessário
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
+import CreateCaravanaPage from './CreateCaravanaPage';
+import JoinCaravanaPage from './JoinCaravanaPage';
+import { CaravanaItem } from '../../components/caravana/CaravanaItem';
+import { Plus, Users, Loader2 } from 'lucide-react';
 
-// --------------------------------------------------
-// Sub-Componente: Tela de Escolha (Landing)
-// --------------------------------------------------
-const CaravanaLanding = ({ onCreateClick, onJoinClick }) => (
-    <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-        <div className="max-w-md w-full p-8 bg-white rounded-2xl shadow-xl text-center">
-            <h2 className="text-2xl font-extrabold text-gray-900 mb-6">Gerenciar Caravanas</h2>
-            <p className="text-gray-600 mb-8">
-                Crie uma nova caravana ou junte-se a um grupo existente com um código de acesso.
-            </p>
-            
-            <div className="space-y-4">
-                <button 
-                    onClick={onCreateClick}
-                    className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition-colors transform hover:scale-[1.01]"
-                >
-                    Criar Nova Caravana
-                </button>
-                <button 
-                    onClick={onJoinClick}
-                    className="w-full bg-gray-200 text-gray-800 font-bold py-4 rounded-xl hover:bg-gray-300 transition-colors"
-                >
-                    Entrar com Código de Acesso
-                </button>
+const CaravanaPage = () => {
+    const { user } = useAuth();
+    const [view, setView] = useState('landing'); 
+    const [caravanas, setCaravanas] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Busca a lista atualizada
+    const fetchCaravanas = useCallback(async () => {
+        if (!user?.id) return;
+        try {
+            setLoading(true);
+            const response = await api.get(`/caravanas/usuario/${user.id}`);
+            setCaravanas(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar caravanas:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        fetchCaravanas();
+    }, [fetchCaravanas]);
+
+    const handleSuccess = (caravanaCriadaOuEntrada) => {
+        alert(`Sucesso! Você está na caravana: ${caravanaCriadaOuEntrada.nome}`);
+        setView('landing');
+        fetchCaravanas(); 
+    };
+
+    if (view === 'create') {
+        return <CreateCaravanaPage onBack={() => setView('landing')} onCreate={handleSuccess} />;
+    }
+
+    if (view === 'join') {
+        return <JoinCaravanaPage onBack={() => setView('landing')} onJoin={handleSuccess} />;
+    }
+
+    // Tela Principal (Landing)
+    return (
+        <div className="w-full min-h-screen bg-gray-50 flex flex-col items-center p-4 pb-24">
+            <div className="w-full max-w-2xl space-y-6">
+                
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Minhas Caravanas</h2>
+                    <p className="text-gray-500 mb-6 text-sm">Gerencie suas viagens e grupos.</p>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                        <button onClick={() => setView('create')} className="flex flex-col items-center justify-center p-4 bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 border border-blue-100 transition-colors">
+                            <Plus className="w-6 h-6 mb-1" />
+                            <span className="font-bold text-sm">Criar Nova</span>
+                        </button>
+                        <button onClick={() => setView('join')} className="flex flex-col items-center justify-center p-4 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-100 border border-gray-200 transition-colors">
+                            <Users className="w-6 h-6 mb-1" />
+                            <span className="font-bold text-sm">Entrar com Código</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 className="text-lg font-bold text-gray-800 mb-3 px-1">Seus Grupos</h3>
+                    {loading ? (
+                        <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>
+                    ) : caravanas.length === 0 ? (
+                        <div className="text-center py-10 bg-white rounded-xl shadow-sm border border-dashed border-gray-300">
+                            <p className="text-gray-400">Nenhuma caravana encontrada.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {caravanas.map((caravana) => (
+                                <CaravanaItem
+                                    key={caravana.id}
+                                    name={caravana.nome}
+                                    eventName={caravana.evento ? caravana.evento.nome : "Evento não definido"}
+                                    date={caravana.evento ? new Date(caravana.evento.data).toLocaleDateString() : "--/--"}
+                                    membersCount={caravana.membros ? caravana.membros.length : 0}
+                                    isOwner={caravana.criadorId === user.id}
+                                    onClick={() => alert(`Detalhes da caravana: ${caravana.nome}`)}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
-    </div>
-);
-
-// --------------------------------------------------
-// Componente Principal que Gerencia a Navegação
-// --------------------------------------------------
-const CaravanaManager = () => {
-    // Estado para controlar a visualização: 'landing', 'create', 'join'
-    const [view, setView] = useState('landing'); 
-
-    // Exemplo de manipulação após a criação/adesão (substitua pela sua lógica real de API)
-    const handleCreateCaravana = (data) => {
-        console.log("Caravana Criada:", data);
-        alert(`Caravana "${data.nome}" criada com sucesso!`);
-        setView('landing'); // Volta para a Landing Page após a criação
-    };
-
-    const handleJoinCaravana = (code) => {
-        console.log("Tentativa de Adesão com o Código:", code);
-        alert(`Entrando na caravana com o código: ${code}`);
-        // Aqui você chamaria a API para verificar o código e adicionar o usuário
-        setView('landing'); // Volta para a Landing Page após a adesão
-    };
-
-    switch (view) {
-        case 'create':
-            return (
-                <CreateCaravanaPage 
-                    onBack={() => setView('landing')} // Volta para a landing page
-                    onCreate={handleCreateCaravana}
-                />
-            );
-        case 'join':
-            return (
-                <JoinCaravanaPage 
-                    onBack={() => setView('landing')} // Volta para a landing page
-                    onJoin={handleJoinCaravana} 
-                />
-            );
-        case 'landing':
-        default:
-            return (
-                <CaravanaLanding 
-                    onCreateClick={() => setView('create')}
-                    onJoinClick={() => setView('join')}
-                />
-            );
-    }
+    );
 };
 
-export default CaravanaManager;
+export default CaravanaPage;
