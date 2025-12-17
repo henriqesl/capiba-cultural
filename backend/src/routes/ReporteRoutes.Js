@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware"); 
 
 const ReporteController = require("../controllers/ReporteController");
 
 const reporteController = new ReporteController();
 
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
   await reporteController.criarOuConfirmarReporte(req, res);
 });
 

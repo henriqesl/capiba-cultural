@@ -6,20 +6,25 @@ class ReporteController {
   }
 
   async criarOuConfirmarReporte(req, res) {
-    const { usuarioId, evento, descricao = "" } = req.body;
+      const reportanteId = req.usuarioId; 
+
+    const {  evento, descricao = ""} = req.body;
 
     try {
-      if (!usuarioId || !evento) {
+      if (!reportanteId || !evento) {
         return res
           .status(400)
           .json({ erro: "Usuário e evento são obrigatórios!" });
       }
 
       const reporte = await this.reporteService.criarOuConfirmarReporte(
-        usuarioId,
+        reportanteId,
         evento,
         descricao,
       );
+
+          console.log("✅ Reporte criado/confirmado:", reporte);
+
       res.status(201).json({
         mensagem: `Reporte sobre o evento "${evento.nome}" criado ou confirmado com sucesso!`,
         reporte,
