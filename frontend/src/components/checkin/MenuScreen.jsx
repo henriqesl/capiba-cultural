@@ -1,7 +1,8 @@
 import React from 'react';
-import { Camera, ScanLine, Info, Megaphone, CalendarPlus } from 'lucide-react';
+import { Camera, ScanLine, Info, Megaphone, CalendarPlus, DollarSign } from 'lucide-react'; // ⬅️ Adicionado DollarSign
 
-const MenuScreen = ({ onScan, onReport, onSuggest }) => (
+// Modificamos a assinatura da função para incluir onShowSources
+const MenuScreen = ({ onScan, onReport, onSuggest, onShowSources }) => (
     <div className="bg-gray-50 min-h-screen w-full flex flex-col items-center">
         <div className="w-full max-w-6xl px-4 py-8 md:py-12">
             <header className="mb-8 md:mb-12 text-center md:text-left">
@@ -49,6 +50,7 @@ const MenuScreen = ({ onScan, onReport, onSuggest }) => (
                         </h2>
                     </div>
 
+                    {/* Botão de Reportar */}
                     <button onClick={onReport} className="relative overflow-hidden bg-white p-6 rounded-3xl shadow-lg border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-xl group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-4">
@@ -63,6 +65,7 @@ const MenuScreen = ({ onScan, onReport, onSuggest }) => (
                         </div>
                     </button>
 
+                    {/* Botão de Sugerir Evento */}
                     <button onClick={onSuggest} className="relative overflow-hidden bg-white p-6 rounded-3xl shadow-lg border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-xl group">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-green-100 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                         <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-4">
@@ -76,6 +79,23 @@ const MenuScreen = ({ onScan, onReport, onSuggest }) => (
                             </div>
                         </div>
                     </button>
+                    
+                    {/* ⬅️ NOVO BOTÃO: Onde Ganhar Capibas */}
+                    <button onClick={onShowSources} className="relative overflow-hidden bg-white p-6 rounded-3xl shadow-lg border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-xl group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-100 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                        <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-4">
+                            <div className="bg-yellow-50 p-4 rounded-2xl w-fit">
+                                <DollarSign className="w-8 h-8 text-yellow-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">Acumular Recompensas</h3>
+                                <p className="text-yellow-600 font-semibold text-sm uppercase tracking-wide mb-1">Onde Ganhar Capibas?</p>
+                                <p className="text-gray-500 text-sm">Veja as melhores formas de acumular moedas Capibas.</p>
+                            </div>
+                        </div>
+                    </button>
+                    {/* ⬅️ FIM DO NOVO BOTÃO */}
+                    
                 </section>
             </div>
         </div>
