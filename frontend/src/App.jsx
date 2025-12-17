@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import MainLayout from './components/layout/MainLayout.jsx';
-import LoginPage from './pages/LoginPage';
-
+import GrupoCompeticoes from './pages/GrupoCompeticoes.jsx';
 import EventPage from './pages/event/EventPage';
 import EventDetailPage from './pages/event/EventDetailPage.jsx';
 
@@ -154,8 +151,9 @@ const App = () => {
             return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
         }
 
-        switch (mainRoute) {
+               switch (mainRoute) {
             case 'eventos': return <EventPage />; 
+            case 'grupos': return <GrupoCompeticoes />;
             case 'capiba': return <CheckInPage />;
             case 'status':  return <StatusPage />;
             default: return <EventPage />;
