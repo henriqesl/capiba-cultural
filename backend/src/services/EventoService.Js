@@ -59,23 +59,40 @@ class EventoService {
     );
   }
 
-   async listarEventos(data) {
-  let filtro = {};
+  // 🟢 ATUALIZADO: Lógica híbrida (Mês ou Dia)
+  async listarEventos(filtros) {
+    let whereClause = {};
 
-  if (data) {
-    const [ano, mes, dia] = data.split("-").map(Number);
+    // 1. Filtro por Mês e Ano (Novo)
+    if (filtros.mes && filtros.ano) {
+        const mesIndex = filtros.mes - 1; // JS: Jan=0, Dez=11
+        const ano = filtros.ano;
 
-    const inicio = new Date(ano, mes - 1, dia, 0, 0, 0, 0);
-    const fim = new Date(ano, mes - 1, dia, 23, 59, 59, 999);
+        // Primeiro dia do mês (Ex: 01/12/2025 00:00)
+        const inicio = new Date(ano, mesIndex, 1, 0, 0, 0, 0);
+        // Último dia do mês (Ex: 31/12/2025 23:59)
+        const fim = new Date(ano, mesIndex + 1, 0, 23, 59, 59, 999);
 
-    filtro.data = {
-      gte: inicio,
-      lte: fim,
-    };
+        whereClause.data = {
+            gte: inicio,
+            lte: fim,
+        };
+    }
+    // 2. Filtro por Dia Específico (Legado)
+    else if (filtros.data) {
+        const [ano, mes, dia] = filtros.data.split("-").map(Number);
+        const inicio = new Date(ano, mes - 1, dia, 0, 0, 0, 0);
+        const fim = new Date(ano, mes - 1, dia, 23, 59, 59, 999);
+
+        whereClause.data = {
+            gte: inicio,
+            lte: fim,
+        };
+    }
+
+    // Chama o repositório passando o objeto de filtro
+    return await this.eventoRepository.listar(whereClause);
   }
-
-  return await this.eventoRepository.listar(filtro);
-}
 
   async obterPorId(id) {
     const evento = await this.eventoRepository.obterPorId(id);
@@ -107,10 +124,8 @@ class EventoService {
       throw new Error("Evento não encontrado");
     }
 
-
-if (evento.imagemUrl) {
+    if (evento.imagemUrl) {
         try {
-            // 1. Extrai o nome do arquivo da URL (ex: 'uploads/abc.jpg' -> 'abc.jpg')
             const nomeDoArquivo = evento.imagemUrl.replace('uploads/', '');
             
             const caminhoBase = path.join(__dirname, '..', '..', 'uploads');
@@ -128,11 +143,11 @@ if (evento.imagemUrl) {
                 console.error(`[DELEÇÃO DE ARQUIVO] ERRO FATAL: Falha ao deletar arquivo. Código: ${error.code}. Mensagem: ${error.message}`);
             }
         }
-
-        return await this.eventoRepository.removerEvento(id);
     }
+    
+    // Movemos o return para fora do if da imagem, para garantir que deleta do banco mesmo se não tiver imagem
+    return await this.eventoRepository.removerEvento(id);
   }
-  
 }
 
-module.exports = new EventoService();
+module.exports = new EventoService(); // Exporta instância

@@ -90,8 +90,21 @@ class EventoController {
   
     async listarEventos(req, res) {
       try {
-        const { data } = req.query;
-        const eventos = await eventoService.listarEventos(data);
+        const { data, mes, ano } = req.query;
+        
+        let filtros = {};
+
+        // Prioridade 1: Filtro Mensal (Novo Frontend)
+        if (mes && ano) {
+            filtros.mes = Number(mes);
+            filtros.ano = Number(ano);
+        } 
+        // Prioridade 2: Filtro Diário (Legado/Compatibilidade)
+        else if (data) {
+            filtros.data = data;
+        }
+
+        const eventos = await eventoService.listarEventos(filtros);
         res.status(200).json(eventos);
       } catch (error) {
         res.status(500).json({ erro: error.message });

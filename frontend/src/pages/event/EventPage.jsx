@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Calendar from '../../components/event/Calendar';
 import Carousel from '../../components/event/Carousel';
 import EventCard from '../../components/event/EventCard'; 
 import EventMap from '../../components/event/EventMap';
@@ -12,15 +11,25 @@ const getFullImageUrl = (relativePath) => {
     return `http://localhost:3000${path}`; 
 };
 
-const formatDateForApi = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+// Gera 12 meses
+const generateNextMonths = () => {
+    const months = [];
+    const today = new Date();
+    for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+        months.push({
+            label: d.toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase().replace('.', ''),
+            fullLabel: d.toLocaleDateString('pt-BR', { month: 'long' }),
+            year: d.getFullYear(),
+            monthNum: d.getMonth() + 1
+        });
+    }
+    return months;
 };
 
 const EventPage = () => {
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [monthsList] = useState(generateNextMonths());
+    const [selectedMonth, setSelectedMonth] = useState(monthsList[0]);
     const [eventos, setEventos] = useState([]); 
     const [loading, setLoading] = useState(true);
     
@@ -28,12 +37,13 @@ const EventPage = () => {
     const [activeTab, setActiveTab] = useState('agenda'); // 'agenda' | 'reminders' | 'map'
     const [reminderIds, setReminderIds] = useState([]);
 
-    // Carrega IDs salvos ao iniciar ou mudar aba
+    // Carrega IDs do localStorage
     useEffect(() => {
         const ids = JSON.parse(localStorage.getItem('capiba_reminders') || '[]');
         setReminderIds(ids);
     }, [activeTab]);
 
+    // Lógica Principal de Busca
     useEffect(() => {
     const fetchEventos = async () => {
         setLoading(true);
@@ -56,10 +66,19 @@ const EventPage = () => {
     fetchEventos();
 }, [selectedDate, activeTab]); 
 
-    const formatDate = (date) => {
-        return date.toLocaleDateString("pt-BR", {
-            day: "2-digit", month: "long", year: "numeric",
-        });
+    const getHorarioEvento = (evento, isReminderMode) => {
+        const dataObj = new Date(evento.data);
+        const hora = evento.horario || dataObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Se for modo lembrete, mostra a DATA junto com a hora (Ex: 12 DEZ • 20:00)
+        if (isReminderMode) {
+            const dia = dataObj.getDate();
+            const mes = dataObj.toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase().replace('.', '');
+            return `${dia} ${mes} • ${hora}`;
+        }
+        
+        // Se for agenda mensal, só a hora basta (pois já filtrei pelo mês)
+        return hora;
     };
 
     const getHorarioEvento = (evento) => {
@@ -79,15 +98,19 @@ const EventPage = () => {
     const carouselDataFinal = carouselData.map(evento => ({
         id: evento.id,
         title: evento.nome, 
-        time: getHorarioEvento(evento),
+        time: getHorarioEvento(evento, false),
         location: evento.local,
         image: getFullImageUrl(evento.imagemUrl), 
     }));
 
     return (
         <div className="bg-gray-100 min-h-screen pb-24 md:pb-12">
-            
-            {/* Seletor de Abas */}
+            <style>{`
+                .hide-scrollbar::-webkit-scrollbar { display: none; }
+                .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
+
+            {/* ABAS */}
             <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
                 <div className="max-w-6xl mx-auto px-4 flex">
                     <button 
@@ -95,16 +118,16 @@ const EventPage = () => {
                         className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'agenda' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                     >
                         <CalendarIcon className="w-4 h-4" />
-                        Agenda Geral
+                        Agenda
                     </button>
                     <button 
                         onClick={() => setActiveTab('reminders')}
                         className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'reminders' ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
                     >
                         <Bell className="w-4 h-4" />
-                        Meus Lembretes
+                        Lembretes
                         {reminderIds.length > 0 && (
-                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
+                            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full ml-1">
                                 {reminderIds.length}
                             </span>
                         )}
@@ -119,18 +142,18 @@ const EventPage = () => {
                 </div>
             </div>
 
-            {/* Carrossel (Apenas na Agenda) */}
+            {/* SEÇÃO DA AGENDA (Carrossel + Meses) - SÓ APARECE NA ABA AGENDA */}
             {activeTab === 'agenda' && (
-                <div className="pt-8 pb-4">
-                    {carouselDataFinal.length > 0 ? (
-                        <Carousel events={carouselDataFinal} />
-                    ) : (
-                        <div className="text-center text-gray-400 py-10">Sem destaques hoje</div>
-                    )}
-                </div>
-            )}
+                <>
+                    <div className="pt-6 pb-2">
+                        {carouselDataFinal.length > 0 ? (
+                            <Carousel events={carouselDataFinal} />
+                        ) : (
+                            <div className="text-center text-gray-400 py-6 text-sm">Sem destaques este mês</div>
+                        )}
+                    </div>
 
-            <div className="max-w-6xl mx-auto border-t border-gray-200 mb-8 mt-4"></div>
+                    <div className="max-w-6xl mx-auto border-t border-gray-200 mb-6 mt-4"></div>
 
             {/* Sessão principal */}
             <div className="px-4 sm:p-8 pt-0">
@@ -153,7 +176,12 @@ const EventPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="text-center py-12 animate-pulse text-gray-400 font-bold">Carregando...</div>
+                    <div className="text-center py-12">
+                        <div className="animate-spin w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-3"></div>
+                        <p className="text-gray-400 font-medium capitalize">
+                            {activeTab === 'agenda' ? `Buscando eventos em ${selectedMonth.fullLabel}...` : 'Carregando lembretes...'}
+                        </p>
+                    </div>
                 ) : (
                     <>
                         {/* Aba de Eventos / Lembretes */}
