@@ -18,44 +18,24 @@ import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
 
 import { AuthContext } from './context/AuthContext'; 
-import api from './services/api'; 
-
-// DADOS DE TESTE (MOCK DATA) 
-const MOCK_EVENTS_DATA = [
-    { id: 1, nome: "Show de Rock Nacional", data: "15/11/2023", local: "Allianz Parque", descricao: "Um show épico com as melhores bandas de rock nacional.", imagem: "https://via.placeholder.com/400x200?text=Rock+Show" },
-    { id: 2, nome: "Festival de Jazz", data: "20/11/2023", local: "Parque Ibirapuera", descricao: "Noite de muito jazz e improviso no parque.", imagem: "https://via.placeholder.com/400x200?text=Jazz+Festival" },
-    { id: 3, nome: "Peça 'Auto da Compadecida'", data: "05/12/2023", local: "Teatro Municipal", descricao: "Adaptação da clássica obra de Ariano Suassuna.", imagem: "https://via.placeholder.com/400x200?text=Teatro" },
-    { id: 4, nome: "Campeonato de Skate", data: "10/01/2024", local: "Pista da Pompéia", descricao: "Venha ver os melhores skatistas em ação.", imagem: "https://via.placeholder.com/400x200?text=Skate" },
-];
 
 const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
     
-    const [events, setEvents] = useState(MOCK_EVENTS_DATA); 
-    
-    // ESTADO GLOBAL DAS CARAVANAS
+    // Dados locais para teste (Caravanas)
     const [caravanas, setCaravanas] = useState([
         { id: 1, nome: "Caravana do Rock", evento: "Show de Rock Nacional", data: "15/11", local: "Allianz Parque", link: "app.com/c/rock", membrosCount: 15, souDono: true },
         { id: 2, nome: "Busão do Jazz", evento: "Festival de Jazz", data: "20/11", local: "Parque Ibirapuera", link: "app.com/c/jazz", membrosCount: 42, souDono: false },
-        { id: 3, nome: "Van Cultural", evento: "Peça 'Auto da Compadecida'", data: "05/12", local: "Teatro Municipal", link: "app.com/c/teatro", membrosCount: 4, souDono: false },
     ]);
 
     const handleCreateCaravana = (newCaravana) => {
         const newId = caravanas.length > 0 ? Math.max(...caravanas.map(c => c.id)) + 1 : 1;
-        
-        const caravanaCompleta = {
-            id: newId,
-            ...newCaravana,
-            membrosCount: 1, 
-            souDono: true 
-        };
-
+        const caravanaCompleta = { id: newId, ...newCaravana, membrosCount: 1, souDono: true };
         setCaravanas([caravanaCompleta, ...caravanas]);
         window.location.hash = '#/perfil/caravana'; 
     };
 
-    // useEffect para lidar com mudanças de hash
     useEffect(() => {
         const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
         window.addEventListener('hashchange', handleHashChange);
@@ -66,15 +46,11 @@ const App = () => {
         };
     }, []); 
 
-    // Calcula a ROTA LIMPA
-    const route = currentPath.startsWith('#/') ? currentPath.slice(2) : currentPath.startsWith('/') ? currentPath.slice(1) : currentPath;
+    const route = currentPath.replace('#/', '').replace('#', '');
     const routeParts = route.split('/');
     const mainRoute = routeParts[0];
 
-    // --- LÓGICA DE AUTENTICAÇÃO ---
-    if (authLoading) {
-        return <div className="text-center p-20 text-xl">Carregando autenticação...</div>;
-    }
+    if (authLoading) return <div className="text-center p-20">Carregando...</div>;
 
     if (!authenticated && mainRoute !== 'login' && mainRoute !== 'registrar') { 
         window.location.hash = '#/login';
@@ -82,76 +58,45 @@ const App = () => {
     }
 
     const renderPage = () => {
-        
-        // 1. ROTA DE REGISTRO
-        if (mainRoute === 'registrar') {
-            return <RegisterPage />;
-        }
-
-        // 2. ROTA DE LOGIN
-        if (mainRoute === 'login' || mainRoute === '') {
-            const subRoute = routeParts[1];
-            if (subRoute === 'criar') return <RegisterPage />;
-            return <LoginPage />;
-        }
+        if (mainRoute === 'registrar') return <RegisterPage />;
+        if (mainRoute === 'login') return <LoginPage />;
         
         // --- ROTAS AUTENTICADAS ---
 
-        // Rota de Ranking (Global ou Competição)
         if (mainRoute === 'ranking') {
-            const competitionId = routeParts[1]; // Ex: #/ranking/123 -> competitionId = 123
+            const competitionId = routeParts[1];
             return <RankingPage competitionId={competitionId} />;
         }
 
         if (mainRoute === 'perfil') {
             const subRoute = routeParts[1];
-            
-            // Mantendo compatibilidade com rota antiga
-            if (subRoute === 'ranking') {
-                return <RankingPage />;
-            }
-            
-            if (subRoute === 'editar') {
-                return <ProfilePage />;
-            }
-
+            if (subRoute === 'ranking') return <RankingPage />;
+            if (subRoute === 'editar') return <ProfilePage />;
             if (subRoute === 'caravana') {
-                const caravanaAction = routeParts[2];
-                const caravanaIdParam = routeParts[3];
-
-                if (caravanaAction === 'criar') {
-                    return (
-                        <CreateCaravanaPage 
-                            onBack={() => window.location.hash = '#/perfil/caravana'}
-                            onCreate={handleCreateCaravana}
-                        />
-                    );
+                const action = routeParts[2];
+                if (action === 'criar') return <CreateCaravanaPage onBack={() => window.location.hash = '#/perfil/caravana'} onCreate={handleCreateCaravana} />;
+                if (action === 'detalhes') {
+                    const cId = parseInt(routeParts[3]);
+                    const carav = caravanas.find(c => c.id === cId);
+                    return <CaravanaDetailsPage caravana={carav} onBack={() => window.location.hash = '#/perfil/caravana'} />;
                 }
-                
-                if (caravanaAction === 'detalhes' && caravanaIdParam) {
-                    const caravanaId = parseInt(caravanaIdParam);
-                    const caravanaEncontrada = caravanas.find(c => c.id === caravanaId);
-                    return (
-                        <CaravanaDetailsPage 
-                            caravana={caravanaEncontrada}
-                            onBack={() => window.location.hash = '#/perfil/caravana'} 
-                        />
-                    );
-                }
-                
                 return <CaravanaPage caravanas={caravanas} />;
             }
-            
             return <UserPage />; 
         }
 
-        // Rota: detalhes de Evento
+        // 🚨 CORREÇÃO DA ROTA DE EVENTOS
         if (mainRoute === 'eventos' && routeParts.length > 1) {
             const eventId = parseInt(routeParts[1]); 
-            const event = events.find(e => e.id === eventId); 
             
-            if (!event) return <div className="text-center p-4">Evento não encontrado.</div>;
-            return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
+            // Passamos o ID para a página de detalhes. 
+            // Ela mesma deve buscar os dados se 'event' for undefined.
+            return (
+                <EventDetailPage 
+                    eventId={eventId} 
+                    onBack={() => window.location.hash = '#/eventos'} 
+                />
+            );
         }
 
         switch (mainRoute) {
@@ -162,19 +107,9 @@ const App = () => {
         }
     };
 
-    const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar' && mainRoute !== ''; 
+    const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar'; 
 
-    return (
-        <>
-            {useMainLayout ? (
-                <MainLayout currentPath={route}>
-                    {renderPage()}
-                </MainLayout>
-            ) : (
-                renderPage()
-            )}
-        </>
-    );
+    return useMainLayout ? <MainLayout currentPath={currentPath}>{renderPage()}</MainLayout> : renderPage();
 };
 
 export default App;
