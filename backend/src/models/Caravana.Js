@@ -39,16 +39,34 @@ async criarCaravana(
 
   async listar() {
     return await prisma.caravana.findMany({
-      include: { membros: true, evento: true },
+      include: {
+        membros: {
+          select: {
+            id: true,
+            nome: true,
+            fotoUrl: true, 
+          },
+        },
+        evento: true,
+      }
     });
   }
 
-  async obterPorId(id) {
-    return await prisma.caravana.findUnique({
-      where: { id },
-      include: { membros: true, evento: true },
-    });
-  }
+     async obterPorId(id) {
+      return await prisma.caravana.findUnique({
+        where: { id },
+        include: {
+          evento: true,
+          membros: {
+            select: {
+              id: true,
+              nome: true,
+              fotoUrl: true // 🔥 ESSENCIAL
+            }
+          }
+        }
+      });
+    }
 
   async atualizar(id, novosDados) {
     return await prisma.caravana.update({
@@ -58,23 +76,28 @@ async criarCaravana(
   }
 
 
-// ... (o restante do código é o mesmo)
-  async listarPorUsuario(usuarioId) {
-  return await prisma.caravana.findMany({
-    where: {
-      membros: {
-        some: {
-          id: usuarioId
-        }
-      }
-    },
-    include: {
-      membros: true,
-      evento: true
-    }
-  });
-}
 
+  async listarPorUsuario(usuarioId) {
+  return await prisma.caravana.findMany({
+    where: {
+      membros: {
+        some: {
+          id: usuarioId
+        }
+      }
+    },
+    include: {
+      evento: true,
+      membros: {
+        select: {
+          id: true,
+          nome: true,
+          fotoUrl: true
+        }
+      }
+    }
+  });
+}
   async remover(id) {
     return await prisma.caravana.delete({
       where: { id },
@@ -101,9 +124,17 @@ async criarCaravana(
       console.log("Consultando caravana com código:", codigoAcesso); 
 
       const caravana = await prisma.caravana.findUnique({
-        where: { codigoAcesso },
-        include: { membros: true },
-      });
+          where: { codigoAcesso },
+          include: {
+            membros: {
+              select: {
+                id: true,
+                nome: true,
+                fotoUrl: true
+              }
+            }
+          }
+        });
 
       if (!caravana) {
         console.log("Caravana não encontrada com esse código:", codigoAcesso); 
@@ -120,14 +151,21 @@ async criarCaravana(
   async adicionarMembro(caravanaId, usuarioId) {
     try {
       console.log(`Adicionando usuário ${usuarioId} à caravana ${caravanaId}`); 
-
-      return await prisma.caravana.update({
-        where: { id: caravanaId },
-        data: {
-          membros: { connect: { id: usuarioId } },
-        },
-        include: { membros: true },
-      });
+          return await prisma.caravana.update({
+            where: { id: caravanaId },
+            data: {
+              membros: { connect: { id: usuarioId } },
+            },
+            include: {
+              membros: {
+                select: {
+                  id: true,
+                  nome: true,
+                  fotoUrl: true
+                }
+              }
+            }
+          });
     } catch (error) {
       console.error("Erro ao adicionar membro:", error);
       throw error;
