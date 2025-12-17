@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Carousel from '../../components/event/Carousel';
 import EventCard from '../../components/event/EventCard'; 
+import EventMap from '../../components/event/EventMap';
 import api from '../../services/api'; 
-import { Bell, Calendar as CalendarIcon, FilterX } from 'lucide-react';
+import { Bell, Calendar as CalendarIcon, MapPin } from 'lucide-react';
 
 const getFullImageUrl = (relativePath) => {
     if (!relativePath) return undefined; 
@@ -32,7 +33,8 @@ const EventPage = () => {
     const [eventos, setEventos] = useState([]); 
     const [loading, setLoading] = useState(true);
     
-    const [activeTab, setActiveTab] = useState('agenda'); 
+    // --- LÓGICA DE ABAS (AGENDA vs LEMBRETES vs MAPA) ---
+    const [activeTab, setActiveTab] = useState('agenda'); // 'agenda' | 'reminders' | 'map'
     const [reminderIds, setReminderIds] = useState([]);
 
     // Carrega IDs do localStorage
@@ -43,50 +45,26 @@ const EventPage = () => {
 
     // Lógica Principal de Busca
     useEffect(() => {
-        const fetchEventos = async () => {
-            setLoading(true);
-            setEventos([]); // Limpa lista visualmente ao trocar
-            
-            try {
-                if (activeTab === 'agenda') {
-                    // MODO AGENDA: Busca por Mês/Ano
-                    const { monthNum, year } = selectedMonth;
-                    const response = await api.get(`/eventos?mes=${monthNum}&ano=${year}`);
-                    setEventos(response.data);
-                } else {
-                    // MODO LEMBRETES: Busca pelos IDs salvos (independente do mês)
-                    if (reminderIds.length === 0) {
-                        setEventos([]);
-                        setLoading(false);
-                        return;
-                    }
+    const fetchEventos = async () => {
+        setLoading(true);
+        try {
+            const dataFormatada = formatDateForApi(selectedDate);
+            const endpoint = activeTab === 'map' 
+                ? '/eventos'  // Busca geral para o mapa
+                : `/eventos?data=${dataFormatada}`; 
+                
+            const response = await api.get(endpoint);
+            setEventos(response.data);
+        } catch (error) {
+            console.error("Erro ao buscar eventos", error);
+            setEventos([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                    // Fazemos várias chamadas em paralelo para pegar os detalhes de cada evento salvo
-                    // (Idealmente o backend teria um endpoint /eventos?ids=1,2,3, mas isso resolve por agora)
-                    const promises = reminderIds.map(id => 
-                        api.get(`/eventos/${id}`).catch(() => null) // Ignora se o evento foi deletado
-                    );
-                    
-                    const responses = await Promise.all(promises);
-                    const validEvents = responses
-                        .filter(res => res && res.data) // Filtra nulos
-                        .map(res => res.data);
-
-                    // Ordena por data (mais próximo primeiro)
-                    validEvents.sort((a, b) => new Date(a.data) - new Date(b.data));
-                    
-                    setEventos(validEvents);
-                }
-            } catch (error) {
-                console.error("Erro ao buscar eventos", error);
-                setEventos([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchEventos();
-    }, [selectedMonth, activeTab, reminderIds]); // Recarrega se mudar mês, aba ou adicionar lembrete
+    fetchEventos();
+}, [selectedDate, activeTab]); 
 
     const getHorarioEvento = (evento, isReminderMode) => {
         const dataObj = new Date(evento.data);
@@ -103,7 +81,18 @@ const EventPage = () => {
         return hora;
     };
 
-    // Filtros para o Carrossel (Apenas Agenda)
+    const getHorarioEvento = (evento) => {
+        if (evento.horario) return evento.horario;
+        if (evento.data) return new Date(evento.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        return '--:--';
+    };
+
+    // FILTRAGEM PARA ABAS
+    const displayedEvents = activeTab === 'reminders' 
+        ? eventos.filter(e => reminderIds.includes(e.id))
+        : eventos;
+
+    // Dados para o Carrossel (Apenas na aba Agenda)
     const featuredEvents = eventos.filter(e => !e.pequenoPorte).slice(0, 5);
     const carouselData = featuredEvents.length > 0 ? featuredEvents : eventos.slice(0, 3);
     const carouselDataFinal = carouselData.map(evento => ({
@@ -143,6 +132,13 @@ const EventPage = () => {
                             </span>
                         )}
                     </button>
+                    <button
+                        onClick={() => setActiveTab('map')}
+                        className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === 'map' ? 'border-purple-600 text-purple-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
+                    >
+                        <MapPin className="w-4 h-4" />
+                        Mapa Cultural
+                    </button>
                 </div>
             </div>
 
@@ -159,62 +155,25 @@ const EventPage = () => {
 
                     <div className="max-w-6xl mx-auto border-t border-gray-200 mb-6 mt-4"></div>
 
-                    {/* MENU DE MESES */}
-                    <div className="mb-8 w-full">
-                        <div className="px-4 mb-4 flex items-baseline justify-center gap-2">
-                            <h2 className="text-xl font-bold text-gray-800 capitalize">
-                                {selectedMonth.fullLabel}
-                            </h2>
-                            <span className="text-sm font-medium text-gray-400">
-                                {selectedMonth.year}
-                            </span>
-                        </div>
-                        
-                        <div className="flex overflow-x-auto gap-4 px-4 pb-4 snap-x hide-scrollbar w-full xl:justify-center">
-                            {monthsList.map((m, index) => {
-                                const isSelected = m.label === selectedMonth.label && m.year === selectedMonth.year;
-                                return (
-                                    <div 
-                                        key={index} 
-                                        onClick={() => setSelectedMonth(m)}
-                                        className="flex flex-col items-center gap-2 cursor-pointer snap-start min-w-[70px]"
-                                    >
-                                        <div className={`
-                                            w-[70px] h-[70px] rounded-full p-[3px] transition-all duration-300
-                                            ${isSelected 
-                                                ? 'bg-gradient-to-tr from-blue-500 to-cyan-400 shadow-md scale-105' 
-                                                : 'bg-gray-200 hover:bg-gray-300'}
-                                        `}>
-                                            <div className="w-full h-full rounded-full bg-white flex flex-col items-center justify-center border-[3px] border-white">
-                                                <span className={`text-sm font-black tracking-wide ${isSelected ? 'text-blue-600' : 'text-gray-400'}`}>
-                                                    {m.label}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <span className={`text-xs font-medium ${isSelected ? 'text-blue-600' : 'text-gray-300'}`}>
-                                            {m.year}
-                                        </span>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </>
-            )}
+            {/* Sessão principal */}
+            <div className="px-4 sm:p-8 pt-0">
+                <div className="flex flex-col items-center mb-10">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 capitalize mb-6 text-center">
+                        {activeTab === 'reminders' 
+                            ? 'Lembretes (nesta data)' 
+                            : activeTab === 'map' 
+                                ? 'Mapa Cultural'
+                                : `Agenda: ${formatDate(selectedDate)}`
+                        }
+                    </h1>
 
-            {/* SEÇÃO DE CONTEÚDO (Lista de Eventos) */}
-            <div className={`px-4 ${activeTab === 'reminders' ? 'pt-8' : ''}`}>
-                
-                {/* Título específico para Lembretes */}
-                {activeTab === 'reminders' && (
-                    <div className="max-w-6xl mx-auto mb-6">
-                        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                            <Bell className="w-5 h-5 text-green-600 fill-green-600" />
-                            Seus Próximos Eventos
-                        </h2>
-                        <p className="text-sm text-gray-500">Lista completa de tudo que você marcou.</p>
-                    </div>
-                )}
+                    {/* Calendário sempre visível para navegar nas datas, exceto na aba de Mapa */}
+                    {activeTab !== 'map' && (
+                        <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
+                            <Calendar onDateChange={(date) => setSelectedDate(date)} />
+                        </div>
+                    )}
+                </div>
 
                 {loading ? (
                     <div className="text-center py-12">
@@ -224,41 +183,44 @@ const EventPage = () => {
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-                        {eventos.length > 0 ? (
-                            eventos.map((evento) => (
-                                <EventCard 
-                                    key={evento.id}
-                                    title={evento.nome} 
-                                    // AQUI: Passamos 'true' para formatar com Data+Hora nos lembretes
-                                    time={getHorarioEvento(evento, activeTab === 'reminders')} 
-                                    location={evento.local} 
-                                    href={`#/eventos/${evento.id}`} 
-                                    image={getFullImageUrl(evento.imagemUrl)}
-                                    className={`
-                                        ${activeTab === 'reminders' ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-blue-500'}
-                                    `}
-                                />
-                            ))
-                        ) : (
-                            <div className="col-span-full text-center py-12 bg-white rounded-3xl border border-dashed border-gray-200 mx-4">
-                                {activeTab === 'reminders' ? (
-                                    <>
-                                        <FilterX className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                                        <p className="text-gray-500 font-medium">Você ainda não tem lembretes.</p>
-                                        <p className="text-sm text-gray-400 mt-1">Navegue na Agenda e clique em "Criar Lembrete" nos eventos que gostar!</p>
-                                    </>
+                    <>
+                        {/* Aba de Eventos / Lembretes */}
+                        {(activeTab === 'agenda' || activeTab === 'reminders') && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+                                {displayedEvents.length > 0 ? (
+                                    displayedEvents.map((evento) => (
+                                        <EventCard 
+                                            key={evento.id}
+                                            title={evento.nome} 
+                                            time={getHorarioEvento(evento)} 
+                                            location={evento.local} 
+                                            href={`#/eventos/${evento.id}`} 
+                                            image={getFullImageUrl(evento.imagemUrl)}
+                                        />
+                                    ))
                                 ) : (
-                                    <>
-                                        <CalendarIcon className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-                                        <p className="text-gray-500 font-medium capitalize">
-                                            Nenhum evento encontrado em {selectedMonth.fullLabel}.
-                                        </p>
-                                    </>
+                                    <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300">
+                                        {activeTab === 'reminders' ? (
+                                            <>
+                                                <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                                                <p className="text-gray-500 text-lg">Nenhum lembrete para esta data.</p>
+                                                <p className="text-sm text-gray-400">Navegue pelo calendário ou adicione eventos da Agenda Geral.</p>
+                                            </>
+                                        ) : (
+                                            <p className="text-gray-500 text-lg">Nenhum evento encontrado para esta data.</p>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         )}
-                    </div>
+
+                        {/* Aba de Mapa Cultural */}
+                        {activeTab === 'map' && (
+                            <div className="max-w-6xl mx-auto w-full">
+                                <EventMap events={eventos} />
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>
