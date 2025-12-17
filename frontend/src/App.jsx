@@ -18,11 +18,8 @@ import { AuthContext } from './context/AuthContext';
 const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
-    
-    const [caravanas, setCaravanas] = useState([
-        { id: 1, nome: "Caravana do Rock", evento: "Show de Rock Nacional", data: "15/11", local: "Allianz Parque", link: "app.com/c/rock", membrosCount: 15, souDono: true },
-    ]);
 
+    // Listener para mudanças de rota via Hash
     useEffect(() => {
         const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
         window.addEventListener('hashchange', handleHashChange);
@@ -33,62 +30,83 @@ const App = () => {
         };
     }, []); 
 
+    // Tratamento de Strings de Rota
     const route = currentPath.replace('#/', '').replace('#', '');
     const routeParts = route.split('/');
-    const mainRoute = routeParts[0];
+    const mainRoute = routeParts[0];   // Ex: 'perfil'
+    const subRoute = routeParts[1];    // Ex: 'caravana'
+    const actionRoute = routeParts[2]; // Ex: 'novo' ou ID
 
-    if (authLoading) return <div className="text-center p-20 font-bold text-purple-600 uppercase tracking-widest">Carregando Capiba...</div>;
+    // Tela de Loading Inicial
+    if (authLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen bg-white">
+                <div className="text-center font-bold text-blue-600 animate-pulse tracking-widest uppercase">
+                    Carregando Capiba...
+                </div>
+            </div>
+        );
+    }
 
+    // Proteção de Rota (Redirect para Login)
     if (!authenticated && mainRoute !== 'login' && mainRoute !== 'registrar') { 
         window.location.hash = '#/login';
         return <LoginPage />;
     }
 
     const renderPage = () => {
+        // 1. Rotas Públicas/Auth
         if (mainRoute === 'registrar') return <RegisterPage />;
         if (mainRoute === 'login') return <LoginPage />;
         
-        // --- ROTAS DE DETALHES (LOGICA DE DESVIO) ---
-
-        // 1. Locais Oficiais (Seja vindo do Mapa ou da Lista de Spots)
-        if (mainRoute === 'locais' && routeParts.length > 1) {
-            const placeId = routeParts[1]; 
-            const origin = routeParts[2]; // 'mapa' ou 'spots'
-            return (
-                <PlaceDetailPage 
-                    placeId={placeId} 
-                    onBack={() => window.location.hash = origin === 'spots' ? '#/capiba' : '#/eventos'} 
-                />
-            );
+        // 2. Rotas de Detalhes de Lugares e Eventos
+        if (mainRoute === 'locais' && subRoute) {
+            return <PlaceDetailPage placeId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
+        }
+        if (mainRoute === 'eventos' && subRoute) {
+            return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
         }
 
-        // 2. Eventos Comunitários
-        if (mainRoute === 'eventos' && routeParts.length > 1) {
-            const eventId = routeParts[1]; 
-            return (
-                <EventDetailPage 
-                    eventId={eventId} 
-                    onBack={() => window.location.hash = '#/eventos'} 
-                />
-            );
+        // 3. HIERARQUIA DO PERFIL (Onde estava o erro)
+        if (mainRoute === 'perfil') {
+            // Se for #/perfil/ranking
+            if (subRoute === 'ranking') return <RankingPage />;
+
+            // Se for #/perfil/editar
+            if (subRoute === 'editar') return <ProfilePage />;
+
+            // Se for #/perfil/caravana/...
+            if (subRoute === 'caravana') {
+                if (actionRoute === 'novo') return <CreateCaravanaPage />;
+                if (actionRoute) return <CaravanaDetailsPage caravanaId={actionRoute} />;
+                return <CaravanaPage />; // Lista de caravanas
+            }
+
+            // Caso seja apenas #/perfil
+            return <UserPage />;
         }
 
-        // --- OUTRAS ROTAS ---
+        // 4. Outras Rotas do Menu Principal
         if (mainRoute === 'ranking') return <RankingPage />;
-        if (mainRoute === 'perfil') return <UserPage />;
         if (mainRoute === 'capiba') return <CheckInPage />;
         if (mainRoute === 'status') return <StatusPage />;
 
-        return <EventPage />; // Default
+        // Rota Default (Dashboard/Mapa)
+        return <EventPage />;
     };
 
+    // Decide se usa o Layout com a barra de navegação inferior
     const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar'; 
 
     return useMainLayout ? (
         <MainLayout currentPath={currentPath}>
-            {renderPage()}
+            <div className="animate-in fade-in duration-500">
+                {renderPage()}
+            </div>
         </MainLayout>
-    ) : renderPage();
+    ) : (
+        renderPage()
+    );
 };
 
 export default App;
