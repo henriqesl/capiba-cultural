@@ -1,124 +1,118 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, QrCode, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, QrCode, Loader2 } from 'lucide-react';
+import jsQR from 'jsqr';
 
 const ScannerScreen = ({ onBack, onScanResult }) => {
-    const [isScanning, setIsScanning] = useState(false);
-    const [scanResult, setScanResult] = useState(null);
+    const [isScanning, setIsScanning] = useState(true);
     const videoRef = useRef(null);
+    const canvasRef = useRef(document.createElement("canvas"));
+    const scanningRef = useRef(true);
 
-    const stopCamera = () => {
+    // Loop de processamento
+    const tick = () => {
+        if (!scanningRef.current) return;
+        
         const video = videoRef.current;
-        if (video && video.srcObject) {
-            video.srcObject.getTracks().forEach(track => track.stop());
-            video.srcObject = null;
+        
+        if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext("2d");
+            
+            canvas.height = video.videoHeight;
+            canvas.width = video.videoWidth;
+            
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            // Tenta decodificar
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: "dontInvert",
+            });
+
+            // SÓ ACEITA SE TIVER DADOS REAIS
+            if (code && code.data && code.data.trim() !== "") {
+                console.log("QR Detectado:", code.data);
+                scanningRef.current = false; // Para o loop
+                setIsScanning(false);
+                onScanResult(code.data); // Manda para validação no pai
+                return;
+            }
         }
+        
+        requestAnimationFrame(tick);
     };
 
-    const startScanner = () => {
-        setIsScanning(true);
-        setScanResult(null);
+    useEffect(() => {
+        scanningRef.current = true;
         
         navigator.mediaDevices.getUserMedia({ 
-            video: { 
-                facingMode: 'environment',
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            } 
+            video: { facingMode: 'environment' } 
         })
         .then(stream => {
-            let video = videoRef.current;
-            if (video) {
-                video.srcObject = stream;
-                video.play();
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                videoRef.current.setAttribute("playsinline", true);
+                videoRef.current.play();
+                requestAnimationFrame(tick);
             }
-            
-            // SIMULAÇÃO DE LEITURA
-            setTimeout(() => {
-                const simulatedResult = "https://app.checkin.com/event/calourada-cin-2026";
-                setScanResult(simulatedResult);
-                onScanResult(simulatedResult); 
-                stopCamera();
-                setIsScanning(false);
-            }, 3000); 
-
         })
         .catch(err => {
-            console.error("Erro ao iniciar o scanner:", err);
-            setIsScanning(false);
-            alert("Não foi possível acessar a câmera para escanear. Verifique as permissões.");
+            console.error("Erro câmera:", err);
+            alert("Erro ao abrir câmera. Verifique permissões.");
         });
-    };
-    
-    useEffect(() => {
-        startScanner();
+
         return () => {
-            stopCamera();
+            scanningRef.current = false;
+            if (videoRef.current && videoRef.current.srcObject) {
+                videoRef.current.srcObject.getTracks().forEach(t => t.stop());
+            }
         };
     }, []);
 
-    const handleRestart = () => {
-        setScanResult(null);
-        startScanner();
-    };
-
     return (
-        <div className="bg-gray-100 min-h-screen w-full flex justify-center py-6 px-4">
-            <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col">
-                <header className="bg-blue-600 text-white p-6 flex items-center gap-4">
-                    <button onClick={onBack} className="p-2 hover:bg-white/20 rounded-full transition-colors">
-                        <ArrowLeft className="w-6 h-6" />
-                    </button>
-                    <div>
-                        <h1 className="text-xl font-bold">Scanner de QR Code</h1>
-                        <p className="text-blue-100 text-sm">Aponte para o código do evento.</p>
-                    </div>
-                </header>
+        <div className="bg-black min-h-screen w-full flex flex-col items-center justify-center relative">
+            {/* Header Flutuante */}
+            <div className="absolute top-0 left-0 w-full p-4 z-20 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+                <button onClick={onBack} className="text-white p-2 bg-white/10 rounded-full hover:bg-white/20">
+                    <ArrowLeft className="w-6 h-6" />
+                </button>
+                <span className="text-white font-bold tracking-wide">Escanear Código</span>
+                <div className="w-10"></div>
+            </div>
 
-                <div className="p-6 md:p-8 space-y-6">
-                    <div className="relative w-full h-96 rounded-xl overflow-hidden shadow-lg bg-gray-900 flex items-center justify-center">
-                        
-                        {isScanning && (
-                            <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted></video>
-                        )}
-                        
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-10 pointer-events-none">
-                            {isScanning ? (
-                                <>
-                                    <QrCode className="w-16 h-16 text-blue-400 animate-pulse" />
-                                    <p className="mt-4 text-white text-lg font-semibold flex items-center gap-2">
-                                        <Loader2 className="w-5 h-5 animate-spin" /> Escaneando...
-                                    </p>
-                                </>
-                            ) : (
-                                <p className="text-white text-lg font-semibold">Pronto para escanear</p>
-                            )}
+            {/* Area da Câmera */}
+            <div className="relative w-full h-full flex items-center justify-center bg-black">
+                <video 
+                    ref={videoRef} 
+                    className="absolute inset-0 w-full h-full object-cover opacity-60" 
+                    playsInline 
+                    muted
+                ></video>
+                
+                {/* Overlay de Foco (Quadrado) */}
+                <div className="relative z-10 w-64 h-64 border-2 border-blue-400 rounded-3xl flex items-center justify-center shadow-[0_0_0_9999px_rgba(0,0,0,0.7)]">
+                    {isScanning && (
+                        <>
+                            <div className="absolute inset-0 border-t-4 border-l-4 border-blue-500 rounded-tl-3xl w-10 h-10 -mt-1 -ml-1"></div>
+                            <div className="absolute inset-0 border-t-4 border-r-4 border-blue-500 rounded-tr-3xl w-10 h-10 -mt-1 -mr-1 right-0 left-auto"></div>
+                            <div className="absolute inset-0 border-b-4 border-l-4 border-blue-500 rounded-bl-3xl w-10 h-10 -mb-1 -ml-1 bottom-0"></div>
+                            <div className="absolute inset-0 border-b-4 border-r-4 border-blue-500 rounded-br-3xl w-10 h-10 -mb-1 -mr-1 bottom-0 right-0 left-auto"></div>
                             
-                            <div className="absolute w-48 h-48 border-4 border-dashed border-blue-400 rounded-lg"></div>
-                        </div>
-                    </div>
-                    
-                    {scanResult && (
-                        <div className="bg-green-100 border border-green-400 text-green-700 p-4 rounded-lg flex flex-col">
-                            <h3 className="font-bold flex items-center gap-2">
-                                <CheckCircle className="w-5 h-5" /> Código Escaneado com Sucesso!
-                            </h3>
-                            <p className="mt-2 break-all text-sm">**Resultado:** {scanResult}</p>
-                            <button 
-                                onClick={handleRestart}
-                                className="mt-4 bg-blue-500 text-white font-medium py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                            >
-                                Escanear Novamente
-                            </button>
-                        </div>
+                            <div className="absolute w-full h-1 bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.8)] animate-[scan_2s_infinite]"></div>
+                        </>
                     )}
                     
-                    <button 
-                        onClick={onBack}
-                        className="w-full bg-gray-200 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-300 transition-colors"
-                    >
-                        Voltar ao Menu
-                    </button>
+                    {!isScanning && (
+                        <div className="bg-white/20 backdrop-blur-md p-4 rounded-full">
+                            <Loader2 className="w-8 h-8 text-white animate-spin" />
+                        </div>
+                    )}
                 </div>
+
+                <p className="absolute bottom-20 text-white/80 text-sm font-medium z-20 bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm">
+                    Aponte para o QR Code do Evento
+                </p>
             </div>
         </div>
     );

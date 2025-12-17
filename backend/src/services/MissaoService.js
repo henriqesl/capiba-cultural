@@ -1,82 +1,118 @@
 const Missao = require("../models/Missao");
-const { TipoMissao } = require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 class MissaoService {
-     constructor() {
-         this.missaoRepository = new Missao();
-     }
+  constructor() {
+    this.missaoRepository = new Missao();
+  }
 
-     // Retorna todas as missões, mostrando o status do usuário ou 0 se ainda não começou
-     async buscarStatusUsuario(userId) {
-         const missoes = await this.missaoRepository.listar();
-         const listaStatus = await this.missaoRepository.statusUsuario(userId);
+  // Processa o progresso de qualquer tipo de missão (CHECKIN, CARAVANA, etc)
+  async processarProgresso(usuarioId, tipoAcao) {
+    try {
+      // 1. Busca todas as missões ativas desse tipo
+      const missoes = await prisma.missao.findMany({
+        where: {
+          tipo: tipoAcao,
+          ativa: true
+        }
+      });
 
-         return missoes.map((missao) => {
-            const status = listaStatus.find((s) => s.missaoId === missao.id);
+      if (!missoes.length) return;
 
-            return {
-              id: missao.id,
-              titulo: missao.titulo,
-              progressoAtual: status ? status.progressoAtual : 0,
-              concluida: status ? status.concluida : false,
-              valorRequisito: missao.valorRequisito,
-              recompensaCapibas: missao.recompensaCapibas,
-            };
-         });
-     }
+      const UsuarioServiceClass = require("./UsuarioService");
+      const usuarioService = new UsuarioServiceClass();
 
-     async atualizarProgressoMissoes(userId) {
-         const missoesAtivas = await this.missaoRepository.listar();
+      for (const missao of missoes) {
+        // 2. Busca ou cria o progresso do usuário nesta missão
+        let progresso = await prisma.progressoMissao.findFirst({
+          where: {
+            usuarioId: usuarioId,
+            missaoId: missao.id
+          }
+        });
 
-         let capibasAcumuladas = 0;
-         const missoesConcluidasNestaSessao = [];
-
-         for (const missao of missoesAtivas) {
-            const statusExistente = (await this.missaoRepository.statusUsuario(userId))
-              .find((s) => s.missaoId === missao.id);
-
-            const progressoAtual = await this._calcularProgresso(userId, missao);
-            const isConcluida = progressoAtual >= missao.valorRequisito;
-
-            if (isConcluida && (!statusExistente || !statusExistente.concluida)) {
-              missoesConcluidasNestaSessao.push(missao);
-              capibasAcumuladas += missao.recompensaCapibas;
+        if (!progresso) {
+          progresso = await prisma.progressoMissao.create({
+            data: {
+              usuarioId,
+              missaoId: missao.id,
+              progressoAtual: 0,
+              completada: false
             }
+          });
+        }
 
-            await this.missaoRepository.atualizarStatus(
-              missao.id,
-              userId,
-              progressoAtual,
-              isConcluida
-            );
-         }
+        // Se já completou, pula
+        if (progresso.completada) continue;
 
-         if (capibasAcumuladas > 0) {
-            await this.missaoRepository.adicionarCapibas(userId, capibasAcumuladas);
-         }
+        // 3. Incrementa o progresso
+        const novoValor = progresso.progressoAtual + 1;
+        const completouAgora = novoValor >= missao.meta;
 
-         return {
-            concluidas: missoesConcluidasNestaSessao.map((m) => m.titulo),
-            capibasGanha: capibasAcumuladas,
-         };
-     }
+        await prisma.progressoMissao.update({
+          where: { id: progresso.id },
+          data: {
+            progressoAtual: novoValor,
+            completada: completouAgora,
+            dataConclusao: completouAgora ? new Date() : null
+          }
+        });
 
-     async _calcularProgresso(userId, missao) {
-         switch (missao.tipoRequisito) {
-            case TipoMissao.COUNT_CHECKINS:
-              // CORREÇÃO: Nome do método correto, chamada com await e parâmetro
-              return await this.missaoRepository.contarTotalCheckins(userId); 
-      
-      // EXEMPLO: Outros tipos de missão
-      case TipoMissao.COUNT_UNIQUE_LOCATIONS:
-        return await this.missaoRepository.contarLocaisUnicos(userId);
+        // 4. Se completou, dá a recompensa extra!
+        if (completouAgora) {
+          console.log(`🎉 Usuário ${usuarioId} completou a missão: ${missao.titulo}`);
+          await usuarioService.adicionarMoedas(usuarioId, missao.recompensa);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao processar missões:", error);
+      // Não damos throw para não travar o fluxo principal (check-in)
+    }
+  }
 
-      default:
-        console.warn(`Tipo de requisito desconhecido ou não implementado: ${missao.tipoRequisito}`);
-        return 0;
-         }
+  async criarMissao(titulo, descricao, recompensa, meta, tipo, expiraEm) {
+    return await this.missaoRepository.novaMissao(
+      titulo,
+      descricao,
+      recompensa,
+      meta,
+      tipo,
+      expiraEm
+    );
+  }
+
+  // Lista missões com o progresso do usuário embutido
+  async listarMissoesComProgresso(usuarioId) {
+    const missoes = await prisma.missao.findMany({
+      where: { ativa: true },
+      include: {
+        progressos: {
+          where: { usuarioId: Number(usuarioId) }
+        }
+      }
+    });
+
+    // Formata para o frontend
+    return missoes.map(m => {
+      const prog = m.progressos[0];
+      return {
+        ...m,
+        progressoAtual: prog ? prog.progressoAtual : 0,
+        completada: prog ? prog.completada : false
+      };
+    });
+  }
+
+  async obterPorId(id) {
+    const missao = await this.missaoRepository.obterPorId(id);
+    if (!missao) throw new Error("Missão não encontrada");
+    return missao;
+  }
+
+  async removerMissao(id) {
+    return await this.missaoRepository.removerMissao(id);
   }
 }
 
-// EXPORTAÇÃO CORRIGIDA: Exporta a instância
-module.exports = new MissaoService();
+module.exports = MissaoService;
