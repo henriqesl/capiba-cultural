@@ -1,223 +1,191 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { ArrowLeft, Calendar, MapPin, Share2, Info, Clock, Bell, CheckCircle } from 'lucide-react';
 import api from '../../services/api';
-// Importação de ícones para melhor visual (assumindo que você tem lucide-react ou similar)
-import { ChevronLeft, Clock, MapPin, DollarSign, Users, Calendar, Award } from 'lucide-react';
 
-// Sub-componente para exibir informações chave
-const InfoItem = ({ icon, label, value }) => (
-    <div className="flex items-start bg-blue-50 rounded-lg p-4">
-        <span className="text-2xl mr-3 mt-1">{icon}</span>
-        <div>
-            <span className="block text-sm font-bold text-blue-800 uppercase">{label}</span>
-            <span className="block text-gray-800 text-lg font-medium">{value}</span>
-        </div>
-    </div>
-);
+const EventDetailPage = ({ event, eventId, onBack }) => {
+    // Se não tiver onBack (caso abra direto), define navegação manual
+    const handleBack = onBack || (() => window.location.hash = '#/eventos');
 
-// 🎯 NOVO SUB-COMPONENTE: Badge do Colaborador (Reporter)
-const ReporterBadge = ({ reporter }) => {
-    if (!reporter || !reporter.nome) return null;
-    
-    // Fallback para foto de perfil se não houver URL
-    const fotoSrc = reporter.fotoUrl || 'https://via.placeholder.com/50/CCCCCC/FFFFFF?text=👤';
-    const capibasGanhas = reporter.capibasGanhas || 10; // Default para incentivo
+    const [eventData, setEventData] = useState(event);
+    const [loading, setLoading] = useState(!event); 
+    const [hasReminder, setHasReminder] = useState(false);
 
-    return (
-        <div className="mt-12 p-6 bg-yellow-50 border-t-4 border-yellow-400 rounded-xl shadow-md">
-            <h3 className="text-xl font-bold text-yellow-800 mb-4 flex items-center gap-2">
-                <Award className="w-6 h-6 text-yellow-500" />
-                Incentivo à Colaboração
-            </h3>
+    // 1. Carrega evento se necessário
+    useEffect(() => {
+        if (!event && eventId) {
+            const fetchEvent = async () => {
+                try {
+                    const response = await api.get(`/eventos/${eventId}`);
+                    setEventData(response.data);
+                } catch (error) {
+                    console.error("Erro ao carregar evento:", error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchEvent();
+        }
+    }, [event, eventId]);
+
+    // 2. Verifica se já existe lembrete salvo
+    useEffect(() => {
+        if (eventData?.id) {
+            const savedReminders = JSON.parse(localStorage.getItem('capiba_reminders') || '[]');
+            setHasReminder(savedReminders.includes(eventData.id));
+        }
+    }, [eventData]);
+
+    // 3. Alternar Lembrete
+    const toggleReminder = () => {
+        if (!eventData?.id) return;
+
+        const savedReminders = JSON.parse(localStorage.getItem('capiba_reminders') || '[]');
+        let newReminders;
+
+        if (hasReminder) {
+            // Remover
+            newReminders = savedReminders.filter(id => id !== eventData.id);
+            alert("Lembrete removido.");
+        } else {
+            // Adicionar
+            newReminders = [...savedReminders, eventData.id];
             
-            <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow-sm">
-                <img 
-                    src={fotoSrc} 
-                    alt={reporter.nome} 
-                    className="w-14 h-14 rounded-full object-cover border-2 border-yellow-500 flex-shrink-0" 
-                />
-                <div>
-                    <p className="text-sm text-gray-600 font-medium">Reportado por:</p>
-                    <p className="text-xl font-bold text-gray-900 mb-1">{reporter.nome}</p>
-                    <p className="text-lg font-extrabold text-green-600 flex items-center gap-1">
-                        + {capibasGanhas} Capibas!
-                    </p>
-                </div>
-            </div>
+            // Feedback e navegação opcional
+            if (confirm("✅ Lembrete definido!\nDeseja ver sua lista de lembretes agora?")) {
+                handleBack(); 
+                // Pequeno hack para garantir que a EventPage recarregue na aba certa, 
+                // idealmente seria via estado global, mas aqui confiamos no localStorage
+            }
+        }
 
-            <p className="text-sm text-gray-600 mt-4 italic">
-                Quer ver seu nome aqui? Sugira um evento inédito e ganhe Capibas!
-            </p>
+        localStorage.setItem('capiba_reminders', JSON.stringify(newReminders));
+        setHasReminder(!hasReminder);
+    };
+
+    if (loading) return (
+        <div className="flex justify-center items-center h-screen bg-gray-50">
+            <div className="text-gray-400 animate-pulse font-medium">Carregando detalhes...</div>
         </div>
     );
-};
-// ----------------------------------------------------------------------------------
-
-const EventDetailPage = ({ onBack }) => {
-    const [event, setEvent] = useState(null);
-    const [loading, setLoading] = useState(true);
     
-    const getEventId = () => {
-        const hash = window.location.hash;
-        const parts = hash.split('/');
-        return parts[parts.length - 1];
-    };
-    const eventId = getEventId();
+    if (!eventData) return (
+        <div className="flex justify-center items-center h-screen bg-gray-50">
+            <div className="text-red-400 font-medium">Evento não encontrado.</div>
+        </div>
+    );
 
-    useEffect(() => {
-        const fetchDetalhes = async () => {
-            setLoading(true);
-            try {
-                // 🚨 O seu backend deve retornar o objeto do evento, incluindo a nova propriedade 'reportadoPor'
-                const response = await api.get(`/eventos/${eventId}`);
-                setEvent(response.data);
-            } catch (error) {
-                console.error("Erro ao carregar detalhes do evento", error);
-                // Exemplo de fallback data para testes se a API falhar ou não tiver a propriedade 'reportadoPor'
-                // setEvent({ /* Dados mockados */ reportadoPor: { nome: "Capibaribe User", fotoUrl: "", capibasGanhas: 10 } }); 
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (eventId) {
-            fetchDetalhes();
-        }
-    }, [eventId]);
-
-    const handleBack = () => {
-        if (onBack) onBack();
-        else window.location.hash = '#/eventos';
-    };
-
-    if (loading) {
-        return (
-            <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-                <span className="text-xl font-bold text-gray-500 animate-pulse">Carregando detalhes...</span>
-            </div>
-        );
-    }
-
-    if (!event) {
-        return (
-            <div className="bg-gray-100 min-h-screen p-8 text-center flex flex-col items-center justify-center">
-                <h1 className="text-3xl font-bold text-gray-800 mb-4">Evento não encontrado</h1>
-                <button 
-                    onClick={handleBack}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    &larr; Voltar para Agenda
-                </button>
-            </div>
-        );
-    }
-
-    // === TRATAMENTO DE DADOS ===
-    const dataObj = new Date(event.data);
-    const horarioExibicao = dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    const dataFormatada = dataObj.toLocaleDateString('pt-BR');
+    const dataFormatada = eventData.data 
+        ? new Date(eventData.data).toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }) 
+        : 'Data a confirmar';
     
-    // Lógica para imagem (usa picsum como fallback)
-    const imagemSrc = event.imagemUrl && event.imagemUrl.startsWith('http') 
-        ? event.imagemUrl 
-        : `https://picsum.photos/seed/${event.id}/800/400`; 
-
-    // Formatação de Preço
-    const precoDisplay = (!event.valor || event.valor === 0) 
-        ? "Gratuito" 
-        : `R$ ${event.valor.toFixed(2)}`;
+    const horario = eventData.horario || 
+        (eventData.data ? new Date(eventData.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--');
 
     return (
-        <div className="bg-gray-100 min-h-screen p-4 sm:p-8 pb-24">
-            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden mt-4 sm:mt-8">
+        <div className="min-h-screen bg-gray-100 md:py-10 flex justify-center items-start">
+            
+            <div className="w-full max-w-3xl bg-white md:rounded-3xl shadow-xl overflow-hidden relative min-h-screen md:min-h-fit flex flex-col">
                 
-                {/* Imagem do Evento */}
-                <div className="w-full h-64 sm:h-96 bg-gray-300 flex items-center justify-center relative overflow-hidden group">
+                {/* Header Imagem */}
+                <div className="relative h-72 md:h-96 w-full group">
                     <img 
-                        src={imagemSrc}
-                        alt={event.nome}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        src={eventData.imagemUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30"} 
+                        alt={eventData.nome} 
+                        className="w-full h-full object-cover"
                     />
-                    
-                    {/* Badge de status */}
-                    <div className="absolute top-4 right-4 flex gap-2">
-                        {event.aoVivo && (
-                            <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse shadow-md">
-                                AO VIVO
-                            </span>
-                        )}
-                        {/* Categoria */}
-                        {event.categoria && (
-                             <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
-                                 {event.categoria}
-                            </span>
-                        )}
-                    </div>
-                </div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent opacity-80"></div>
 
-                <div className="p-6 sm:p-10">
                     <button 
                         onClick={handleBack} 
-                        className="mb-6 text-blue-600 hover:text-blue-800 font-semibold text-lg flex items-center gap-2 transition-colors"
+                        className="absolute top-4 left-4 p-2.5 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-all border border-white/10 shadow-lg"
                     >
-                        <ChevronLeft className="w-5 h-5" /> Voltar
+                        <ArrowLeft className="w-6 h-6" />
                     </button>
-                    
-                    <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-2 leading-tight">
-                        {event.nome}
-                    </h1>
-                    <p className="text-gray-500 text-lg mb-8 flex items-center gap-2">
-                        <Calendar className="w-5 h-5" /> {dataFormatada}
-                    </p>
-                    
-                    {/* Grid de Informações */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        <InfoItem icon={<Clock className="w-6 h-6" />} label="Horário" value={horarioExibicao} />
-                        <InfoItem icon={<MapPin className="w-6 h-6" />} label="Local" value={event.local} />
-                        
-                        {/* Valores padrão */}
-                        <InfoItem 
-                            icon="🎂" 
-                            label="Faixa Etária" 
-                            value="Livre" 
-                        />
-                        <InfoItem 
-                            icon={<DollarSign className="w-6 h-6" />} 
-                            label="Valor" 
-                            value={precoDisplay} 
-                        />
-                        <InfoItem 
-                            icon="✅" 
-                            label="Acesso" 
-                            value="Entrada Livre" 
-                        />
-                        <InfoItem 
-                            icon={<Users className="w-6 h-6" />} 
-                            label="Confirmados" 
-                            value={`${event.confirmacoes || 0} pessoas`} 
-                        />
-                    </div>
 
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Sobre o Evento</h2>
-                    <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
-                        {event.descricao}
-                    </p>
+                    <span className="absolute top-4 right-4 bg-blue-600/90 backdrop-blur-md text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg border border-white/10 uppercase tracking-wider">
+                        {eventData.categoria || "Evento"}
+                    </span>
+                </div>
 
-                    {/* Botão de Ação */}
-                    <div className="mt-10">
-                        <button 
-                            className="w-full sm:w-auto bg-green-600 text-white font-bold py-4 px-8 rounded-xl hover:bg-green-700 transition transform hover:scale-105 shadow-lg"
-                            onClick={() => alert("Funcionalidade de Check-in em desenvolvimento!")} 
-                        >
-                            Confirmar Presença (+10 Capibas)
+                {/* Conteúdo */}
+                <div className="flex-1 px-6 py-8 md:px-10 relative">
+                    <div className="flex justify-between items-start gap-4 mb-6">
+                        <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 leading-tight">
+                            {eventData.nome}
+                        </h1>
+                        <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                            <Share2 className="w-6 h-6" />
                         </button>
                     </div>
 
-                    {/* 🎯 NOVA SESSÃO: Badge do Colaborador */}
-                    {/* Assume que event.reportadoPor é o objeto { nome, fotoUrl, capibasGanhas } */}
-                    <ReporterBadge reporter={event.reportadoPor} />
-                    {/* -------------------------------------- */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div className="flex items-start gap-4 p-4 rounded-2xl bg-blue-50/50 border border-blue-100">
+                            <div className="bg-white p-2.5 rounded-xl shadow-sm text-blue-600">
+                                <Calendar className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-blue-400 uppercase tracking-wide mb-1">Quando?</p>
+                                <p className="font-semibold text-gray-900 capitalize">{dataFormatada}</p>
+                                <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                                    <Clock className="w-3 h-3" /> {horario}
+                                </p>
+                            </div>
+                        </div>
 
+                        <div className="flex items-start gap-4 p-4 rounded-2xl bg-red-50/50 border border-red-100">
+                            <div className="bg-white p-2.5 rounded-xl shadow-sm text-red-500">
+                                <MapPin className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-red-400 uppercase tracking-wide mb-1">Onde?</p>
+                                <p className="font-semibold text-gray-900">{eventData.local}</p>
+                                <p className="text-sm text-gray-500 truncate max-w-[200px]">
+                                    {eventData.endereco || "Ver no mapa"}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h3 className="font-bold text-xl text-gray-900 flex items-center gap-2">
+                            <Info className="w-5 h-5 text-gray-400" /> Sobre o evento
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed text-lg">
+                            {eventData.descricao || "Sem descrição disponível."}
+                        </p>
+                    </div>
                 </div>
+
+                {/* BOTÃO DE LEMBRETE */}
+                <div className="p-6 md:p-10 border-t border-gray-100 bg-gray-50/50 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="hidden md:block">
+                        <p className="text-sm text-gray-500">Não quer esquecer?</p>
+                        <p className="text-lg font-bold text-gray-900">Adicione aos seus lembretes</p>
+                    </div>
+                    
+                    <button 
+                        onClick={toggleReminder}
+                        className={`
+                            w-full md:w-auto md:px-12 font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 text-lg
+                            ${hasReminder 
+                                ? "bg-green-500 hover:bg-green-600 text-white shadow-green-200" 
+                                : "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200"}
+                        `}
+                    >
+                        {hasReminder ? (
+                            <>
+                                <CheckCircle className="w-6 h-6" />
+                                Lembrete Definido
+                            </>
+                        ) : (
+                            <>
+                                <Bell className="w-6 h-6" />
+                                Criar Lembrete
+                            </>
+                        )}
+                    </button>
+                </div>
+
             </div>
         </div>
     );
