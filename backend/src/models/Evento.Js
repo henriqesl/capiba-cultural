@@ -8,7 +8,7 @@ class Evento {
     data,
     descricao,      
     pequenoPorte,    
-    reportadoPorUsuario,
+    reportadoPorUsuario =  true,
     aoVivo,
     moedasCapibasDestribuidas,
     ativo,
