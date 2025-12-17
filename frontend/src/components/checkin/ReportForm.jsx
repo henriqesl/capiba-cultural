@@ -2,14 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import api from '../../services/api'; 
 import { geocodeLocation, reverseGeocodeLocation } from '../../services/mapbox';
 import LocationMap, { RECIFE_BOUNDS, isInsideBounds } from './LocationMap.jsx';
+import { useAuth } from '../../context/AuthContext'; 
+
 
 import { 
-    ArrowLeft, Camera, StopCircle, Video, Megaphone, // Megaphone será usado para o ícone de título
+    ArrowLeft, Camera, StopCircle, Video, Megaphone, 
     MapPin, Loader2, CheckCircle 
 } from 'lucide-react';
 
 const ReportForm = ({ onBack }) => {
-    // 🌟 CORRIGIDO: Variável de estado para o Título/Nome do Evento
+    const { user: userContext } = useAuth(); 
     const [nome, setNome] = useState('');
     const [local, setLocal] = useState('');
     const [value, setValue] = useState('');
@@ -22,7 +24,6 @@ const ReportForm = ({ onBack }) => {
     const [isGeolocating, setIsGeolocating] = useState(false); 
     const [coords, setCoords] = useState(null);
     
-    // ESTADOS E REFS PARA A CÂMERA
     const [isCameraActive, setIsCameraActive] = useState(false); 
     const videoRef = useRef(null); 
     const canvasRef = useRef(null);
@@ -161,7 +162,6 @@ const ReportForm = ({ onBack }) => {
             return;
         }
         
-        // 🌟 VALIDAÇÃO DO NOME/TÍTULO
         if (!nome.trim()) {
             alert("Por favor, insira um Título para o evento.");
             setIsLoading(false);
@@ -181,7 +181,7 @@ const ReportForm = ({ onBack }) => {
             }
 
             const formData = new FormData();
-            formData.append('nome', nome); // 🌟 CORRIGIDO: Usando a variável de estado `nome`
+            formData.append('nome', nome);
             formData.append('local', local);
             formData.append('data', new Date().toISOString());
             formData.append('preco', value || "Gratuito");
@@ -195,9 +195,22 @@ const ReportForm = ({ onBack }) => {
 
             if (imageFile) formData.append('imagemFile', imageFile); 
 
-            await api.post('/eventos', formData); 
+            const eventoResponse = await api.post('/eventos', formData); 
             alert("Reporte enviado com sucesso!");
             onBack();
+
+
+            const eventoCriado = eventoResponse.data.evento;
+
+            await api.post('/reportes', {
+                evento: eventoCriado,  
+                descricao: "Reporte automático após criar o evento",
+                usuarioId: userContext.id 
+            });
+
+            alert("Evento criado e reportado com sucesso!");
+            onBack();
+
 
         } catch (error) {
             console.error("Erro:", error);
@@ -227,8 +240,8 @@ const ReportForm = ({ onBack }) => {
                         <label className="block text-sm font-bold text-gray-700 mb-1">Título do Evento</label>
                         <div className="relative">
                             <input 
-                                value={nome} // 🌟 VINCULADO AO ESTADO 'nome'
-                                onChange={e => setNome(e.target.value)} // 🌟 VINCULADO AO SETTER 'setNome'
+                                value={nome} 
+                                onChange={e => setNome(e.target.value)} 
                                 type="text" 
                                 placeholder="Ex: Show de Maracatu na Praça" 
                                 className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none" 
