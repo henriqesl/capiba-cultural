@@ -5,71 +5,44 @@ import MenuScreen from '../components/checkin/MenuScreen';
 import ScannerScreen from '../components/checkin/ScannerScreen';
 import ReportForm from '../components/checkin/ReportForm';
 import SuggestForm from '../components/checkin/SuggestForm';
-// ⬅️ Importar o novo componente
-import CapibaSourcesPage from '../components/checkin/RecifeSpotsPage'; 
+import RecifeSpotsPage from '../components/checkin/RecifeSpotsPage'; // <--- IMPORTADO
 
 const CheckInPage = () => {
-    // 'menu' | 'report' | 'suggest' | 'scanner' | 'sources' ⬅️ Novo estado
     const [view, setView] = useState('menu'); 
     const [loading, setLoading] = useState(false);
 
-    // Função que recebe o texto lido pelo QR Code
     const handleScanResult = async (result) => {
-        if (!result || loading) return; // Se já estiver carregando, ignora
+        if (!result || loading) return; 
 
-        // 1. FILTRO DE RUÍDO (Evita ler rosto, URLs aleatórias, etc)
-        // Se for uma URL externa ou texto muito longo/curto estranho, ignora
-        if (result.startsWith('http') || result.length > 50 || result.length < 1) {
-            console.log("Leitura ignorada (formato inválido):", result);
-            return; // Retorna sem fazer nada, o scanner continua rodando
-        }
+        if (result.startsWith('http') || result.length > 50) return;
 
-        // 2. Tenta extrair apenas o ID numérico
         const eventoId = result.replace(/\D/g, '');
+        if (!eventoId) return;
 
-        // Se não conseguiu extrair nenhum número (ex: leu um texto "Olá Mundo")
-        if (!eventoId) {
-            console.log("Leitura ignorada (sem ID numérico):", result);
-            return; // Ignora silenciosamente
-        }
-
-        // Se passou pelos filtros, aí sim paramos para processar
         setLoading(true);
 
         try {
-            // Chama a API de Check-in
-            const response = await api.post('/checkin', { 
-                eventoId: Number(eventoId) 
-            });
-
-            // Sucesso!
+            const response = await api.post('/checkin', { eventoId: Number(eventoId) });
             const moedas = response.data.moedasGanhas || 0;
             
-            // Pequeno delay para garantir que o usuário veja que travou a câmera
             setTimeout(() => {
-                alert(`✅ SUCESSO!\nCheck-in realizado no evento ${eventoId}.\n💰 Você ganhou ${moedas} moedas Capiba!`);
+                alert(`✅ SUCESSO!\nCheck-in confirmado!\n💰 +${moedas} Capibas`);
                 setView('menu');
             }, 100);
 
         } catch (error) {
-            console.error("Erro checkin:", error);
-            
-            const msg = error.response?.data?.erro || "Erro ao validar check-in.";
-            
-            // Só exibe alerta se for erro do backend (ex: Duplicidade ou ID não existe)
+            const msg = error.response?.data?.erro || "Erro no check-in.";
             setTimeout(() => {
-                if (msg.includes("já fez check-in")) {
-                    alert(`⚠️ JÁ VISITADO\nVocê já marcou presença neste evento.`);
-                } else {
-                    alert(`❌ ERRO NO CHECK-IN\n${msg}`);
-                }
+                if (msg.includes("já fez check-in")) alert(`⚠️ Você já fez check-in neste evento.`);
+                else alert(`❌ ERRO: ${msg}`);
                 setView('menu');
             }, 100);
-            
         } finally {
             setLoading(false);
         }
     };
+
+    // --- ROTEAMENTO DAS TELAS ---
 
     if (view === 'menu') {
         return (
@@ -77,10 +50,13 @@ const CheckInPage = () => {
                 onScan={() => setView('scanner')} 
                 onReport={() => setView('report')} 
                 onSuggest={() => setView('suggest')}
-                // ⬅️ Nova função para navegar
-                onShowSources={() => setView('sources')}
+                onSpots={() => setView('spots')} // <--- NOVA PROPS
             />
         );
+    }
+
+    if (view === 'spots') { // <--- NOVA TELA (LOCAIS CULTURAIS)
+        return <RecifeSpotsPage onBack={() => setView('menu')} />;
     }
 
     if (view === 'report') {
@@ -93,11 +69,6 @@ const CheckInPage = () => {
     
     if (view === 'scanner') {
         return <ScannerScreen onBack={() => setView('menu')} onScanResult={handleScanResult} />;
-    }
-    
-    // ⬅️ Nova renderização
-    if (view === 'sources') {
-        return <CapibaSourcesPage onBack={() => setView('menu')} />;
     }
 
     return null;

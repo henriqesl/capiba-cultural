@@ -24,11 +24,14 @@ class CheckIn {
     });
   }
 
+  // MÉTODO IMPORTANTE PARA O HISTÓRICO
   async listarPorUsuario(usuarioId) {
     return await prisma.checkIn.findMany({
       where: { usuarioId },
-      include: { evento: true },
-      orderBy: { data: "desc" },
+      include: { 
+        evento: true // <--- Traz nome, local, imagem, etc.
+      },
+      orderBy: { data: "desc" } // Mais recentes primeiro
     });
   }
 }

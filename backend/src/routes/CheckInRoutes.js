@@ -1,12 +1,14 @@
 const express = require("express");
-const router = express.Router();
 const CheckInController = require("../controllers/CheckInController");
-const authMiddleware = require("../middleware/authMiddleware"); // Middleware de autenticação
+const authMiddleware = require("../middleware/authMiddleware");
 
-const checkInController = new CheckInController();
+const router = express.Router();
+const checkInController = new CheckInController(); // Instancia aqui
 
-router.post("/", authMiddleware, async (req, res) => {
-  await checkInController.realizarCheckIn(req, res);
-});
+// POST /api/checkin (Realizar check-in)
+router.post("/", authMiddleware, (req, res) => checkInController.realizarCheckIn(req, res));
+
+// GET /api/checkin/historico/:usuarioId (Histórico para Status Page)
+router.get("/historico/:usuarioId", (req, res) => checkInController.listarHistorico(req, res));
 
 module.exports = router;

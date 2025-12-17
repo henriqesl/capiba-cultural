@@ -7,111 +7,132 @@ class MissaoService {
     this.missaoRepository = new Missao();
   }
 
-  // Processa o progresso de qualquer tipo de missão (CHECKIN, CARAVANA, etc)
-  async processarProgresso(usuarioId, tipoAcao) {
-    try {
-      // 1. Busca todas as missões ativas desse tipo
-      const missoes = await prisma.missao.findMany({
-        where: {
-          tipo: tipoAcao,
-          ativa: true
+  // Lógica principal: Busca TODAS as missões globais e anexa o status do usuário
+  async listarMissoesComProgresso(usuarioId) {
+    // 1. Busca todas as missões no banco
+    const missoes = await prisma.missao.findMany({
+      include: {
+        // Inclui APENAS o progresso deste usuário específico
+        progressos: { 
+          where: { usuarioId: Number(usuarioId) }
         }
-      });
+      },
+      orderBy: { id: 'asc' }
+    });
 
+    // 2. Formata para o frontend
+    return missoes.map(m => {
+      // Se tiver progresso, pega o primeiro (e único). Se não, assume 0.
+      const status = m.progressos[0]; 
+      
+      return {
+        id: m.id,
+        titulo: m.titulo,
+        descricao: m.descricao,
+        recompensa: m.recompensaCapibas,
+        meta: m.valorRequisito,
+        // Aqui está a mágica: Mostra o progresso individual ou 0 se nunca começou
+        progressoAtual: status ? status.progressoAtual : 0,
+        completada: status ? status.concluida : false
+      };
+    });
+  }
+
+  async processarProgresso(usuarioId, tipoAcaoString, eventoAtual = null) {
+     // ... (Código da gamificação que te passei antes) ...
+     // Se precisar dele completo me avise, mas o foco agora é a listagem
+      try {
+      const missoes = await prisma.missao.findMany();
       if (!missoes.length) return;
 
       const UsuarioServiceClass = require("./UsuarioService");
       const usuarioService = new UsuarioServiceClass();
 
       for (const missao of missoes) {
-        // 2. Busca ou cria o progresso do usuário nesta missão
-        let progresso = await prisma.progressoMissao.findFirst({
-          where: {
-            usuarioId: usuarioId,
-            missaoId: missao.id
-          }
+        let deveProcessar = false;
+        let incremento = 0;
+        let valorAbsoluto = null;
+
+        if (missao.tipoRequisito === 'COUNT_CHECKINS' && tipoAcaoString === 'CHECKIN') {
+            deveProcessar = true;
+            incremento = 1;
+        } else if (missao.tipoRequisito === 'SPECIFIC_TAG' && tipoAcaoString === 'CHECKIN' && eventoAtual) {
+            if (eventoAtual.categoria && missao.tagRequisito && 
+                eventoAtual.categoria.toUpperCase() === missao.tagRequisito.toUpperCase()) {
+                deveProcessar = true;
+                incremento = 1;
+            }
+        } else if (missao.tipoRequisito === 'UNIQUE_LOCATIONS' && tipoAcaoString === 'CHECKIN') {
+            deveProcessar = true;
+            const locais = await prisma.checkIn.groupBy({
+                by: ['eventoId'],
+                where: { usuarioId: usuarioId }
+            });
+            valorAbsoluto = locais.length; 
+        }
+
+        if (!deveProcessar) continue;
+
+        let status = await prisma.statusUsuario.findUnique({
+          where: { usuarioId_missaoId: { usuarioId, missaoId: missao.id } }
         });
 
-        if (!progresso) {
-          progresso = await prisma.progressoMissao.create({
-            data: {
-              usuarioId,
-              missaoId: missao.id,
-              progressoAtual: 0,
-              completada: false
-            }
+        if (!status) {
+          status = await prisma.statusUsuario.create({
+            data: { usuarioId, missaoId: missao.id, progressoAtual: 0, concluida: false }
           });
         }
 
-        // Se já completou, pula
-        if (progresso.completada) continue;
+        if (status.concluida) continue;
 
-        // 3. Incrementa o progresso
-        const novoValor = progresso.progressoAtual + 1;
-        const completouAgora = novoValor >= missao.meta;
+        const novoValor = (valorAbsoluto !== null) ? valorAbsoluto : (status.progressoAtual + incremento);
+        const completou = novoValor >= missao.valorRequisito;
 
-        await prisma.progressoMissao.update({
-          where: { id: progresso.id },
+        await prisma.statusUsuario.update({
+          where: { id: status.id },
           data: {
             progressoAtual: novoValor,
-            completada: completouAgora,
-            dataConclusao: completouAgora ? new Date() : null
+            concluida: completou,
+            dataConclusao: completou ? new Date() : null
           }
         });
 
-        // 4. Se completou, dá a recompensa extra!
-        if (completouAgora) {
-          console.log(`🎉 Usuário ${usuarioId} completou a missão: ${missao.titulo}`);
-          await usuarioService.adicionarMoedas(usuarioId, missao.recompensa);
+        if (completou) {
+            await usuarioService.adicionarMoedas(usuarioId, missao.recompensaCapibas);
         }
       }
     } catch (error) {
-      console.error("Erro ao processar missões:", error);
-      // Não damos throw para não travar o fluxo principal (check-in)
+      console.error("Erro gamificação:", error);
     }
   }
 
-  async criarMissao(titulo, descricao, recompensa, meta, tipo, expiraEm) {
-    return await this.missaoRepository.novaMissao(
-      titulo,
-      descricao,
-      recompensa,
-      meta,
-      tipo,
-      expiraEm
-    );
-  }
-
-  // Lista missões com o progresso do usuário embutido
   async listarMissoesComProgresso(usuarioId) {
+    console.log(`🤖 Service buscando missões para User ${usuarioId}`);
+    
+    // Busca missões e inclui 'progressos' (conforme seu schema.prisma)
     const missoes = await prisma.missao.findMany({
-      where: { ativa: true },
       include: {
-        progressos: {
+        progressos: { 
           where: { usuarioId: Number(usuarioId) }
         }
-      }
+      },
+      orderBy: { id: 'asc' }
     });
 
-    // Formata para o frontend
+    console.log(`🤖 Encontradas ${missoes.length} missões no banco.`);
+
     return missoes.map(m => {
-      const prog = m.progressos[0];
+      const status = m.progressos[0]; // Pega o primeiro (e único) status para esse user
       return {
-        ...m,
-        progressoAtual: prog ? prog.progressoAtual : 0,
-        completada: prog ? prog.completada : false
+        id: m.id,
+        titulo: m.titulo,
+        descricao: m.descricao,
+        recompensa: m.recompensaCapibas,
+        meta: m.valorRequisito,
+        progressoAtual: status ? status.progressoAtual : 0,
+        completada: status ? status.concluida : false
       };
     });
-  }
-
-  async obterPorId(id) {
-    const missao = await this.missaoRepository.obterPorId(id);
-    if (!missao) throw new Error("Missão não encontrada");
-    return missao;
-  }
-
-  async removerMissao(id) {
-    return await this.missaoRepository.removerMissao(id);
   }
 }
 

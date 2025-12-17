@@ -1,14 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, QrCode, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import jsQR from 'jsqr';
 
 const ScannerScreen = ({ onBack, onScanResult }) => {
     const [isScanning, setIsScanning] = useState(true);
     const videoRef = useRef(null);
+    // Removemos o canvasRef do estado para evitar recriação desnecessária, 
+    // mas criamos ele internamente no tick ou usamos uma ref persistente simples.
     const canvasRef = useRef(document.createElement("canvas"));
     const scanningRef = useRef(true);
+    const streamRef = useRef(null); // 🟢 Nova ref para guardar o stream e poder desligar depois
 
-    // Loop de processamento
+    // Função para parar a câmera
+    const stopCamera = () => {
+        scanningRef.current = false;
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => {
+                track.stop(); // 🛑 Para a câmera fisicamente
+            });
+            streamRef.current = null;
+        }
+        if (videoRef.current) {
+            videoRef.current.srcObject = null;
+        }
+    };
+
     const tick = () => {
         if (!scanningRef.current) return;
         
@@ -25,17 +41,15 @@ const ScannerScreen = ({ onBack, onScanResult }) => {
             
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             
-            // Tenta decodificar
             const code = jsQR(imageData.data, imageData.width, imageData.height, {
                 inversionAttempts: "dontInvert",
             });
 
-            // SÓ ACEITA SE TIVER DADOS REAIS
             if (code && code.data && code.data.trim() !== "") {
                 console.log("QR Detectado:", code.data);
-                scanningRef.current = false; // Para o loop
+                stopCamera(); // 🛑 Para a câmera assim que ler
                 setIsScanning(false);
-                onScanResult(code.data); // Manda para validação no pai
+                onScanResult(code.data);
                 return;
             }
         }
@@ -50,6 +64,7 @@ const ScannerScreen = ({ onBack, onScanResult }) => {
             video: { facingMode: 'environment' } 
         })
         .then(stream => {
+            streamRef.current = stream; // Guarda o stream
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 videoRef.current.setAttribute("playsinline", true);
@@ -59,59 +74,46 @@ const ScannerScreen = ({ onBack, onScanResult }) => {
         })
         .catch(err => {
             console.error("Erro câmera:", err);
-            alert("Erro ao abrir câmera. Verifique permissões.");
+            alert("Erro ao acessar câmera.");
         });
 
+        // 🟢 CLEANUP: Executado quando o componente desmonta (ao clicar em Voltar)
         return () => {
-            scanningRef.current = false;
-            if (videoRef.current && videoRef.current.srcObject) {
-                videoRef.current.srcObject.getTracks().forEach(t => t.stop());
-            }
+            stopCamera();
         };
     }, []);
 
+    const handleBack = () => {
+        stopCamera(); // Garante parada ao clicar no botão
+        onBack();
+    };
+
     return (
         <div className="bg-black min-h-screen w-full flex flex-col items-center justify-center relative">
-            {/* Header Flutuante */}
-            <div className="absolute top-0 left-0 w-full p-4 z-20 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
-                <button onClick={onBack} className="text-white p-2 bg-white/10 rounded-full hover:bg-white/20">
+            <div className="absolute top-0 left-0 w-full p-4 z-20 flex justify-between">
+                <button onClick={handleBack} className="text-white p-2 bg-white/10 rounded-full hover:bg-white/20">
                     <ArrowLeft className="w-6 h-6" />
                 </button>
-                <span className="text-white font-bold tracking-wide">Escanear Código</span>
-                <div className="w-10"></div>
             </div>
-
-            {/* Area da Câmera */}
-            <div className="relative w-full h-full flex items-center justify-center bg-black">
+            
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
                 <video 
                     ref={videoRef} 
-                    className="absolute inset-0 w-full h-full object-cover opacity-60" 
+                    className="absolute inset-0 w-full h-full object-cover opacity-80" 
                     playsInline 
                     muted
                 ></video>
                 
-                {/* Overlay de Foco (Quadrado) */}
-                <div className="relative z-10 w-64 h-64 border-2 border-blue-400 rounded-3xl flex items-center justify-center shadow-[0_0_0_9999px_rgba(0,0,0,0.7)]">
-                    {isScanning && (
-                        <>
-                            <div className="absolute inset-0 border-t-4 border-l-4 border-blue-500 rounded-tl-3xl w-10 h-10 -mt-1 -ml-1"></div>
-                            <div className="absolute inset-0 border-t-4 border-r-4 border-blue-500 rounded-tr-3xl w-10 h-10 -mt-1 -mr-1 right-0 left-auto"></div>
-                            <div className="absolute inset-0 border-b-4 border-l-4 border-blue-500 rounded-bl-3xl w-10 h-10 -mb-1 -ml-1 bottom-0"></div>
-                            <div className="absolute inset-0 border-b-4 border-r-4 border-blue-500 rounded-br-3xl w-10 h-10 -mb-1 -mr-1 bottom-0 right-0 left-auto"></div>
-                            
-                            <div className="absolute w-full h-1 bg-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.8)] animate-[scan_2s_infinite]"></div>
-                        </>
-                    )}
+                <div className="relative z-10 w-72 h-72 border-2 border-blue-400 rounded-3xl flex items-center justify-center shadow-[0_0_0_9999px_rgba(0,0,0,0.8)]">
+                    {!isScanning && <Loader2 className="w-10 h-10 text-white animate-spin" />}
                     
-                    {!isScanning && (
-                        <div className="bg-white/20 backdrop-blur-md p-4 rounded-full">
-                            <Loader2 className="w-8 h-8 text-white animate-spin" />
-                        </div>
+                    {isScanning && (
+                        <div className="absolute w-full h-1 bg-blue-500/80 shadow-[0_0_20px_rgba(59,130,246,1)] animate-[scan_2s_infinite]"></div>
                     )}
                 </div>
 
-                <p className="absolute bottom-20 text-white/80 text-sm font-medium z-20 bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm">
-                    Aponte para o QR Code do Evento
+                <p className="absolute bottom-24 text-white/90 text-sm font-medium z-20 bg-black/60 px-6 py-2 rounded-full backdrop-blur-md border border-white/10">
+                    Aponte para o código do evento
                 </p>
             </div>
         </div>

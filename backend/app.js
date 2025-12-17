@@ -50,7 +50,7 @@ app.use("/api/grupos", grupoRoutes);
 app.use("/api/reportes", reporteRoutes);
 app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/checkin", checkInRoutes);
-app.use("/api/missao", missaoRoutes);
+app.use("/api/missoes", missaoRoutes);
 
 /* ===============================
    ROOT
