@@ -17,10 +17,8 @@ import CaravanaPage from './pages/user/CaravanaPage.jsx';
 import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
 
-import { AuthContext, AuthProvider } from './context/AuthContext'; 
+import { AuthContext } from './context/AuthContext'; 
 import api from './services/api'; 
-
-import LogoCapiba from './assets/logo_capiba.png';
 
 // DADOS DE TESTE (MOCK DATA) 
 const MOCK_EVENTS_DATA = [
@@ -30,15 +28,13 @@ const MOCK_EVENTS_DATA = [
     { id: 4, nome: "Campeonato de Skate", data: "10/01/2024", local: "Pista da Pompéia", descricao: "Venha ver os melhores skatistas em ação.", imagem: "https://via.placeholder.com/400x200?text=Skate" },
 ];
 
-
 const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
     
     const [events, setEvents] = useState(MOCK_EVENTS_DATA); 
-    const [loadingEvents, setLoadingEvents] = useState(false); 
-
-    // ESTADO GLOBAL DAS CARAVANAS ---
+    
+    // ESTADO GLOBAL DAS CARAVANAS
     const [caravanas, setCaravanas] = useState([
         { id: 1, nome: "Caravana do Rock", evento: "Show de Rock Nacional", data: "15/11", local: "Allianz Parque", link: "app.com/c/rock", membrosCount: 15, souDono: true },
         { id: 2, nome: "Busão do Jazz", evento: "Festival de Jazz", data: "20/11", local: "Parque Ibirapuera", link: "app.com/c/jazz", membrosCount: 42, souDono: false },
@@ -58,7 +54,6 @@ const App = () => {
         setCaravanas([caravanaCompleta, ...caravanas]);
         window.location.hash = '#/perfil/caravana'; 
     };
-    // -------------------------------------
 
     // useEffect para lidar com mudanças de hash
     useEffect(() => {
@@ -81,12 +76,10 @@ const App = () => {
         return <div className="text-center p-20 text-xl">Carregando autenticação...</div>;
     }
 
-    // Se não estiver autenticado E não for login E não for registrar, redireciona para login.
     if (!authenticated && mainRoute !== 'login' && mainRoute !== 'registrar') { 
         window.location.hash = '#/login';
         return <LoginPage />;
     }
-    // ------------------------------------------
 
     const renderPage = () => {
         
@@ -95,23 +88,25 @@ const App = () => {
             return <RegisterPage />;
         }
 
-        // 2. ROTA DE LOGIN OU VAZIA (Incluindo #/login/criar como fallback)
+        // 2. ROTA DE LOGIN
         if (mainRoute === 'login' || mainRoute === '') {
             const subRoute = routeParts[1];
-
-            if (subRoute === 'criar') { 
-                return <RegisterPage />;
-            }
-            
-            // Retorna o LoginPage padrão
+            if (subRoute === 'criar') return <RegisterPage />;
             return <LoginPage />;
         }
         
-        // --- ROTAS AUTENTICADAS (ABAixo desta linha o usuário é considerado autenticado) ---
+        // --- ROTAS AUTENTICADAS ---
+
+        // Rota de Ranking (Global ou Competição)
+        if (mainRoute === 'ranking') {
+            const competitionId = routeParts[1]; // Ex: #/ranking/123 -> competitionId = 123
+            return <RankingPage competitionId={competitionId} />;
+        }
 
         if (mainRoute === 'perfil') {
             const subRoute = routeParts[1];
             
+            // Mantendo compatibilidade com rota antiga
             if (subRoute === 'ranking') {
                 return <RankingPage />;
             }
@@ -150,26 +145,23 @@ const App = () => {
             return <UserPage />; 
         }
 
-        // Rota: detalhes de Evento (ex: #/eventos/1)
+        // Rota: detalhes de Evento
         if (mainRoute === 'eventos' && routeParts.length > 1) {
             const eventId = parseInt(routeParts[1]); 
             const event = events.find(e => e.id === eventId); 
             
-            if (!event) {
-                return <div className="text-center p-4">Evento não encontrado ou ainda carregando.</div>;
-            }
+            if (!event) return <div className="text-center p-4">Evento não encontrado.</div>;
             return <EventDetailPage event={event} onBack={() => window.location.hash = '#/eventos'} />;
         }
 
         switch (mainRoute) {
             case 'eventos': return <EventPage />; 
             case 'capiba': return <CheckInPage />;
-            case 'status':  return <StatusPage />;
+            case 'status':  return <StatusPage />;
             default: return <EventPage />;
         }
     };
 
-    // Use MainLayout se não for uma rota de autenticação (login, registrar, ou vazia)
     const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar' && mainRoute !== ''; 
 
     return (
