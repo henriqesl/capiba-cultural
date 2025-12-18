@@ -71,12 +71,18 @@ const EventPage = () => {
         fetchEventos();
     }, [selectedMonth, activeTab]); 
 
-    // Função de formatação de horário (ÚNICA VERSÃO)
     const getHorarioEvento = (evento, isReminderMode) => {
+        // Criamos o objeto de data. O JS vai entender o fuso -03:00 que enviamos.
         const dataObj = new Date(evento.data);
-        const hora = evento.horario || dataObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         
-        // Se for modo lembrete, mostra a DATA junto com a hora
+        // Se não houver campo 'horario' separado no DB, usamos o toLocaleTimeString
+        // 'pt-BR' garante o formato 24h correto
+        const hora = evento.horario || dataObj.toLocaleTimeString('pt-BR', {
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false 
+        });
+        
         if (isReminderMode) {
             const dia = dataObj.getDate();
             const mes = dataObj.toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase().replace('.', '');
