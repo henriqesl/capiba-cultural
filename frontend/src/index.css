@@ -36,3 +36,13 @@ html, body {
   overflow-x: hidden;
   overscroll-behavior-y: none;
 }
+
+.home-carousel .carousel-item {
+    height: 200px; /* Altura reduzida para a Home (era +/- 300px) */
+}
+
+@media (min-width: 768px) {
+    .home-carousel .carousel-item {
+        height: 250px; /* Um pouco maior em tablets/PC */
+    }
+}
