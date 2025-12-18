@@ -68,7 +68,7 @@ const App = () => {
 
         // 3. Rotas de Detalhes de Lugares e Eventos
         if (mainRoute === 'locais' && subRoute) {
-            return <PlaceDetailPage placeId={subRoute} onBack={() => window.location.hash = '#/home'} />;
+                return <PlaceDetailPage placeId={subRoute} onBack={() => window.history.back()} />;
         }
         if (mainRoute === 'eventos' && subRoute) {
             return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/home'} />;

@@ -35,7 +35,7 @@ const SpotCard = ({ spot }) => {
                 <div className="flex items-center gap-3 mt-2">
                     <div className="flex items-center gap-1 text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded-lg border border-green-100">
                         <Star className="w-3.5 h-3.5 fill-green-500" />
-                        <span>+{spot.pontos || 100} CAPIBAS</span>
+                        <span>+{spot.moedasCapibasDestribuidas ?? 100} CAPIBAS</span>
                     </div>
                 </div>
             </div>

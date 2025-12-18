@@ -32,6 +32,19 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
         window.open(url, '_blank');
     };
 
+    const handleBackAction = () => {
+        if (onBack) {
+                onBack(); // Se estiver aberto como um modal/overlay
+            } else {
+                window.history.back(); // Se veio da Agenda, do Mapa ou do Check-in Oficial, ele volta exatamente para lá
+            }
+        };
+
+        // E no botão de voltar da sua UI, troquei o <Link> ou a rota fixa por:
+        <button onClick={handleBackAction} className="...">
+            <ArrowLeft className="w-6 h-6" />
+        </button>
+
     if (showScanner) return <ScannerScreen onBack={() => setShowScanner(false)} onScanResult={() => window.location.hash = '#/status'} />;
     if (loading) return <div className="h-screen flex items-center justify-center font-black text-purple-600 uppercase italic tracking-tighter">Carregando...</div>;
     if (!placeData) return <div className="p-10 text-center font-bold text-gray-400 font-sans">Local não encontrado.</div>;
@@ -58,7 +71,7 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                     <div className="flex justify-end mb-6">
                         <div className="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-2xl border border-green-200">
                             <Star className="w-4 h-4 text-green-600 fill-current" />
-                            <span className="text-green-700 font-black text-xs">+{placeData.pontos || 100} CAPIBAS</span>
+                            <span className="text-green-700 font-black text-xs">+{placeData.moedasCapibasDestribuidas ?? 100} CAPIBAS</span>
                         </div>
                     </div>
 
