@@ -1,19 +1,16 @@
-const MissaoService = require('../services/MissaoService');
+const MissaoService = require("../services/MissaoService");
 
 class MissaoController {
   constructor() {
     this.missaoService = new MissaoService();
   }
 
+  // Busca status das missões (App)
   async getStatusUsuario(req, res) {
     try {
-      // Pega ID dos Params (/1) OU da Query (?usuarioId=1)
       const userId = Number(req.params.userId) || Number(req.query.usuarioId);
 
-      console.log(`🔍 Buscando missões para UserID: ${userId}`);
-
       if (!userId || isNaN(userId)) {
-        console.log("⚠️ ID não fornecido. Retornando lista vazia.");
         return res.json([]); 
       }
 
@@ -26,8 +23,25 @@ class MissaoController {
     }
   }
 
+  async criar(req, res) {
+    try {
+        console.log("Tentando criar missão:", req.body); // Log para debug
+        const missao = await this.missaoService.criarMissao(req.body);
+        return res.status(201).json(missao);
+    } catch (error) {
+        console.error("ERRO NO BACKEND:", error); // Isso vai mostrar o erro real no terminal
+        
+        // Verifica se é erro de duplicidade do Prisma (P2002)
+        if (error.code === 'P2002') {
+            return res.status(400).json({ erro: "Já existe uma missão com este título." });
+        }
+        
+        return res.status(400).json({ erro: error.message });
+    }
+  }
+
   async atualizarStatus(req, res) {
-    res.status(200).json({ ok: true });
+     return res.status(200).json({ msg: "Atualização é automática via check-in." });
   }
 }
 
