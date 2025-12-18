@@ -53,7 +53,7 @@ class UsuarioService {
       { expiresIn: "8h" },
     );
 
-    return { token, usuario: { id: usuario.id, email: usuario.email, nome: usuario.nome } };
+    return { token, usuario: { id: usuario.id, email: usuario.email } };
   }
 
   async listarUsuarios() {
