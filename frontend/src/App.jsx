@@ -13,6 +13,7 @@ import UserPage from './pages/user/UserPage.jsx';
 import CaravanaPage from './pages/user/CaravanaPage.jsx';
 import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
+import AdminPage from './pages/AdminPage.jsx'; // 🟢 Nova importação
 import { AuthContext } from './context/AuthContext'; 
 
 const App = () => {
@@ -33,7 +34,7 @@ const App = () => {
     // Tratamento de Strings de Rota
     const route = currentPath.replace('#/', '').replace('#', '');
     const routeParts = route.split('/');
-    const mainRoute = routeParts[0];   // Ex: 'perfil'
+    const mainRoute = routeParts[0];   // Ex: 'perfil', 'admin'
     const subRoute = routeParts[1];    // Ex: 'caravana'
     const actionRoute = routeParts[2]; // Ex: 'novo' ou ID
 
@@ -59,7 +60,12 @@ const App = () => {
         if (mainRoute === 'registrar') return <RegisterPage />;
         if (mainRoute === 'login') return <LoginPage />;
         
-        // 2. Rotas de Detalhes de Lugares e Eventos
+        // 🟢 2. Rota Admin
+        if (mainRoute === 'admin') {
+            return <AdminPage />;
+        }
+
+        // 3. Rotas de Detalhes de Lugares e Eventos
         if (mainRoute === 'locais' && subRoute) {
             return <PlaceDetailPage placeId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
         }
@@ -67,26 +73,19 @@ const App = () => {
             return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
         }
 
-        // 3. HIERARQUIA DO PERFIL (Onde estava o erro)
+        // 4. HIERARQUIA DO PERFIL
         if (mainRoute === 'perfil') {
-            // Se for #/perfil/ranking
             if (subRoute === 'ranking') return <RankingPage />;
-
-            // Se for #/perfil/editar
             if (subRoute === 'editar') return <ProfilePage />;
-
-            // Se for #/perfil/caravana/...
             if (subRoute === 'caravana') {
                 if (actionRoute === 'novo') return <CreateCaravanaPage />;
                 if (actionRoute) return <CaravanaDetailsPage caravanaId={actionRoute} />;
-                return <CaravanaPage />; // Lista de caravanas
+                return <CaravanaPage />; 
             }
-
-            // Caso seja apenas #/perfil
             return <UserPage />;
         }
 
-        // 4. Outras Rotas do Menu Principal
+        // 5. Outras Rotas do Menu Principal
         if (mainRoute === 'ranking') return <RankingPage />;
         if (mainRoute === 'capiba') return <CheckInPage />;
         if (mainRoute === 'status') return <StatusPage />;
@@ -95,7 +94,6 @@ const App = () => {
         return <EventPage />;
     };
 
-    // Decide se usa o Layout com a barra de navegação inferior
     const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar'; 
 
     return useMainLayout ? (
