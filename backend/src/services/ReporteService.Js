@@ -81,20 +81,8 @@ class ReporteService {
 
     async listarPorEvento(eventoId) {
         return await prisma.reporteEvento.findMany({
-            where: { eventoId: Number(eventoId) },
-            include: { 
-                evento: true, 
-                confirmadores: true,
-                // Aqui é onde usamos o reportanteId para trazer os dados do autor
-                reportante: {
-                    select: {
-                        id: true,
-                        nome: true,
-                        fotoUrl: true // Certifique-se que este campo existe no seu schema de usuário
-                    }
-                }
-            },
-            orderBy: { dataReporte: 'asc' } // O primeiro reporte (menor data) é o criador
+            where: { eventoId },
+            include: { evento: true, confirmadores: true },
         });
     }
 

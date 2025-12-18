@@ -2,21 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { ArrowLeft, Calendar, MapPin, Share2, Info, Clock, Bell, CheckCircle } from 'lucide-react';
 import api from '../../services/api';
 
-// 1. Função para tratar a URL da imagem (deve apontar para o seu backend)
-const getFullImageUrl = (relativePath) => {
-    if (!relativePath) return "https://images.unsplash.com/photo-1492684223066-81342ee5ff30"; 
-    if (relativePath.startsWith('http')) return relativePath;
-    const path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
-    return `http://localhost:3000${path}`; 
-};
-
 const EventDetailPage = ({ event, eventId, onBack }) => {
+    // Se não tiver onBack (caso abra direto), define navegação manual
     const handleBack = onBack || (() => window.location.hash = '#/eventos');
 
     const [eventData, setEventData] = useState(event);
     const [loading, setLoading] = useState(!event); 
     const [hasReminder, setHasReminder] = useState(false);
 
+    // 1. Carrega evento se necessário
     useEffect(() => {
         if (!event && eventId) {
             const fetchEvent = async () => {
@@ -33,6 +27,7 @@ const EventDetailPage = ({ event, eventId, onBack }) => {
         }
     }, [event, eventId]);
 
+    // 2. Verifica se já existe lembrete salvo
     useEffect(() => {
         if (eventData?.id) {
             const savedReminders = JSON.parse(localStorage.getItem('capiba_reminders') || '[]');
@@ -40,20 +35,29 @@ const EventDetailPage = ({ event, eventId, onBack }) => {
         }
     }, [eventData]);
 
+    // 3. Alternar Lembrete
     const toggleReminder = () => {
         if (!eventData?.id) return;
+
         const savedReminders = JSON.parse(localStorage.getItem('capiba_reminders') || '[]');
         let newReminders;
 
         if (hasReminder) {
+            // Remover
             newReminders = savedReminders.filter(id => id !== eventData.id);
             alert("Lembrete removido.");
         } else {
+            // Adicionar
             newReminders = [...savedReminders, eventData.id];
+            
+            // Feedback e navegação opcional
             if (confirm("✅ Lembrete definido!\nDeseja ver sua lista de lembretes agora?")) {
                 handleBack(); 
+                // Pequeno hack para garantir que a EventPage recarregue na aba certa, 
+                // idealmente seria via estado global, mas aqui confiamos no localStorage
             }
         }
+
         localStorage.setItem('capiba_reminders', JSON.stringify(newReminders));
         setHasReminder(!hasReminder);
     };
@@ -79,12 +83,13 @@ const EventDetailPage = ({ event, eventId, onBack }) => {
 
     return (
         <div className="min-h-screen bg-gray-100 md:py-10 flex justify-center items-start">
+            
             <div className="w-full max-w-3xl bg-white md:rounded-3xl shadow-xl overflow-hidden relative min-h-screen md:min-h-fit flex flex-col">
                 
-                {/* Header Imagem - CORRIGIDO AQUI */}
+                {/* Header Imagem */}
                 <div className="relative h-72 md:h-96 w-full group">
                     <img 
-                        src={getFullImageUrl(eventData.imagemUrl)} 
+                        src={eventData.imagemUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30"} 
                         alt={eventData.nome} 
                         className="w-full h-full object-cover"
                     />
@@ -151,7 +156,7 @@ const EventDetailPage = ({ event, eventId, onBack }) => {
                     </div>
                 </div>
 
-                {/* Botão de Lembrete */}
+                {/* BOTÃO DE LEMBRETE */}
                 <div className="p-6 md:p-10 border-t border-gray-100 bg-gray-50/50 flex flex-col md:flex-row gap-4 items-center justify-between">
                     <div className="hidden md:block">
                         <p className="text-sm text-gray-500">Não quer esquecer?</p>
@@ -180,6 +185,7 @@ const EventDetailPage = ({ event, eventId, onBack }) => {
                         )}
                     </button>
                 </div>
+
             </div>
         </div>
     );

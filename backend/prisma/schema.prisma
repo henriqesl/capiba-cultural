@@ -45,7 +45,7 @@ model Evento {
   descricao                 String
   moedasCapibasDestribuidas Float           @default(0)
   pequenoPorte              Boolean         @default(true)
-  reportadoPorUsuario       Boolean         @default(false)
+  reportadoPorUsuario       Boolean         @default(true)
   faixaEtaria               Int             @default(0)
   imagemUrl                 String?
   precisaInscricao          Boolean         @default(false)

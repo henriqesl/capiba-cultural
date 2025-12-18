@@ -6,13 +6,26 @@ import api from '../../services/api';
 import { Bell, Calendar as CalendarIcon, MapPin } from 'lucide-react';
 
 const getFullImageUrl = (relativePath) => {
-    if (!relativePath) return undefined; 
-    const path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
-    return `http://localhost:3000${path}`; 
+    if (!relativePath) return undefined; 
+    const path = relativePath.startsWith('/') ? relativePath : `/${relativePath}`;
+    return `http://localhost:3000${path}`; 
 };
 
-const formatDateForApi = (date) => date.toISOString().split('T')[0];
-const formatDateDisplay = (date) => date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+// Gera 12 meses
+const generateNextMonths = () => {
+    const months = [];
+    const today = new Date();
+    for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+        months.push({
+            label: d.toLocaleDateString('pt-BR', { month: 'short' }).toUpperCase().replace('.', ''),
+            fullLabel: d.toLocaleDateString('pt-BR', { month: 'long' }),
+            year: d.getFullYear(),
+            monthNum: d.getMonth() + 1
+        });
+    }
+    return months;
+};
 
 const EventPage = () => {
     const [monthsList] = useState(generateNextMonths());

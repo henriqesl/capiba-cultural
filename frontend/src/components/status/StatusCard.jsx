@@ -1,14 +1,14 @@
 import React from 'react';
 
 const StatusCard = ({ 
-    variant = 'mission', 
-    title = "Missão", 
-    description = "", 
-    progress = 0,   // Valor padrão 0
-    total = 5,      // Valor padrão 1 para evitar divisão por zero
-    reward, 
-    isUnlocked = false,
-    isComplete = false 
+    variant = 'mission', 
+    title, 
+    description, 
+    progress, 
+    total, 
+    reward, 
+    isUnlocked = false,
+    isComplete = false // NOVO: Recebe a informação de conclusão
 }) => {
   
     const isMissionCompleted = progress >= total || isComplete;

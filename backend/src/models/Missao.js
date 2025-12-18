@@ -7,24 +7,9 @@ class Missao {
   }
 
   async statusUsuario(usuarioId) {
-    const resultados = await prisma.statusUsuario.findMany({
-      where: { usuarioId: Number(usuarioId) },
-      include: {
-        missao: true, // FAZ O JOIN COM A TABELA MISSAO
-      },
+    return prisma.statusUsuario.findMany({
+      where: { usuarioId },
     });
-
-    // Mapeamos para "achatar" o objeto e facilitar a vida do React
-    return resultados.map(item => ({
-      id: item.id,
-      progressoAtual: item.progressoAtual,
-      concluida: item.concluida,
-      // Pegamos os dados de dentro do objeto 'missao'
-      titulo: item.missao.titulo,
-      descricao: item.missao.descricao,
-      recompensa: item.missao.recompensaCapibas,
-      meta: item.missao.valorRequisito,
-    }));
   }
 
   async atualizarStatus(missaoId, usuarioId, progressoAtual, isConcluida) {
