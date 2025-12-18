@@ -96,13 +96,24 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                                         <p className="text-sm font-bold">{placeData.horario || "17:00"}</p>
                                     </div>
                                 </div>
-                                <div className="p-5 bg-gray-50 rounded-3xl border border-gray-100 flex items-center gap-4">
-                                    <Globe className="w-5 h-5 text-blue-600" />
-                                    <div>
-                                        <p className="text-[9px] font-black text-gray-400 uppercase">Site Oficial</p>
-                                        <p className="text-sm font-bold truncate">Acessar link</p>
+                                    <div className="p-5 bg-gray-50 rounded-3xl border border-gray-100 flex items-center gap-4 overflow-hidden">
+                                        <Globe className="w-5 h-5 text-blue-600 shrink-0" />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider">Site Oficial</p>
+                                            {placeData.preco ? (
+                                                <a 
+                                                    href={placeData.preco.startsWith('http') ? placeData.preco : `https://${placeData.preco}`}
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="text-sm font-bold text-blue-600 hover:underline block truncate"
+                                                >
+                                                    {placeData.preco.replace(/^https?:\/\//, '')}
+                                                </a>
+                                            ) : (
+                                                <p className="text-sm font-bold text-gray-400">Não disponível</p>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
 

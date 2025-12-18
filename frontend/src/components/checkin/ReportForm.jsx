@@ -189,6 +189,7 @@ const ReportForm = ({ onBack }) => {
             formData.append('descricao', "Evento reportado pela comunidade em tempo real.");
             formData.append('precisaInscricao', false);
             formData.append('ativo', true);
+            formData.append('reportadoPorUsuario', 'true'); // <--- ADICIONE ESTA LINHA
             
             if (finalLatitude !== null) formData.append('latitude', finalLatitude);
             if (finalLongitude !== null) formData.append('longitude', finalLongitude);
