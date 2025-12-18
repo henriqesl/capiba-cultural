@@ -13,16 +13,16 @@ import UserPage from './pages/user/UserPage.jsx';
 import CaravanaPage from './pages/user/CaravanaPage.jsx';
 import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
-import AdminPage from './pages/AdminPage.jsx'; 
+import AdminPage from './pages/AdminPage.jsx'; // 🟢 Nova importação
 import { AuthContext } from './context/AuthContext'; 
 
 const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
+    const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
 
     const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
 
     useEffect(() => {
-    
         const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
         window.addEventListener('hashchange', handleHashChange);
         window.addEventListener('load', handleHashChange); 
@@ -64,13 +64,8 @@ const App = () => {
         if (mainRoute === 'locais' && subRoute) {
                 return <PlaceDetailPage placeId={subRoute} onBack={() => window.history.back()} />;
         }
-        
-
-        if (mainRoute === 'eventos') {
-            if (subRoute) {
-                return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
-            }
-            return <EventPage />; 
+        if (mainRoute === 'eventos' && subRoute) {
+            return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
         }
 
         if (mainRoute === 'perfil') {
@@ -88,7 +83,7 @@ const App = () => {
         if (mainRoute === 'capiba') return <CheckInPage />;
         if (mainRoute === 'status') return <StatusPage />;
 
-        // 🟢 MUDANÇA: Retorno padrão é EventPage
+        // Rota Default (Dashboard/Mapa)
         return <EventPage />;
     };
 
