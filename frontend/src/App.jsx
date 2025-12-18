@@ -14,15 +14,16 @@ import CaravanaPage from './pages/user/CaravanaPage.jsx';
 import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
 import AdminPage from './pages/AdminPage.jsx'; // 🟢 Nova importação
+import HomePage from './pages/home/HomePage.jsx';
 import { AuthContext } from './context/AuthContext'; 
 
 const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
-    const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
+    const [currentPath, setCurrentPath] = useState(window.location.hash || '#/home');
 
     // Listener para mudanças de rota via Hash
     useEffect(() => {
-        const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
+        const handleHashChange = () => setCurrentPath(window.location.hash || '#/home');
         window.addEventListener('hashchange', handleHashChange);
         window.addEventListener('load', handleHashChange); 
         return () => {
@@ -67,10 +68,10 @@ const App = () => {
 
         // 3. Rotas de Detalhes de Lugares e Eventos
         if (mainRoute === 'locais' && subRoute) {
-            return <PlaceDetailPage placeId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
+            return <PlaceDetailPage placeId={subRoute} onBack={() => window.location.hash = '#/home'} />;
         }
         if (mainRoute === 'eventos' && subRoute) {
-            return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/eventos'} />;
+            return <EventDetailPage eventId={subRoute} onBack={() => window.location.hash = '#/home'} />;
         }
 
         // 4. HIERARQUIA DO PERFIL
@@ -90,8 +91,10 @@ const App = () => {
         if (mainRoute === 'capiba') return <CheckInPage />;
         if (mainRoute === 'status') return <StatusPage />;
 
+        if (mainRoute === 'home') return <HomePage />;
+
         // Rota Default (Dashboard/Mapa)
-        return <EventPage />;
+        return <HomePage />;
     };
 
     const useMainLayout = mainRoute !== 'login' && mainRoute !== 'registrar'; 
