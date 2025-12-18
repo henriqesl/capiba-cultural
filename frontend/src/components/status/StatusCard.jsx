@@ -4,8 +4,8 @@ const StatusCard = ({
     variant = 'mission', 
     title, 
     description, 
-    progress, 
-    total, 
+    progress = 0, 
+    total = 5, 
     reward, 
     isUnlocked = false,
     isComplete = false // NOVO: Recebe a informação de conclusão
