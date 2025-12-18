@@ -24,7 +24,7 @@ class EventoController {
             data,
             descricao,
             pequenoPorte = 'false', // Definindo default como string para consistência
-            reportadoPorUsuario = 'false',
+            reportadoPorUsuario ='true',
             aoVivo = 'false',
             moedasCapibasDestribuidas = '0', // Usando '0' como string
             ativo = 'true',

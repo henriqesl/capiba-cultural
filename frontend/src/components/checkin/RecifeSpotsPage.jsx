@@ -1,136 +1,162 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MapPin, Landmark, ChevronRight, Star, Sparkles, Map } from 'lucide-react';
-import api from '../../services/api';
+import React from 'react';
+import { ArrowLeft, MapPin, Landmark, BookOpen, Utensils, Zap, ChevronRight } from 'lucide-react';
 
-const API_URL = "http://localhost:3000";
+// Importação das imagens conforme sua estrutura de pastas
+import RicardoBrennandImg from '../../assets/ricardo_brennand.png'; 
+import TorreMalakoffImg from '../../assets/torre_malakoff.jpg';
+import CaisDoSertaoImg from '../../assets/cais_sertao.png';
+import EmbaixadaBonecosGigantesImg from '../../assets/embaixada_bonecos.png';
+import MercadoBoaVistaImg from '../../assets/mercado.png';
 
-const SpotCard = ({ spot }) => {
+const culturalSpots = [
+    {
+        id: 1,
+        title: "Instituto Ricardo Brennand (IRB)",
+        icon: Landmark,
+        value: "+100 Capibas",
+        description: "Visite o acervo de arte e história, incluindo a coleção de armaria.",
+        imageTag: RicardoBrennandImg 
+    },
+    {
+        id: 2,
+        title: "Torre Malakoff",
+        icon: MapPin,
+        value: "+50 Capibas",
+        description: "Observatório Cultural e sede de exposições no coração do Bairro do Recife.",
+        imageTag: TorreMalakoffImg
+    },
+    {
+        id: 3,
+        title: "Cais do Sertão",
+        icon: BookOpen,
+        value: "+75 Capibas",
+        description: "Museu interativo dedicado à cultura do Sertão nordestino e Luiz Gonzaga.",
+        imageTag: CaisDoSertaoImg
+    },
+    {
+        id: 4,
+        title: "Embaixada dos Bonecos Gigantes",
+        icon: Zap,
+        value: "+40 Capibas",
+        description: "Confira de perto os famosos bonecos do Carnaval de Olinda/Recife.",
+        imageTag: EmbaixadaBonecosGigantesImg
+    },
+    {
+        id: 5,
+        title: "Mercado da Boa Vista",
+        icon: Utensils,
+        value: "+30 Capibas",
+        description: "Local de check-in gastronômico com sabores locais.",
+        imageTag: MercadoBoaVistaImg
+    },
+];
+
+// Componente visual para cada local
+const SpotCard = ({ id, icon: Icon, title, value, description, imageTag }) => {
+    
+    // Função para navegar para a página de detalhes
     const handleNavigation = () => {
-        window.location.hash = `#/locais/${spot.id}/spots`;
+        window.location.hash = `#/locais/${id}/spots`;
     };
 
     return (
         <div 
             onClick={handleNavigation}
-            className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-4 flex items-center gap-5 transition-all hover:shadow-xl hover:shadow-purple-200/40 hover:scale-[1.02] cursor-pointer group mb-2"
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-4 transition-all hover:shadow-md hover:scale-[1.01] cursor-pointer group"
         >
-            <div className="relative flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden shadow-md bg-gray-50 border-2 border-white">
-                <img 
-                    src={spot.imagemUrl ? `${API_URL}${spot.imagemUrl.startsWith('/') ? '' : '/'}${spot.imagemUrl}` : "https://images.unsplash.com/photo-1518998053502-51908d17ce3b"} 
-                    alt={spot.nome} 
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700" 
-                />
-            </div>
-            
-            <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider border border-blue-100 flex items-center gap-1">
-                        <Landmark className="w-2.5 h-2.5" /> Oficial
-                    </span>
+            {/* 1. LADO ESQUERDO: IMAGEM */}
+            {imageTag && (
+                <div className="flex-shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden shadow-inner bg-gray-100">
+                    <img 
+                        src={imageTag} 
+                        alt={`Foto de ${title}`} 
+                        className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500" 
+                    />
                 </div>
-                <h3 className="text-lg font-extrabold text-gray-900 truncate leading-tight group-hover:text-purple-600 transition-colors">
-                    {spot.nome}
-                </h3>
-                
-                <div className="flex items-center gap-3 mt-2">
-                    <div className="flex items-center gap-1 text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded-lg border border-green-100">
-                        <Star className="w-3.5 h-3.5 fill-green-500" />
-                        <span>+{spot.pontos || 100} CAPIBAS</span>
+            )}
+            
+            {/* 2. LADO DIREITO: TEXTO E INFORMAÇÕES */}
+            <div className="flex-1 flex items-start gap-3 min-w-0">
+                <div className="p-2.5 bg-purple-50 rounded-xl flex-shrink-0 mt-1">
+                    <Icon className="w-5 h-5 text-purple-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 truncate group-hover:text-purple-600 transition-colors">
+                        {title}
+                    </h3>
+                    <div className="flex items-center gap-2 mt-0.5 mb-1">
+                        <span className="text-xs font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
+                            {value}
+                        </span>
                     </div>
+                    <p className="text-gray-500 text-xs sm:text-sm line-clamp-2 leading-snug">
+                        {description}
+                    </p>
                 </div>
-            </div>
-            
-            <div className="bg-gray-50 p-2 rounded-full text-gray-300 group-hover:bg-purple-600 group-hover:text-white transition-all">
-                <ChevronRight className="w-5 h-5" />
+                
+                {/* Indicador de clique */}
+                <div className="self-center text-gray-300 group-hover:text-purple-400 transition-colors px-2">
+                    <ChevronRight className="w-5 h-5" />
+                </div>
             </div>
         </div>
     );
 };
 
-const RecifeSpotsPage = () => {
-    const [spots, setSpots] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const loadSpots = async () => {
-            try {
-                const response = await api.get('/eventos'); 
-                
-                // FILTRO RESTRITIVO: Pega apenas o que NÃO é reporte de usuário
-                const oficiais = response.data.filter(spot => 
-                    spot.reportadoPorUsuario === false && 
-                    !spot.usuario_id // Garante que não tem um ID de usuário vinculado
-                );
-                
-                setSpots(oficiais);
-            } catch (error) {
-                console.error("Erro ao carregar locais:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadSpots();
-    }, []);
+// O componente principal
+const RecifeSpotsPage = ({ onBack }) => {
+    // Caso não venha onBack, volta para a home de eventos
+    const handleBack = onBack || (() => window.location.hash = '#/eventos');
 
     return (
-        <div className="w-full bg-[#FDFDFF] min-h-screen">
-            <div className="w-full bg-gradient-to-br from-purple-700 via-purple-800 to-indigo-900 pt-14 pb-24 px-6 flex flex-col items-center text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-5%] w-72 h-72 bg-purple-400/20 rounded-full blur-[80px]"></div>
-                    <div className="absolute bottom-[-10%] left-[-5%] w-72 h-72 bg-blue-400/20 rounded-full blur-[80px]"></div>
-                </div>
-
-                <div className="w-full max-w-4xl flex items-center justify-between mb-10 z-10">
+        <div className="w-full bg-gray-50 min-h-screen flex flex-col items-center">
+            
+            {/* Banner Superior Estilizado */}
+            <div className="w-full bg-purple-700 pt-12 pb-20 px-6 flex flex-col items-center text-center">
+                <div className="w-full max-w-4xl flex items-center mb-6">
                     <button 
-                        onClick={() => window.location.hash = '#/eventos'} 
-                        className="p-3 text-white bg-white/10 hover:bg-white/20 rounded-2xl backdrop-blur-md border border-white/20 transition-all shadow-lg"
+                        onClick={handleBack} 
+                        className="p-2.5 text-white hover:bg-white/20 transition-all bg-white/10 rounded-xl backdrop-blur-md border border-white/20"
                     >
-                        <ArrowLeft className="w-5 h-5" />
+                        <ArrowLeft className="w-6 h-6" />
                     </button>
-                    <div className="flex items-center gap-2 bg-yellow-400 px-4 py-2 rounded-2xl shadow-lg border-2 border-white animate-bounce-subtle">
-                        <Sparkles className="w-4 h-4 text-purple-900" />
-                        <span className="text-purple-900 font-black text-xs uppercase italic tracking-tighter">Capiba Cultural</span>
-                    </div>
                 </div>
-
-                <h1 className="text-4xl md:text-5xl font-black text-white mb-3 italic uppercase tracking-tighter z-10 drop-shadow-2xl">
-                    Check-in <span className="text-yellow-400">Oficial</span>
+                
+                <h1 className="text-3xl md:text-4xl font-black text-white mb-3">
+                    Check-in Cultural
                 </h1>
-                <p className="text-purple-100 text-sm max-w-xs opacity-90 z-10 leading-relaxed font-medium">
-                    Patrimônios históricos certificados para você colecionar pontos.
+                <p className="text-purple-100 text-sm md:text-base max-w-lg opacity-90 leading-relaxed">
+                    Explore os tesouros de Recife, registre sua visita e acumule <span className="font-bold text-white">Capibas</span> para trocar por recompensas!
                 </p>
             </div>
 
-            <main className="w-full max-w-2xl mx-auto px-6 -mt-12 pb-24 relative z-20">
-                {loading ? (
-                    <div className="bg-white rounded-[3rem] p-20 shadow-xl border border-gray-100 flex flex-col items-center">
-                        <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                        <p className="text-purple-600 font-black text-xs uppercase tracking-widest">Carregando...</p>
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-3">
-                        {spots.length > 0 ? (
-                            spots.map(spot => <SpotCard key={spot.id} spot={spot} />)
-                        ) : (
-                            <div className="bg-white rounded-[3rem] p-16 text-center shadow-lg border border-gray-100">
-                                <Landmark className="text-purple-100 w-16 h-16 mx-auto mb-4" />
-                                <h3 className="text-gray-900 font-black text-xl mb-2 uppercase italic tracking-tighter">Nenhum Local Oficial</h3>
-                                <p className="text-gray-400 text-sm">Estamos atualizando os pontos históricos.</p>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </main>
+            {/* Lista de Locais (Sobreposta ao banner) */}
+            <main className="w-full max-w-md md:max-w-3xl px-6 -mt-10 pb-20">
+                <div className="flex flex-col gap-4">
+                    {culturalSpots.map(spot => (
+                        <SpotCard
+                            key={spot.id}
+                            id={spot.id}
+                            icon={spot.icon}
+                            title={spot.title}
+                            value={spot.value}
+                            description={spot.description}
+                            imageTag={spot.imageTag}
+                        />
+                    ))}
+                </div>
 
-            <style>{`
-                @keyframes bounce-subtle {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-5px); }
-                }
-                .animate-bounce-subtle {
-                    animation: bounce-subtle 3s ease-in-out infinite;
-                }
-            `}</style>
+                {/* Info de Rodapé */}
+                <div className="mt-10 p-6 bg-white rounded-3xl border border-dashed border-gray-300 flex flex-col items-center text-center">
+                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                        <MapPin className="w-6 h-6 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 text-sm">
+                        Novos locais são adicionados toda semana.<br/>
+                        Mantenha seu GPS ligado ao visitar!
+                    </p>
+                </div>
+            </main>
         </div>
     );
 };
