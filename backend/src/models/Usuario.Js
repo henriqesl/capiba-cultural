@@ -5,11 +5,11 @@ class Usuario {
   async buscarId(id) {
     return await prisma.usuario.findUnique({
       where: { id: id },
-      include: { 
-        caravanas_membro: true, 
-        checkins: {             
-            include: { evento: true } 
-        }
+      include: {
+        caravanas_membro: true,
+        checkins: {
+          include: { evento: true },
+        },
       },
     });
   }
@@ -18,20 +18,20 @@ class Usuario {
     return await prisma.usuario.findUnique({
       where: { email: email },
       select: {
-          id: true,
-          nome: true,
-          email: true,
-          cpf: true,
-          senha: true, 
-          fotoUrl: true,
-          saldoMoedaCapiba: true,
-          dataCadastro: true,
-          dataNascimento: true,
-          cep: true,
-          endereco: true,
-          numero: true,
-          bairro: true
-        }
+        id: true,
+        nome: true,
+        email: true,
+        cpf: true,
+        senha: true,
+        fotoUrl: true,
+        saldoMoedaCapiba: true,
+        dataCadastro: true,
+        dataNascimento: true,
+        cep: true,
+        endereco: true,
+        numero: true,
+        bairro: true,
+      },
     });
   }
 
@@ -41,23 +41,34 @@ class Usuario {
     });
   }
 
-  async novoUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, imagemUrl) {
+  async novoUsuario(
+    nome,
+    email,
+    senha,
+    cpf,
+    dataNascimento,
+    cep,
+    endereco,
+    numero,
+    bairro,
+    imagemUrl,
+  ) {
     return await prisma.usuario.create({
       data: {
         nome,
         email,
         senha,
-        cpf,     
+        cpf,
         dataNascimento: dataNascimento ? new Date(dataNascimento) : null,
         cep,
         endereco,
         numero,
         bairro,
 
-        fotoUrl: imagemUrl, 
-        
+        fotoUrl: imagemUrl,
+
         saldoMoedaCapiba: 0,
-        dataCadastro: new Date()
+        dataCadastro: new Date(),
       },
     });
   }
@@ -90,7 +101,9 @@ class Usuario {
         endereco: dados.endereco,
         numero: dados.numero,
         bairro: dados.bairro,
-        dataNascimento: dados.dataNascimento ? new Date(dados.dataNascimento) : undefined,
+        dataNascimento: dados.dataNascimento
+          ? new Date(dados.dataNascimento)
+          : undefined,
 
         ...(dados.senha ? { senha: dados.senha } : {}),
       },

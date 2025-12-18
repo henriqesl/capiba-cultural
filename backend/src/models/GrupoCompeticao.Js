@@ -9,7 +9,7 @@ class GrupoCompeticao {
     dataFim,
     encerrado = false,
     pontuacaoTotal = 0,
-    participantesIds = []
+    participantesIds = [],
   ) {
     return await prisma.grupoCompeticao.create({
       data: {

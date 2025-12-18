@@ -2,7 +2,7 @@ import {
   __commonJS
 } from "./chunk-G3PMV62Z.js";
 
-// node_modules/mapbox-gl/dist/mapbox-gl.js
+
 var require_mapbox_gl = __commonJS({
   "node_modules/mapbox-gl/dist/mapbox-gl.js"(exports, module) {
     (function(global, factory) {
@@ -626,7 +626,7 @@ var require_mapbox_gl = __commonJS({
           Be && Fe(Be), Be = null, Ee = true;
         }, ze.onerror = function() {
           Te = true, Be = null;
-        }, ze.src = "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAQAAAAfQ//73v/+BiOh/AAA=");
+        }, ze.src = "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAQAAAAf
         const Ce = { Unknown: "Unknown", Style: "Style", Source: "Source", Tile: "Tile", Glyphs: "Glyphs", SpriteImage: "SpriteImage", SpriteJSON: "SpriteJSON", Iconset: "Iconset", Image: "Image", Model: "Model" };
         "function" == typeof Object.freeze && Object.freeze(Ce);
         class De extends Error {
@@ -3244,10 +3244,10 @@ var require_mapbox_gl = __commonJS({
           return { type: t2 };
         }
         function As(t2) {
-          if (t2 instanceof Ai) return /* @__PURE__ */ new Set([t2.key]);
-          let e2 = /* @__PURE__ */ new Set();
+          if (t2 instanceof Ai) return  new Set([t2.key]);
+          let e2 =  new Set();
           return t2.eachChild(((t3) => {
-            e2 = /* @__PURE__ */ new Set([...e2, ...As(t3)]);
+            e2 =  new Set([...e2, ...As(t3)]);
           })), e2;
         }
         function Is(t2) {
@@ -3291,7 +3291,7 @@ var require_mapbox_gl = __commonJS({
           if ("exponential" === s2) o2 = Ls;
           else if ("interval" === s2) o2 = Rs;
           else if ("categorical" === s2) {
-            o2 = Ds, a2 = /* @__PURE__ */ Object.create(null);
+            o2 = Ds, a2 =  Object.create(null);
             for (const e3 of t2.stops) a2[e3[0]] = e3[1];
             l2 = typeof t2.stops[0][0];
           } else {
@@ -3649,12 +3649,12 @@ var require_mapbox_gl = __commonJS({
           if ("object" == typeof t2) {
             const e2 = t2.$name || "Object";
             if ("Map" === e2) {
-              const e3 = t2.entries || [], r3 = /* @__PURE__ */ new Map();
+              const e3 = t2.entries || [], r3 =  new Map();
               for (let t3 = 0; t3 < e3.length; t3 += 2) r3.set(ro(e3[t3]), ro(e3[t3 + 1]));
               return r3;
             }
             if ("Set" === e2) {
-              const e3 = /* @__PURE__ */ new Set();
+              const e3 =  new Set();
               for (const r3 of Object.keys(t2)) "$name" !== r3 && e3.add(ro(t2[r3]));
               return e3;
             }
@@ -3741,7 +3741,7 @@ var require_mapbox_gl = __commonJS({
               }
               {
                 let r4 = t3;
-                return "string" == typeof t3 && "color" === e3.type && (r4 = lr.parse(t3)), { kind: "constant", configDependencies: /* @__PURE__ */ new Set(), isIndoorDependent: false, evaluate: () => r4 };
+                return "string" == typeof t3 && "color" === e3.type && (r4 = lr.parse(t3)), { kind: "constant", configDependencies:  new Set(), isIndoorDependent: false, evaluate: () => r4 };
               }
             })(void 0 === e2 ? t2.specification.default : e2, t2.specification, r2, n2, i2);
           }
@@ -3768,13 +3768,13 @@ var require_mapbox_gl = __commonJS({
         }
         class Po {
           constructor(t2, e2, r2, n2) {
-            this._properties = t2, this._values = Object.create(t2.defaultTransitionablePropertyValues), this._scope = e2, this._options = r2, this._iconImageUseTheme = n2, this._isIndoorDependent = false, this.configDependencies = /* @__PURE__ */ new Set();
+            this._properties = t2, this._values = Object.create(t2.defaultTransitionablePropertyValues), this._scope = e2, this._options = r2, this._iconImageUseTheme = n2, this._isIndoorDependent = false, this.configDependencies =  new Set();
           }
           getValue(t2) {
             return Gt(this._values[t2].value.value);
           }
           setValue(t2, e2) {
-            this._values.hasOwnProperty(t2) || (this._values[t2] = new So(this._values[t2].property, this._scope, this._options, this._iconImageUseTheme)), this._values[t2].value = new Mo(this._values[t2].property, null === e2 ? void 0 : Gt(e2), this._scope, this._options, this._iconImageUseTheme), this._values[t2].value.expression.configDependencies && (this.configDependencies = /* @__PURE__ */ new Set([...this.configDependencies, ...this._values[t2].value.expression.configDependencies]), this._isIndoorDependent = this._isIndoorDependent || this._values[t2].value.isIndoorDependent());
+            this._values.hasOwnProperty(t2) || (this._values[t2] = new So(this._values[t2].property, this._scope, this._options, this._iconImageUseTheme)), this._values[t2].value = new Mo(this._values[t2].property, null === e2 ? void 0 : Gt(e2), this._scope, this._options, this._iconImageUseTheme), this._values[t2].value.expression.configDependencies && (this.configDependencies =  new Set([...this.configDependencies, ...this._values[t2].value.expression.configDependencies]), this._isIndoorDependent = this._isIndoorDependent || this._values[t2].value.isIndoorDependent());
           }
           setTransitionOrValue(t2, e2) {
             e2 && (this._options = e2);
@@ -3852,13 +3852,13 @@ var require_mapbox_gl = __commonJS({
         }
         class zo {
           constructor(t2, e2, r2, n2) {
-            this._properties = t2, this._values = Object.create(t2.defaultPropertyValues), this._scope = e2, this._options = r2, this._iconImageUseTheme = n2, this._isIndoorDependent = false, this.configDependencies = /* @__PURE__ */ new Set();
+            this._properties = t2, this._values = Object.create(t2.defaultPropertyValues), this._scope = e2, this._options = r2, this._iconImageUseTheme = n2, this._isIndoorDependent = false, this.configDependencies =  new Set();
           }
           getValue(t2) {
             return Gt(this._values[t2].value);
           }
           setValue(t2, e2) {
-            this._values[t2] = new Mo(this._values[t2].property, null === e2 ? void 0 : Gt(e2), this._scope, this._options, this._iconImageUseTheme), this._values[t2].expression.configDependencies && (this.configDependencies = /* @__PURE__ */ new Set([...this.configDependencies, ...this._values[t2].expression.configDependencies]), this._isIndoorDependent = this._isIndoorDependent || this._values[t2].isIndoorDependent());
+            this._values[t2] = new Mo(this._values[t2].property, null === e2 ? void 0 : Gt(e2), this._scope, this._options, this._iconImageUseTheme), this._values[t2].expression.configDependencies && (this.configDependencies =  new Set([...this.configDependencies, ...this._values[t2].expression.configDependencies]), this._isIndoorDependent = this._isIndoorDependent || this._values[t2].isIndoorDependent());
           }
           serialize() {
             const t2 = {};
@@ -4061,7 +4061,7 @@ ${JSON.stringify(i2, null, 2)}
           for (let e3 = 1; e3 < t2.length; e3++) if (Go(t2[e3])) return true;
           return false;
         }
-        const qo = /* @__PURE__ */ new Set(["in", "==", "!=", ">", ">=", "<", "<=", "to-boolean"]);
+        const qo =  new Set(["in", "==", "!=", ">", ">=", "<", "<=", "to-boolean"]);
         function Ho(t2, e2) {
           return t2 < e2 ? -1 : t2 > e2 ? 1 : 0;
         }
@@ -4162,20 +4162,20 @@ ${JSON.stringify(i2, null, 2)}
             return void 0 !== this.getUnevaluatedProperty(t2).value;
           }
         }
-        const ia = "-transition", sa = /* @__PURE__ */ new Set(["fill", "line", "background", "hillshade", "raster"]);
+        const ia = "-transition", sa =  new Set(["fill", "line", "background", "hillshade", "raster"]);
         class oa extends nr {
           constructor(t2, e2, r2, n2, i2, s2) {
-            if (super(), this.id = t2.id, this.fqid = ta(this.id, r2), this.type = t2.type, this.scope = r2, this.lut = n2, this.options = i2, this.iconImageUseTheme = s2, this.appearances = new Array(), this._featureFilter = { filter: () => true, needGeometry: false, needFeature: false }, this._filterCompiled = false, this.expressionDependencies = { isIndoorDependent: false, configDependencies: /* @__PURE__ */ new Set() }, "custom" !== t2.type) {
+            if (super(), this.id = t2.id, this.fqid = ta(this.id, r2), this.type = t2.type, this.scope = r2, this.lut = n2, this.options = i2, this.iconImageUseTheme = s2, this.appearances = new Array(), this._featureFilter = { filter: () => true, needGeometry: false, needFeature: false }, this._filterCompiled = false, this.expressionDependencies = { isIndoorDependent: false, configDependencies:  new Set() }, "custom" !== t2.type) {
               if (this.metadata = t2.metadata, this.minzoom = t2.minzoom, this.maxzoom = t2.maxzoom, t2.type && "background" !== t2.type && "sky" !== t2.type && "slot" !== t2.type) {
                 this.source = t2.source, this.sourceLayer = t2["source-layer"], this.filter = t2.filter;
                 const e3 = js(this.filter, Ro[`filter_${t2.type}`]);
-                "error" !== e3.result && (this.expressionDependencies.configDependencies = /* @__PURE__ */ new Set([...this.expressionDependencies.configDependencies, ...e3.value.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || e3.value.isIndoorDependent);
+                "error" !== e3.result && (this.expressionDependencies.configDependencies =  new Set([...this.expressionDependencies.configDependencies, ...e3.value.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || e3.value.isIndoorDependent);
               }
-              if (t2.slot && (this.slot = t2.slot), t2.appearances && this.setAppearances(t2.appearances), e2.layout && (this._unevaluatedLayout = new zo(e2.layout, this.scope, i2, this.iconImageUseTheme), this.expressionDependencies.configDependencies = /* @__PURE__ */ new Set([...this.expressionDependencies.configDependencies, ...this._unevaluatedLayout.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || this._unevaluatedLayout.isIndoorDependent()), e2.paint) {
+              if (t2.slot && (this.slot = t2.slot), t2.appearances && this.setAppearances(t2.appearances), e2.layout && (this._unevaluatedLayout = new zo(e2.layout, this.scope, i2, this.iconImageUseTheme), this.expressionDependencies.configDependencies =  new Set([...this.expressionDependencies.configDependencies, ...this._unevaluatedLayout.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || this._unevaluatedLayout.isIndoorDependent()), e2.paint) {
                 this._transitionablePaint = new Po(e2.paint, this.scope, i2);
                 for (const e3 in t2.paint) this.setPaintProperty(e3, t2.paint[e3]);
                 for (const e3 in t2.layout) this.setLayoutProperty(e3, t2.layout[e3]);
-                this.expressionDependencies.configDependencies = /* @__PURE__ */ new Set([...this.expressionDependencies.configDependencies, ...this._transitionablePaint.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || this._transitionablePaint.isIndoorDependent(), this._transitioningPaint = this._transitionablePaint.untransitioned(), this.paint = new Eo(e2.paint);
+                this.expressionDependencies.configDependencies =  new Set([...this.expressionDependencies.configDependencies, ...this._transitionablePaint.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || this._transitionablePaint.isIndoorDependent(), this._transitioningPaint = this._transitionablePaint.untransitioned(), this.paint = new Eo(e2.paint);
               }
             }
           }
@@ -4192,7 +4192,7 @@ ${JSON.stringify(i2, null, 2)}
           setLayoutProperty(t2, e2) {
             if ("custom" === this.type && "visibility" === t2) return void (this.visibility = e2);
             const r2 = this._unevaluatedLayout;
-            r2._properties.properties[t2] && (r2.setValue(t2, e2), this.expressionDependencies.configDependencies = /* @__PURE__ */ new Set([...this.expressionDependencies.configDependencies, ...r2.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || r2.isIndoorDependent(), "visibility" === t2 && this.possiblyEvaluateVisibility());
+            r2._properties.properties[t2] && (r2.setValue(t2, e2), this.expressionDependencies.configDependencies =  new Set([...this.expressionDependencies.configDependencies, ...r2.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || r2.isIndoorDependent(), "visibility" === t2 && this.possiblyEvaluateVisibility());
           }
           setAppearances(t2) {
             this.appearances = [], t2.forEach(((t3) => {
@@ -4216,7 +4216,7 @@ ${JSON.stringify(i2, null, 2)}
             }
             if (!n2[t2]) return false;
             const i2 = r2._values[t2], s2 = i2.value.isDataDriven(), o2 = i2.value;
-            r2.setValue(t2, e2), this.expressionDependencies.configDependencies = /* @__PURE__ */ new Set([...this.expressionDependencies.configDependencies, ...r2.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || r2.isIndoorDependent(), this._handleSpecialPaintPropertyUpdate(t2);
+            r2.setValue(t2, e2), this.expressionDependencies.configDependencies =  new Set([...this.expressionDependencies.configDependencies, ...r2.configDependencies]), this.expressionDependencies.isIndoorDependent = this.expressionDependencies.isIndoorDependent || r2.isIndoorDependent(), this._handleSpecialPaintPropertyUpdate(t2);
             const a2 = r2._values[t2].value, l2 = a2.isDataDriven(), u2 = t2.endsWith("pattern") || "line-dasharray" === t2;
             return l2 || s2 || u2 || this._handleOverridablePaintPropertyUpdate(t2, o2, a2);
           }
@@ -7276,7 +7276,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class ap {
           constructor() {
-            this.polygons = /* @__PURE__ */ new Map();
+            this.polygons =  new Map();
           }
           add(t2, ...e2) {
             const r2 = this.polygons.get(t2);
@@ -7322,7 +7322,7 @@ ${JSON.stringify(i2, null, 2)}
         Qs(lp, "ElevationPortalGraph"), Qs(ap, "ElevationPolygons");
         class up {
           constructor(t2, e2, r2) {
-            this.outPositions = t2, this.outNormals = e2, this.outIndices = r2, this.vertexLookup = /* @__PURE__ */ new Map();
+            this.outPositions = t2, this.outNormals = e2, this.outIndices = r2, this.vertexLookup =  new Map();
           }
           addVertex(t2, e2, r2) {
             let n2 = t2[2];
@@ -7364,7 +7364,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class cp {
           constructor(t2, e2, r2, n2) {
-            this.unevaluatedPortals = new lp(), this.portalPolygons = new ap(), this.bridgeFeatureSections = [], this.tunnelFeatureSections = [], this.vertexHashLookup = /* @__PURE__ */ new Map(), this.unevalVertices = [], this.unevalHeights = [], this.unevalTriangles = [], this.unevalTunnelTriangles = [], this.unevalEdges = [], this.vertexPositions = new ga(), this.vertexNormals = new xa(), this.indexArray = new Fa(), this.tileToMeters = vu(t2), this.bridgeProgramConfigurations = new Ul(e2, { zoom: r2, lut: n2 }, ((t3) => "fill-tunnel-structure-color" !== t3)), this.tunnelProgramConfigurations = new Ul(e2, { zoom: r2, lut: n2 }, ((t3) => "fill-bridge-guard-rail-color" !== t3));
+            this.unevaluatedPortals = new lp(), this.portalPolygons = new ap(), this.bridgeFeatureSections = [], this.tunnelFeatureSections = [], this.vertexHashLookup =  new Map(), this.unevalVertices = [], this.unevalHeights = [], this.unevalTriangles = [], this.unevalTunnelTriangles = [], this.unevalEdges = [], this.vertexPositions = new ga(), this.vertexNormals = new xa(), this.indexArray = new Fa(), this.tileToMeters = vu(t2), this.bridgeProgramConfigurations = new Ul(e2, { zoom: r2, lut: n2 }, ((t3) => "fill-tunnel-structure-color" !== t3)), this.tunnelProgramConfigurations = new Ul(e2, { zoom: r2, lut: n2 }, ((t3) => "fill-bridge-guard-rail-color" !== t3));
           }
           addVertices(t2, e2) {
             const r2 = this.unevalVertices.length;
@@ -7443,7 +7443,7 @@ ${JSON.stringify(i2, null, 2)}
             s2(this.bridgeProgramConfigurations, this.bridgeFeatureSections), s2(this.tunnelProgramConfigurations, this.tunnelFeatureSections);
           }
           computeVertexConnections(t2, e2, r2, n2, i2) {
-            const s2 = /* @__PURE__ */ new Map();
+            const s2 =  new Map();
             for (let o2 = n2; o2 < i2; o2++) {
               const n3 = r2[o2], i3 = n3.a, a2 = n3.b, l2 = cp.computePosHash(t2[i3]), u2 = cp.computePosHash(t2[a2]);
               let c2 = s2.get(l2);
@@ -9252,7 +9252,7 @@ ${JSON.stringify(i2, null, 2)}
           send(t2, e2, r2, n2, i2 = false, s2) {
             const o2 = Math.round(1e18 * Math.random()).toString(36).substring(0, 10);
             r2 && (r2.metadata = s2, this.callbacks[o2] = r2);
-            const a2 = /* @__PURE__ */ new Set();
+            const a2 =  new Set();
             return this.target.postMessage({ id: o2, type: t2, hasCallback: !!r2, targetMapId: n2, mustQueue: i2, sourceMapId: this.mapId, data: eo(e2, a2) }, a2), { cancel: () => {
               r2 && delete this.callbacks[o2], this.target.postMessage({ id: o2, type: "<cancel>", targetMapId: n2, sourceMapId: this.mapId });
             } };
@@ -9274,7 +9274,7 @@ ${JSON.stringify(i2, null, 2)}
               const r2 = this.callbacks[t2];
               delete this.callbacks[t2], r2 && (e2.error ? r2(ro(e2.error)) : r2(null, ro(e2.data)));
             } else {
-              const r2 = /* @__PURE__ */ new Set(), n2 = e2.hasCallback ? (e3, n3) => {
+              const r2 =  new Set(), n2 = e2.hasCallback ? (e3, n3) => {
                 this.target.postMessage({ id: t2, type: "<response>", sourceMapId: this.mapId, error: e3 ? eo(e3) : null, data: eo(n3, r2) }, r2);
               } : () => {
               }, i2 = ro(e2.data);
@@ -9532,7 +9532,7 @@ ${JSON.stringify(i2, null, 2)}
                 return (WebAssembly.instantiateStreaming ? WebAssembly.instantiateStreaming(t4, s3) : t4.then(((t5) => t5.arrayBuffer())).then(((t5) => WebAssembly.instantiate(t5, s3)))).then(((t5) => {
                   const { Rb: i5, Qb: s4, P: o3, T: a3, X: l3, Ja: u3, La: c2, Qa: h2, Va: p2, Wa: d2, eb: f2, jb: m2, f: y2, e: g2, yb: x2, zb: v2, Ab: b2, Bb: w2, Db: _2, Gb: A2 } = t5.instance.exports;
                   r3 = g2;
-                  const I2 = /* @__PURE__ */ (() => {
+                  const I2 =  (() => {
                     let t6 = 0, r4 = 0, n4 = 0, o4 = 0;
                     return (a4) => {
                       n4 && (i5(o4), i5(t6), r4 += n4, n4 = t6 = 0), t6 || (r4 += 128, t6 = s4(r4));
@@ -9827,7 +9827,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class Qf {
           constructor(t2, e2, r2, n2, i2) {
-            this.materialOverrides = /* @__PURE__ */ new Map(), this.nodeOverrides = /* @__PURE__ */ new Map(), this.materialOverrideNames = [], this.nodeOverrideNames = [], this.featureProperties = {}, this.id = t2, this.uri = e2, this.position = null != r2 ? new iu(r2[0], r2[1]) : new iu(0, 0), this.orientation = null != n2 ? n2 : [0, 0, 0], this.nodes = i2, this.uploaded = false, this.aabb = new Ju([1 / 0, 1 / 0, 1 / 0], [-1 / 0, -1 / 0, -1 / 0]), this.matrix = [];
+            this.materialOverrides =  new Map(), this.nodeOverrides =  new Map(), this.materialOverrideNames = [], this.nodeOverrideNames = [], this.featureProperties = {}, this.id = t2, this.uri = e2, this.position = null != r2 ? new iu(r2[0], r2[1]) : new iu(0, 0), this.orientation = null != n2 ? n2 : [0, 0, 0], this.nodes = i2, this.uploaded = false, this.aabb = new Ju([1 / 0, 1 / 0, 1 / 0], [-1 / 0, -1 / 0, -1 / 0]), this.matrix = [];
           }
           _applyTransformations(t2, e2) {
             h(t2.globalMatrix, e2, t2.localMatrix);
@@ -10057,7 +10057,7 @@ ${JSON.stringify(i2, null, 2)}
           })(t2, e2), { scenes: n2, scene: i2, nodes: s2 } = t2.json, o2 = n2 ? n2[i2 || 0].nodes : [...s2.keys()], a2 = [];
           for (const e3 of o2) a2.push(lm(s2[e3], t2, r2));
           return (function(t3, e3, r3) {
-            const n3 = {}, i3 = /* @__PURE__ */ new Set();
+            const n3 = {}, i3 =  new Set();
             for (let s3 = 0; s3 < t3.length; s3++) {
               const t4 = r3[e3[s3]];
               if (!t4.extras) continue;
@@ -10148,7 +10148,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class Tm {
           constructor(t2) {
-            this.colorBufferUploaded = false, this.maxHeight = 0, this.replacementUpdateTime = 0, this.activeReplacements = [], this.footprints = [], this.footprintsVertices = new ja(), this.footprintsIndices = new Ga(), this.footprintsMin = new It(1 / 0, 1 / 0), this.footprintsMax = new It(-1 / 0, -1 / 0), this.featuresOnBorder = [], this.buildingWithoutFacade = new zm(false), this.buildingWithFacade = new zm(true), this.indexArrayForConflationUploaded = false, this.featureFootprintLookup = /* @__PURE__ */ new Map(), this.buildingIds = /* @__PURE__ */ new Set(), this.footprintLookup = {}, this.zoom = t2.zoom, this.canonical = t2.canonical, this.layers = t2.layers, this.layerIds = this.layers.map(((t3) => t3.fqid)), this.index = t2.index, this.hasPattern = false, this.worldview = t2.worldview, this.lut = t2.lut, this.programConfigurations = new Ul(t2.layers, { zoom: t2.zoom, lut: t2.lut }), this.stateDependentLayerIds = this.layers.filter(((t3) => t3.isStateDependent())).map(((t3) => t3.id)), this.projection = t2.projection, this.groundEffect = new yd(t2), this.groundEffect.groundRadiusArray = new ya(), this.hasAppearances = null;
+            this.colorBufferUploaded = false, this.maxHeight = 0, this.replacementUpdateTime = 0, this.activeReplacements = [], this.footprints = [], this.footprintsVertices = new ja(), this.footprintsIndices = new Ga(), this.footprintsMin = new It(1 / 0, 1 / 0), this.footprintsMax = new It(-1 / 0, -1 / 0), this.featuresOnBorder = [], this.buildingWithoutFacade = new zm(false), this.buildingWithFacade = new zm(true), this.indexArrayForConflationUploaded = false, this.featureFootprintLookup =  new Map(), this.buildingIds =  new Set(), this.footprintLookup = {}, this.zoom = t2.zoom, this.canonical = t2.canonical, this.layers = t2.layers, this.layerIds = this.layers.map(((t3) => t3.fqid)), this.index = t2.index, this.hasPattern = false, this.worldview = t2.worldview, this.lut = t2.lut, this.programConfigurations = new Ul(t2.layers, { zoom: t2.zoom, lut: t2.lut }), this.stateDependentLayerIds = this.layers.filter(((t3) => t3.isStateDependent())).map(((t3) => t3.id)), this.projection = t2.projection, this.groundEffect = new yd(t2), this.groundEffect.groundRadiusArray = new ya(), this.hasAppearances = null;
           }
           updateFootprints(t2, e2) {
             const r2 = new Mp([], [], 1), n2 = { vertices: [], indices: new Uint32Array(0), grid: r2, min: this.footprintsMin, max: this.footprintsMax, buildingIds: this.buildingIds };
@@ -10192,7 +10192,7 @@ ${JSON.stringify(i2, null, 2)}
             if (!i2) return;
             const s2 = vu(r2);
             this.tileToMeter = s2, this.brightness = e2.brightness, i2.setStyle({ normalScale: [1, -1, s2], tileToMeters: s2 }), i2.setAOOptions(false, 0.3), i2.setMetricOptions(false, 16), i2.setStructuralOptions(true), i2.setFacadeClassifierOptions(3);
-            const o2 = /* @__PURE__ */ new Map(), a2 = /* @__PURE__ */ new Map();
+            const o2 =  new Map(), a2 =  new Map();
             let l2 = 0;
             for (const { feature: e3 } of t2) {
               if ("LineString" !== Mm[e3.type]) {
@@ -10210,7 +10210,7 @@ ${JSON.stringify(i2, null, 2)}
               p3 || (p3 = [], a2.set(h3, p3)), p3.push(c3), ++l2;
             }
             this.maxHeight = 0;
-            const u2 = new Array(), c2 = /* @__PURE__ */ new Set(), h2 = (t3) => {
+            const u2 = new Array(), c2 =  new Set(), h2 = (t3) => {
               null != t3 && c2.add(t3);
             }, p2 = (t3, e3) => {
               null != t3 && u2.push({ buildingId: t3, footprintIndex: e3 });
@@ -10389,7 +10389,7 @@ ${JSON.stringify(i2, null, 2)}
             u2.forEach((({ buildingId: t3, footprintIndex: e3 }) => {
               c2.has(t3) && (this.footprints[e3].hiddenFlags |= 4);
             }));
-            const m2 = /* @__PURE__ */ new Set();
+            const m2 =  new Set();
             this.buildingIds.forEach(((t3, e3, r3) => {
               c2.has(t3) || m2.add(t3);
             })), this.buildingIds = m2, this.groundEffect.prepareBorderSegments();
@@ -11802,7 +11802,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class Ig {
           constructor(t2, e2, r2) {
-            const n2 = /* @__PURE__ */ new Map(), i2 = /* @__PURE__ */ new Map();
+            const n2 =  new Map(), i2 =  new Map();
             this.haveRenderCallbacks = [];
             const s2 = [];
             this.addImages(t2, n2, wg, s2), this.addImages(e2, i2, 2, s2);
@@ -12960,7 +12960,7 @@ ${JSON.stringify(i2, null, 2)}
               return n3.filter(((t4) => t4.geometry));
             })(this.features)), "hd-road-markup" === s2.get("symbol-elevation-reference")) {
               if (this.elevationType = "road", e2.elevationFeatures) {
-                !this.elevationFeatures && e2.elevationFeatures.length > 0 && (this.elevationFeatures = [], this.elevationFeatureIdToIndex = /* @__PURE__ */ new Map());
+                !this.elevationFeatures && e2.elevationFeatures.length > 0 && (this.elevationFeatures = [], this.elevationFeatureIdToIndex =  new Map());
                 for (const t3 of e2.elevationFeatures) this.elevationFeatureIdToIndex.set(t3.id, this.elevationFeatures.length), this.elevationFeatures.push(t3);
               }
             } else s2.get("symbol-z-elevate") && (this.elevationType = "offset");
@@ -14170,7 +14170,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class $v extends nr {
           constructor(t2, e2, r2, n2) {
-            super(), this.id = t2, this.type = "model", this.models = [], this._loaded = false, this._options = e2, this._modelsInfo = /* @__PURE__ */ new Map();
+            super(), this.id = t2, this.type = "model", this.models = [], this._loaded = false, this._options = e2, this._modelsInfo =  new Map();
           }
           load() {
             const t2 = [];
@@ -14253,7 +14253,7 @@ ${JSON.stringify(i2, null, 2)}
           }
           setModels(t2) {
             this.models = [];
-            const e2 = /* @__PURE__ */ new Map();
+            const e2 =  new Map();
             for (const r2 in t2) {
               const n2 = t2[r2];
               if (this._modelsInfo.has(r2)) {
@@ -14819,7 +14819,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class Ab {
           static calculate(t2 = {}, e2 = []) {
-            const r2 = /* @__PURE__ */ new Map(), n2 = /* @__PURE__ */ new Map();
+            const r2 =  new Map(), n2 =  new Map();
             if (0 === Object.keys(t2).length) return r2;
             e2.forEach(((t3) => {
               n2.set(t3.name, t3.rgb_color || new lr(0, 0, 0));
@@ -15007,7 +15007,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class Nb {
           constructor(t2) {
-            this.capacity = t2, this.cache = /* @__PURE__ */ new Map();
+            this.capacity = t2, this.cache =  new Map();
           }
           get(t2) {
             if (!this.cache.has(t2)) return;
@@ -15024,7 +15024,7 @@ ${JSON.stringify(i2, null, 2)}
         Qs(Nb, "LRUCache");
         class jb {
           constructor() {
-            this.cacheMap = /* @__PURE__ */ new Map(), this.cacheDependenciesMap = /* @__PURE__ */ new Map();
+            this.cacheMap =  new Map(), this.cacheDependenciesMap =  new Map();
           }
           static _getImage(t2) {
             return new Ah(t2, t2.data);
@@ -15033,9 +15033,9 @@ ${JSON.stringify(i2, null, 2)}
             return this.cacheMap.has(r2) || this.cacheMap.set(r2, new Nb(150)), this.cacheMap.get(r2).get(ta(t2.toString(), e2));
           }
           setInCache(t2, e2, r2, n2) {
-            this.cacheDependenciesMap.has(n2) || this.cacheDependenciesMap.set(n2, /* @__PURE__ */ new Map()), this.cacheMap.has(n2) || this.cacheMap.set(n2, new Nb(150));
+            this.cacheDependenciesMap.has(n2) || this.cacheDependenciesMap.set(n2,  new Map()), this.cacheMap.has(n2) || this.cacheMap.set(n2, new Nb(150));
             const i2 = this.cacheDependenciesMap.get(n2), s2 = ta(t2.id.toString(), r2);
-            i2.get(s2) || i2.set(s2, /* @__PURE__ */ new Set());
+            i2.get(s2) || i2.set(s2,  new Set());
             const o2 = this.cacheMap.get(n2), a2 = t2.toString();
             i2.get(s2).add(a2), o2.put(ta(t2.toString(), r2), e2);
           }
@@ -15463,7 +15463,7 @@ ${JSON.stringify(i2, null, 2)}
         class qw {
           constructor({ version: t2, name: e2, units: r2, tileSize: n2, pixelFormat: i2, buffer: s2, dataIndex: o2 }, a2) {
             if (this.version = t2, 1 !== this.version) throw new Ow(`Cannot parse raster layer encoded with MRT version ${t2}`);
-            this.name = e2, this.units = r2, this.tileSize = n2, this.buffer = s2, this.pixelFormat = Uw[i2], this.dataIndex = o2, this.bandShape = [n2 + 2 * s2, n2 + 2 * s2, Nw[this.pixelFormat]], this._decodedBlocks = new Nb(a2 ? a2.cacheSize : 5), this._blocksInProgress = /* @__PURE__ */ new Set();
+            this.name = e2, this.units = r2, this.tileSize = n2, this.buffer = s2, this.pixelFormat = Uw[i2], this.dataIndex = o2, this.bandShape = [n2 + 2 * s2, n2 + 2 * s2, Nw[this.pixelFormat]], this._decodedBlocks = new Nb(a2 ? a2.cacheSize : 5), this._blocksInProgress =  new Set();
           }
           get dimension() {
             return Nw[this.pixelFormat];
@@ -15500,7 +15500,7 @@ ${JSON.stringify(i2, null, 2)}
           }
           getDataRange(t2) {
             let e2 = 1 / 0, r2 = -1 / 0;
-            const n2 = [], i2 = /* @__PURE__ */ new Set();
+            const n2 = [], i2 =  new Set();
             for (const s2 of t2) {
               const { blockIndex: t3 } = this.getBlockForBand(s2);
               if (t3 < 0) throw new Ow(`Invalid band: ${JSON.stringify(s2)}`);
@@ -15683,7 +15683,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         class Zw {
           constructor(t2, e2) {
-            this.tileID = t2, this.x = t2.canonical.x, this.y = t2.canonical.y, this.z = t2.canonical.z, this.grid = new Ks(Un, 16, 0), this.featureIndexArray = new il(), this.promoteId = e2, this.is3DTile = false, this.serializedLayersCache = /* @__PURE__ */ new Map();
+            this.tileID = t2, this.x = t2.canonical.x, this.y = t2.canonical.y, this.z = t2.canonical.z, this.grid = new Ks(Un, 16, 0), this.featureIndexArray = new il(), this.promoteId = e2, this.is3DTile = false, this.serializedLayersCache =  new Map();
           }
           insert(t2, e2, r2, n2, i2, s2 = 0, o2 = 0) {
             const a2 = this.featureIndexArray.length;
@@ -16772,7 +16772,7 @@ ${JSON.stringify(i2, null, 2)}
           }
         }
         function a(e2, t2, s2) {
-          e2[t2] ? s2 && (e2[t2].center = s2) : e2[t2] = { floorIds: /* @__PURE__ */ new Set(), center: s2 || [0, 0], floors: {} };
+          e2[t2] ? s2 && (e2[t2].center = s2) : e2[t2] = { floorIds:  new Set(), center: s2 || [0, 0], floors: {} };
         }
         function l(e2, t2, s2, i2) {
           for (const o2 of t2) a(e2, o2), e2[o2].floors[s2] = i2, e2[o2].floorIds.add(s2);
@@ -16781,7 +16781,7 @@ ${JSON.stringify(i2, null, 2)}
           return { id: e2.properties.id.toString(), center: e2.properties.center.toString().split(";").map(Number) };
         }
         function h(e2) {
-          return { id: e2.properties.id.toString(), isDefault: !!e2.properties.is_default && e2.properties.is_default, connections: e2.properties.connected_floor_ids ? new Set(e2.properties.connected_floor_ids.toString().split(";")) : /* @__PURE__ */ new Set(), conflicts: e2.properties.conflicted_floor_ids ? new Set(e2.properties.conflicted_floor_ids.toString().split(";")) : /* @__PURE__ */ new Set(), buildings: e2.properties.building_ids ? new Set(e2.properties.building_ids.toString().split(";")) : /* @__PURE__ */ new Set(), name: e2.properties.name.toString(), zIndex: e2.properties.z_index };
+          return { id: e2.properties.id.toString(), isDefault: !!e2.properties.is_default && e2.properties.is_default, connections: e2.properties.connected_floor_ids ? new Set(e2.properties.connected_floor_ids.toString().split(";")) :  new Set(), conflicts: e2.properties.conflicted_floor_ids ? new Set(e2.properties.conflicted_floor_ids.toString().split(";")) :  new Set(), buildings: e2.properties.building_ids ? new Set(e2.properties.building_ids.toString().split(";")) :  new Set(), name: e2.properties.name.toString(), zIndex: e2.properties.z_index };
         }
         function u(e2, t2) {
           return t2.every(((t3) => e2.properties && null != e2.properties[t3]));
@@ -16801,7 +16801,7 @@ ${JSON.stringify(i2, null, 2)}
             this.status = "parsing", this.data = t2, this.collisionBoxArray = new e.b3();
             const p2 = new e.fm(Object.keys(t2.layers).sort()), m2 = new e.fn(this.tileID, this.promoteId);
             m2.bucketLayerIDs = [];
-            const y2 = {}, w2 = new e.fo(256, 256), b2 = { featureIndex: m2, iconDependencies: /* @__PURE__ */ new Map(), patternDependencies: /* @__PURE__ */ new Map(), glyphDependencies: {}, lineAtlas: w2, availableImages: i2, brightness: this.brightness, scaleFactor: this.scaleFactor, elevationFeatures: void 0, activeFloors: void 0 };
+            const y2 = {}, w2 = new e.fo(256, 256), b2 = { featureIndex: m2, iconDependencies:  new Map(), patternDependencies:  new Map(), glyphDependencies: {}, lineAtlas: w2, availableImages: i2, brightness: this.brightness, scaleFactor: this.scaleFactor, elevationFeatures: void 0, activeFloors: void 0 };
             if (this.indoor) {
               const s3 = this.indoor.indoorState.activeFloorsVisible, i3 = (function(t3, s4, i4) {
                 const o3 = (function(t4, s5) {
@@ -16811,9 +16811,9 @@ ${JSON.stringify(i2, null, 2)}
                   for (const t5 of i5) e.w(`Missing source layer required in indoor specification: ${t5}`);
                   return s5.intersection(s5);
                 })(s4.sourceLayers, new Set(Object.keys(t3.layers))), n3 = s4.indoorState, r2 = (function(t4, s5, i5, o4) {
-                  const n4 = /* @__PURE__ */ new Set(), r3 = /* @__PURE__ */ new Set(), u3 = /* @__PURE__ */ new Set(), p3 = /* @__PURE__ */ new Map(), g2 = {}, m3 = (e2) => {
-                    const t5 = p3.get(e2) || /* @__PURE__ */ new Set();
-                    for (const s6 of n4) if ((p3.get(s6) || /* @__PURE__ */ new Set()).has(e2) || t5.has(s6)) return true;
+                  const n4 =  new Set(), r3 =  new Set(), u3 =  new Set(), p3 =  new Map(), g2 = {}, m3 = (e2) => {
+                    const t5 = p3.get(e2) ||  new Set();
+                    for (const s6 of n4) if ((p3.get(s6) ||  new Set()).has(e2) || t5.has(s6)) return true;
                     return false;
                   };
                   for (const i6 of s5) {
@@ -16881,7 +16881,7 @@ ${JSON.stringify(i2, null, 2)}
                 if (s3) return this.status = "done", u2(s3);
                 if (this.extraShadowCaster) this.status = "done", u2(null, { buckets: Object.values(y2).filter(((e2) => !e2.isEmpty())), featureIndex: m2, collisionBoxArray: null, glyphAtlasImage: null, lineAtlas: null, imageAtlas: null, brightness: b2.brightness, glyphMap: null, iconMap: null, glyphPositions: null });
                 else if (o3 && a2 && l2) {
-                  const t3 = new r(o3), s4 = /* @__PURE__ */ new Map();
+                  const t3 = new r(o3), s4 =  new Map();
                   for (const [t4, i3] of a2.entries()) {
                     const { imagePosition: o4 } = e.fu(t4, i3, e.fv);
                     s4.set(t4, o4);
@@ -16919,12 +16919,12 @@ ${JSON.stringify(i2, null, 2)}
                 }), void 0, false, d2) : o3 = {};
                 const i3 = Array.from(b2.iconDependencies.keys()).map(((t4) => e.I.parse(t4)));
                 i3.length ? n2.send("getImages", { images: i3, source: this.source, scope: this.scope, tileID: this.tileID, type: "icons" }, ((e2, t4) => {
-                  s3 || (s3 = e2, a2 = /* @__PURE__ */ new Map(), c2 = this.updateImageMapAndGetImageTaskQueue(a2, t4, b2.iconDependencies), f2());
-                }), void 0, false, d2) : (a2 = /* @__PURE__ */ new Map(), c2 = /* @__PURE__ */ new Map());
+                  s3 || (s3 = e2, a2 =  new Map(), c2 = this.updateImageMapAndGetImageTaskQueue(a2, t4, b2.iconDependencies), f2());
+                }), void 0, false, d2) : (a2 =  new Map(), c2 =  new Map());
                 const r2 = Array.from(b2.patternDependencies.keys()).map(((t4) => e.I.parse(t4)));
                 r2.length ? n2.send("getImages", { images: r2, source: this.source, scope: this.scope, tileID: this.tileID, type: "patterns" }, ((e2, t4) => {
-                  s3 || (s3 = e2, l2 = /* @__PURE__ */ new Map(), h2 = this.updateImageMapAndGetImageTaskQueue(l2, t4, b2.patternDependencies), f2());
-                }), void 0, false, d2) : (l2 = /* @__PURE__ */ new Map(), h2 = /* @__PURE__ */ new Map());
+                  s3 || (s3 = e2, l2 =  new Map(), h2 = this.updateImageMapAndGetImageTaskQueue(l2, t4, b2.patternDependencies), f2());
+                }), void 0, false, d2) : (l2 =  new Map(), h2 =  new Map());
               }
               if (b2.elevationFeatures && b2.elevationFeatures.length > 0) {
                 const s4 = [];
@@ -16949,7 +16949,7 @@ ${JSON.stringify(i2, null, 2)}
             Array.from(t2.values()).some(((e3) => e3.usvg)) ? this.rasterize(e2, t2, s2, i2) : i2();
           }
           updateImageMapAndGetImageTaskQueue(e2, t2, s2) {
-            const i2 = /* @__PURE__ */ new Map();
+            const i2 =  new Map();
             for (const o2 of t2.keys()) {
               const n2 = s2.get(o2) || [];
               for (const s3 of n2) {
@@ -17137,7 +17137,7 @@ ${JSON.stringify(i2, null, 2)}
         const M = 64 / 4096, P = 128;
         class T {
           constructor() {
-            this.features = /* @__PURE__ */ new Map();
+            this.features =  new Map();
           }
           clear() {
             this.features.clear();
@@ -17248,7 +17248,7 @@ ${JSON.stringify(i2, null, 2)}
         }
         function F({ name: t2, features: s2 }, i2) {
           i2.writeStringField(1, t2), i2.writeVarintField(5, e.al);
-          const o2 = /* @__PURE__ */ new Map(), n2 = /* @__PURE__ */ new Map(), r2 = { keys: o2, values: n2, feature: null };
+          const o2 =  new Map(), n2 =  new Map(), r2 = { keys: o2, values: n2, feature: null };
           for (const e2 of s2) r2.feature = e2, i2.writeMessage(2, A, r2);
           for (const e2 of o2.keys()) i2.writeStringField(3, e2);
           for (const e2 of n2.keys()) i2.writeMessage(4, R, e2);
@@ -18062,7 +18062,7 @@ ${JSON.stringify(i2, null, 2)}
             return o2[e2] || (o2[e2] = {}), o2[e2][i2] || (o2[e2][i2] = {}), o2[e2][i2][t2] || (o2[e2][i2][t2] = {}), this.isSpriteLoaded[e2] || (this.isSpriteLoaded[e2] = {}), o2[e2][i2][t2][s2] || (o2[e2][i2][t2][s2] = new this.workerSourceTypes[t2]({ send: (t3, s3, i3, o3, n2, r2) => this.actor.send(t3, s3, i3, e2, n2, r2), scheduler: this.actor.scheduler }, this.getLayerIndex(e2, i2), this.getAvailableImages(e2, i2), this.getAvailableModels(e2, i2), this.isSpriteLoaded[e2][i2], void 0, this.brightness, this.worldview)), o2[e2][i2][t2][s2];
           }
           rasterizeImagesWorker(e2, t2, s2) {
-            const i2 = /* @__PURE__ */ new Map();
+            const i2 =  new Map();
             for (const [s3, { image: o2, imageVariant: n2 }] of t2.tasks.entries()) {
               const r2 = this.imageRasterizer.rasterize(n2, o2, t2.scope, e2);
               i2.set(s3, r2);
@@ -18224,7 +18224,7 @@ ${JSON.stringify(i2, null, 2)}
           normalizeTileURL(t2, i2, o2) {
             if (this._isSkuTokenExpired() && this._createSkuToken(), t2 && !e.h(t2)) return t2;
             const s2 = S(t2);
-            s2.path = s2.path.replace(/(\.(png|jpg)\d*)(?=$)/, `${i2 || o2 && "raster" !== s2.authority && 512 === o2 ? "@2x" : ""}${e.k.supported ? ".webp" : "$1"}`), "raster" === s2.authority ? s2.path = `/${e.e.RASTER_URL_PREFIX}${s2.path}` : "rasterarrays" === s2.authority ? s2.path = `/${e.e.RASTERARRAYS_URL_PREFIX}${s2.path}` : "3dtiles" === s2.authority ? s2.path = `/${e.e.TILES3D_URL_PREFIX}${s2.path}` : (s2.path = s2.path.replace(/^.+\/v4\//, "/"), s2.path = `/${e.e.TILE_URL_VERSION}${s2.path}`);
+            s2.path = s2.path.replace(/(\.(png|jpg)\d*)(?=$)/, `${i2 || o2 && "raster" !== s2.authority && 512 === o2 ? "@2x" : ""}${e.k.supported ? ".webp" : "$1"}`), "raster" === s2.authority ? s2.path = `/${e.e.RASTER_URL_PREFIX}${s2.path}` : "rasterarrays" === s2.authority ? s2.path = `/${e.e.RASTERARRAYS_URL_PREFIX}${s2.path}` : "3dtiles" === s2.authority ? s2.path = `/${e.e.TILES3D_URL_PREFIX}${s2.path}` : (s2.path = s2.path.replace(/^.+\/v4
             const r2 = this._customAccessToken || (function(e2) {
               for (const t3 of e2) {
                 const e3 = t3.match(/^access_token=(.*)$/);
@@ -18238,7 +18238,7 @@ ${JSON.stringify(i2, null, 2)}
             const o2 = S(t2);
             if (!o2.path.match(/^(\/v4\/|\/(raster|rasterarrays)\/v1\/)/) || !o2.path.match(/\.[\w]+$/)) return t2;
             let s2 = "mapbox://";
-            o2.path.match(/^\/raster\/v1\//) ? s2 += `raster/${o2.path.replace(`/${e.e.RASTER_URL_PREFIX}/`, "")}` : o2.path.match(/^\/rasterarrays\/v1\//) ? s2 += `rasterarrays/${o2.path.replace(`/${e.e.RASTERARRAYS_URL_PREFIX}/`, "")}` : s2 += `tiles/${o2.path.replace(`/${e.e.TILE_URL_VERSION}/`, "")}`;
+            o2.path.match(/^\/raster\/v1
             let r2 = o2.params;
             return i2 && (r2 = r2.filter(((e2) => !e2.match(/^access_token=/)))), r2.length && (s2 += `?${r2.join("&")}`), s2;
           }
@@ -18390,7 +18390,7 @@ ${JSON.stringify(i2, null, 2)}
           }
         }(), z = O.postMapLoadEvent.bind(O), M = new class extends A {
           constructor() {
-            super("style.load"), this.eventIdPerMapInstanceMap = /* @__PURE__ */ new Map(), this.mapInstanceIdMap = /* @__PURE__ */ new WeakMap();
+            super("style.load"), this.eventIdPerMapInstanceMap =  new Map(), this.mapInstanceIdMap =  new WeakMap();
           }
           getMapInstanceId(t2) {
             let i2 = this.mapInstanceIdMap.get(t2);
@@ -18492,13 +18492,13 @@ ${JSON.stringify(i2, null, 2)}
           remove() {
             this.errorCb = null;
           }
-        }(), H = V.getSessionAPI.bind(V), q = /* @__PURE__ */ new Set();
+        }(), H = V.getSessionAPI.bind(V), q =  new Set();
         function Z(e2, t2) {
           t2 ? q.add(e2) : q.delete(e2);
         }
         class W {
           constructor() {
-            this._changed = false, this._updatedLayers = {}, this._removedLayers = {}, this._updatedSourceCaches = {}, this._updatedPaintProps = /* @__PURE__ */ new Set(), this._updatedImages = {};
+            this._changed = false, this._updatedLayers = {}, this._removedLayers = {}, this._updatedSourceCaches = {}, this._updatedPaintProps =  new Set(), this._updatedImages = {};
           }
           isDirty() {
             return this._changed;
@@ -18517,11 +18517,11 @@ ${JSON.stringify(i2, null, 2)}
           }
           updateLayer(e2) {
             const t2 = e2.scope;
-            this._updatedLayers[t2] = this._updatedLayers[t2] || /* @__PURE__ */ new Set(), this._updatedLayers[t2].add(e2.id), this.setDirty();
+            this._updatedLayers[t2] = this._updatedLayers[t2] ||  new Set(), this._updatedLayers[t2].add(e2.id), this.setDirty();
           }
           removeLayer(e2) {
             const t2 = e2.scope;
-            this._removedLayers[t2] = this._removedLayers[t2] || {}, this._updatedLayers[t2] = this._updatedLayers[t2] || /* @__PURE__ */ new Set(), this._removedLayers[t2][e2.id] = e2, this._updatedLayers[t2].delete(e2.id), this._updatedPaintProps.delete(e2.fqid), this.setDirty();
+            this._removedLayers[t2] = this._removedLayers[t2] || {}, this._updatedLayers[t2] = this._updatedLayers[t2] ||  new Set(), this._removedLayers[t2][e2.id] = e2, this._updatedLayers[t2].delete(e2.id), this._updatedPaintProps.delete(e2.fqid), this.setDirty();
           }
           getRemovedLayer(e2) {
             return this._removedLayers[e2.scope] ? this._removedLayers[e2.scope][e2.id] : null;
@@ -18545,7 +18545,7 @@ ${JSON.stringify(i2, null, 2)}
             return this._updatedImages[e2] ? Array.from(this._updatedImages[e2].values()) : [];
           }
           updateImage(t2, i2) {
-            this._updatedImages[i2] = this._updatedImages[i2] || /* @__PURE__ */ new Set(), this._updatedImages[i2].add(e.I.toString(t2)), this.setDirty();
+            this._updatedImages[i2] = this._updatedImages[i2] ||  new Set(), this._updatedImages[i2].add(e.I.toString(t2)), this.setDirty();
           }
           resetUpdatedImages(e2) {
             this._updatedImages[e2] && this._updatedImages[e2].clear();
@@ -18560,10 +18560,10 @@ ${JSON.stringify(i2, null, 2)}
         }
         class X extends e.E {
           constructor(t2) {
-            super(), this.imageProviders = /* @__PURE__ */ new Map(), this.images = /* @__PURE__ */ new Map(), this.updatedImages = /* @__PURE__ */ new Map(), this.callbackDispatchedThisFrame = /* @__PURE__ */ new Map(), this.loaded = /* @__PURE__ */ new Map(), this.requestors = [], this.patterns = /* @__PURE__ */ new Map(), this.patternsInFlight = /* @__PURE__ */ new Set(), this.atlasImage = /* @__PURE__ */ new Map(), this.atlasTexture = /* @__PURE__ */ new Map(), this.dirty = true, this.spriteFormat = t2, "raster" !== t2 && e.r() && (this.imageRasterizerDispatcher = new e.D(e.t(), this, "Image Rasterizer Worker", 1));
+            super(), this.imageProviders =  new Map(), this.images =  new Map(), this.updatedImages =  new Map(), this.callbackDispatchedThisFrame =  new Map(), this.loaded =  new Map(), this.requestors = [], this.patterns =  new Map(), this.patternsInFlight =  new Set(), this.atlasImage =  new Map(), this.atlasTexture =  new Map(), this.dirty = true, this.spriteFormat = t2, "raster" !== t2 && e.r() && (this.imageRasterizerDispatcher = new e.D(e.t(), this, "Image Rasterizer Worker", 1));
           }
           addScope(t2) {
-            this.loaded.set(t2, false), this.imageProviders.set(t2, /* @__PURE__ */ new Map()), this.images.set(t2, /* @__PURE__ */ new Map()), this.updatedImages.set(t2, /* @__PURE__ */ new Set()), this.callbackDispatchedThisFrame.set(t2, /* @__PURE__ */ new Set()), this.patterns.set(t2, /* @__PURE__ */ new Map()), this.atlasImage.set(t2, new e.q({ width: 1, height: 1 }));
+            this.loaded.set(t2, false), this.imageProviders.set(t2,  new Map()), this.images.set(t2,  new Map()), this.updatedImages.set(t2,  new Set()), this.callbackDispatchedThisFrame.set(t2,  new Set()), this.patterns.set(t2,  new Map()), this.atlasImage.set(t2, new e.q({ width: 1, height: 1 }));
           }
           removeScope(e2) {
             this.loaded.delete(e2), this.imageProviders.delete(e2), this.images.delete(e2), this.updatedImages.delete(e2), this.callbackDispatchedThisFrame.delete(e2), this.patterns.delete(e2), this.atlasImage.delete(e2);
@@ -18571,7 +18571,7 @@ ${JSON.stringify(i2, null, 2)}
             t2 && (t2.destroy(), this.atlasTexture.delete(e2));
           }
           addImageProvider(e2, t2) {
-            this.imageProviders.has(t2) || this.imageProviders.set(t2, /* @__PURE__ */ new Map()), this.imageProviders.get(t2).set(e2.id, e2);
+            this.imageProviders.has(t2) || this.imageProviders.set(t2,  new Map()), this.imageProviders.get(t2).set(e2.id, e2);
           }
           removeImageProvider(e2, t2) {
             this.imageProviders.has(t2) && this.imageProviders.get(t2).delete(e2);
@@ -18661,7 +18661,7 @@ ${JSON.stringify(i2, null, 2)}
             a2 || n2 ? this._notify(o2, t2, i2) : this.requestors.push({ ids: o2, scope: t2, callback: i2 });
           }
           rasterizeImages(e2, t2) {
-            const i2 = /* @__PURE__ */ new Map(), { tasks: o2, scope: s2 } = e2;
+            const i2 =  new Map(), { tasks: o2, scope: s2 } = e2;
             for (const [e3, t3] of o2.entries()) {
               const o3 = this.getImage(t3.id, s2);
               o3 && i2.set(e3, { image: o3, imageVariant: t3 });
@@ -18671,16 +18671,16 @@ ${JSON.stringify(i2, null, 2)}
           _rasterizeImages(t2, i2, o2) {
             if (e.r()) this.imageRasterizerDispatcher.getActor().send("rasterizeImagesWorker", { tasks: i2, scope: t2 }, o2);
             else {
-              const e2 = /* @__PURE__ */ new Map();
+              const e2 =  new Map();
               for (const [o3, { image: s2, imageVariant: r2 }] of i2.entries()) e2.set(o3, this.imageRasterizer.rasterize(r2, s2, t2, 0));
               o2(void 0, e2);
             }
           }
           getUpdatedImages(e2) {
-            return this.updatedImages.get(e2) || /* @__PURE__ */ new Set();
+            return this.updatedImages.get(e2) ||  new Set();
           }
           _notify(t2, i2, o2) {
-            const s2 = this.images.get(i2), r2 = /* @__PURE__ */ new Map();
+            const s2 = this.images.get(i2), r2 =  new Map();
             for (const i3 of t2) {
               if (!s2.get(i3.toString())) {
                 if (i3.iconsetId) continue;
@@ -18711,7 +18711,7 @@ ${JSON.stringify(i2, null, 2)}
                 const r3 = this.getPatternInFlightId(s2, i2);
                 if (this.patternsInFlight.has(r3)) return null;
                 this.patternsInFlight.add(r3);
-                const n3 = new e.A(t2).scaleSelf(e.o.devicePixelRatio), l2 = /* @__PURE__ */ new Map([[n3.toString(), { image: a2, imageVariant: n3 }]]);
+                const n3 = new e.A(t2).scaleSelf(e.o.devicePixelRatio), l2 =  new Map([[n3.toString(), { image: a2, imageVariant: n3 }]]);
                 return this._rasterizeImages(i2, l2, ((e2, t3) => this.storePatternImage(n3, i2, a2, o2, t3))), null;
               }
               this.storePattern(t2, i2, a2);
@@ -18753,7 +18753,7 @@ ${JSON.stringify(i2, null, 2)}
             this.dirty = true;
           }
           beginFrame() {
-            for (const e2 of this.images.keys()) this.callbackDispatchedThisFrame.set(e2, /* @__PURE__ */ new Set());
+            for (const e2 of this.images.keys()) this.callbackDispatchedThisFrame.set(e2,  new Set());
           }
           dispatchRenderCallbacks(e2, t2) {
             const i2 = this.images.get(t2);
@@ -18855,7 +18855,7 @@ ${JSON.stringify(i2, null, 2)}
           return [];
         }
         function ee(t2, i2) {
-          const o2 = /* @__PURE__ */ new Set(["zoom", "feature-state", "pitch", "distance-from-center"]);
+          const o2 =  new Set(["zoom", "feature-state", "pitch", "distance-from-center"]);
           if (i2.valueSpec && i2.valueSpec.expression) for (const e2 of i2.valueSpec.expression.parameters) o2.delete(e2);
           if (0 === o2.size) return [];
           const s2 = [];
@@ -18864,7 +18864,7 @@ ${JSON.stringify(i2, null, 2)}
           })), s2);
         }
         function te(t2, i2) {
-          const o2 = /* @__PURE__ */ new Set();
+          const o2 =  new Set();
           if (i2.valueSpec && i2.valueSpec.expression) for (const e2 of i2.valueSpec.expression.parameters) o2.add(e2);
           if (0 === o2.size) return [];
           const s2 = [];
@@ -18989,7 +18989,7 @@ Use an identity property function instead: ${t3}.`)];
                 return i5;
               })(Object.assign({ layer: o3, layerType: s4 }, t6)) } });
               return "hidden" !== n3 && void 0 === a3 && l3.push(new e.V(t5.key, "name", 'Appearance with name different than "hidden" must have a condition')), l3;
-            })(Object.assign({ layerType: a2, layer: o2 }, t4)) }), s3 = Array.isArray(t3.value) ? t3.value : [], r3 = /* @__PURE__ */ new Set();
+            })(Object.assign({ layerType: a2, layer: o2 }, t4)) }), s3 = Array.isArray(t3.value) ? t3.value : [], r3 =  new Set();
             return s3.forEach(((s4, n3) => {
               const a3 = e.J(s4.name);
               if (a3) if (r3.has(a3)) {
@@ -19691,7 +19691,7 @@ Use an identity property function instead: ${t3}.`)];
               if (this._tileJSONRequest = null, this._loaded = true, s2) i2 && console.warn(`Ensure that your requested language string is a valid BCP-47 code or list of codes. Found: ${i2}`), o2 && console.warn(`Requested worldview strings must be a valid ISO alpha-2 code. Found: ${o2}`), this.fire(new e.y(s2));
               else if (r2) {
                 if (Object.assign(this, r2), this.hasWorldviews = !!r2.worldview_options, r2.worldview_default && (this.worldviewDefault = r2.worldview_default), r2.vector_layers) {
-                  this.vectorLayers = r2.vector_layers, this.vectorLayerIds = [], this.localizableLayerIds = /* @__PURE__ */ new Set();
+                  this.vectorLayers = r2.vector_layers, this.vectorLayerIds = [], this.localizableLayerIds =  new Set();
                   for (const e2 of r2.vector_layers) this.vectorLayerIds.push(e2.id), r2.worldview && r2.worldview[e2.source] && this.localizableLayerIds.add(e2.id);
                 }
                 this.tileBounds = ht.fromTileJSON(r2), P(r2.tiles, this.map._requestManager._customAccessToken), this.fire(new e.z("data", { dataType: "source", sourceDataType: "metadata" })), this.fire(new e.z("data", { dataType: "source", sourceDataType: "content" }));
@@ -19900,7 +19900,7 @@ Use an identity property function instead: ${t3}.`)];
             return Object.assign({}, a2, { texture: t2.texturePerLayer.get(i2.id) });
           }
           getImages(t2, i2) {
-            const o2 = /* @__PURE__ */ new Map();
+            const o2 =  new Map();
             for (const s2 of t2) for (const t3 of i2) {
               const [i3, r2] = t3.split("/"), n2 = s2.getLayer(i3);
               if (!n2) continue;
@@ -19913,7 +19913,7 @@ Use an identity property function instead: ${t3}.`)];
           queryRasterArrayValueByBandId(t2, i2, o2) {
             const s2 = i2._mrt;
             return new Promise(((r2) => {
-              const n2 = {}, a2 = /* @__PURE__ */ new Set();
+              const n2 = {}, a2 =  new Set();
               for (const [l2, c2] of Object.entries(s2.layers)) {
                 if (o2.layerName && l2 !== o2.layerName) continue;
                 const h2 = {};
@@ -20000,7 +20000,7 @@ Use an identity property function instead: ${t3}.`)];
             if (!this._options.dynamic) return this.fire(new e.y(new Error("Can't call updateData on a GeoJSON source with dynamic set to false.")));
             if ("string" != typeof t2 && ("Feature" === t2.type && (t2 = { type: "FeatureCollection", features: [t2] }), "FeatureCollection" !== t2.type)) return this.fire(new e.y(new Error("Data to update should be a feature or a feature collection.")));
             if (this._coalesce && "string" != typeof t2 && "string" != typeof this._data && "FeatureCollection" === this._data.type) {
-              const e2 = /* @__PURE__ */ new Map();
+              const e2 =  new Map();
               for (const t3 of this._data.features) e2.set(t3.id, t3);
               for (const i2 of t2.features) e2.set(i2.id, i2);
               this._data.features = [...e2.values()];
@@ -20499,7 +20499,7 @@ Use an identity property function instead: ${t3}.`)];
             }
           }
           getExpiryTimeout() {
-            if (this.expirationTime) return this.expiredRequestCount ? 1e3 * (1 << Math.min(this.expiredRequestCount - 1, 31)) : Math.min(this.expirationTime - (/* @__PURE__ */ new Date()).getTime(), Math.pow(2, 31) - 1);
+            if (this.expirationTime) return this.expiredRequestCount ? 1e3 * (1 << Math.min(this.expiredRequestCount - 1, 31)) : Math.min(this.expirationTime - ( new Date()).getTime(), Math.pow(2, 31) - 1);
           }
           refreshFeatureState(e2) {
             this.latestFeatureIndex && (this.latestFeatureIndex.rawTileData || this.latestFeatureIndex.is3DTile) && e2 && this.updateBuckets(e2);
@@ -20674,7 +20674,7 @@ Use an identity property function instead: ${t3}.`)];
         e.bs.setPbf(e.bt);
         class Ot extends Pt {
           constructor(e2, t2, i2, o2, s2) {
-            super(e2, t2, i2, o2, s2), this._workQueuePerLayer = /* @__PURE__ */ new Map(), this._fetchQueuePerLayer = /* @__PURE__ */ new Map(), this._taskQueue = /* @__PURE__ */ new Map(), this._isHeaderLoaded = false, this.textureDescriptorPerLayer = /* @__PURE__ */ new Map(), this.texturePerLayer = /* @__PURE__ */ new Map();
+            super(e2, t2, i2, o2, s2), this._workQueuePerLayer =  new Map(), this._fetchQueuePerLayer =  new Map(), this._taskQueue =  new Map(), this._isHeaderLoaded = false, this.textureDescriptorPerLayer =  new Map(), this.texturePerLayer =  new Map();
           }
           getLayers() {
             return this._mrt ? Object.values(this._mrt.layers) : [];
@@ -20734,7 +20734,7 @@ Use an identity property function instead: ${t3}.`)];
             let l2;
             const c2 = e.B(String(o2), e.B(this.tileID.key, t2));
             let h2 = this._taskQueue.get(c2);
-            h2 ? h2.add(s2) : (h2 = /* @__PURE__ */ new Set(), h2.add(s2), this._taskQueue.set(c2, h2));
+            h2 ? h2.add(s2) : (h2 =  new Set(), h2.add(s2), this._taskQueue.set(c2, h2));
             const d2 = (e2, t3) => {
               l2.complete(e2, t3), e2 ? s2(e2) : (h2.forEach(((e3) => e3(null, t3))), this._taskQueue.delete(c2));
             }, u2 = (e2, t3) => {
@@ -20991,7 +20991,7 @@ Use an identity property function instead: ${t3}.`)];
               return;
             }
             t2.timeAdded = e.o.now(), "expired" === o2 && (t2.refreshedUponExpiration = true), this._setTileReloadTimer(i2, t2), "raster-dem" === this._source.type && t2.dem && this._backfillDEM(t2), this._state.initializeTileState(t2, this.map ? this.map.painter : null);
-            let n2 = /* @__PURE__ */ new Map();
+            let n2 =  new Map();
             r2 && r2.responseHeaders && (n2 = r2.responseHeaders), this._source.fire(new e.z("data", { dataType: "source", tile: t2, coord: t2.tileID, sourceCacheId: this.id, responseHeaders: n2 }));
           }
           _backfillDEM(e2) {
@@ -21287,7 +21287,7 @@ Use an identity property function instead: ${t3}.`)];
               };
               return void this._source.on("data", e2);
             }
-            const o2 = /* @__PURE__ */ new Map(), s2 = Array.isArray(t2) ? t2 : [t2], r2 = this.map.painter.terrain, n2 = this.usedForTerrain && r2 ? r2.getScaledDemTileSize() : this._source.tileSize;
+            const o2 =  new Map(), s2 = Array.isArray(t2) ? t2 : [t2], r2 = this.map.painter.terrain, n2 = this.usedForTerrain && r2 ? r2.getScaledDemTileSize() : this._source.tileSize;
             for (const e2 of s2) {
               const t3 = e2.coveringTiles({ tileSize: n2, minzoom: this._source.minzoom, maxzoom: this._source.maxzoom, roundZoom: this._source.roundZoom && !this.usedForTerrain, reparseOverscaled: this._source.reparseOverscaled, isTerrainDEM: this.usedForTerrain });
               for (const e3 of t3) o2.set(e3.key, e3);
@@ -21401,7 +21401,7 @@ Use an identity property function instead: ${t3}.`)];
         }
         function Gt(e2) {
           e2 = e2.slice();
-          const t2 = /* @__PURE__ */ Object.create(null);
+          const t2 =  Object.create(null);
           for (let i2 = 0; i2 < e2.length; i2++) t2[e2[i2].id] = e2[i2];
           for (let i2 = 0; i2 < e2.length; i2++) "ref" in e2[i2] && (e2[i2] = jt(e2[i2], t2[e2[i2].ref]));
           return e2;
@@ -22127,7 +22127,7 @@ Use an identity property function instead: ${t3}.`)];
           }
           updateLayerOpacities(e2, t2, i2, o2) {
             o2 && (this.lastReplacementSourceUpdateTime = o2.updateTime);
-            const s2 = /* @__PURE__ */ new Set();
+            const s2 =  new Set();
             for (const r2 of t2) {
               const t3 = r2.getBucket(e2);
               t3 && r2.latestFeatureIndex && e2.fqid === t3.layerIds[0] && (this.updateBucketOpacities(t3, s2, r2, r2.collisionBoxArray, i2, o2, r2.tileID, e2.scope), "offset" === t3.elevationType && this.buildingIndex && this.buildingIndex.updateZOffset(t3, r2.tileID), "road" === t3.elevationType && t3.updateRoadElevation(r2.tileID.canonical), t3.updateZOffset());
@@ -22227,7 +22227,7 @@ Use an identity property function instead: ${t3}.`)];
         const Ni = 0;
         class Ui {
           constructor(e2) {
-            this._sortAcrossTiles = "viewport-y" !== e2.layout.get("symbol-z-order") && void 0 !== e2.layout.get("symbol-sort-key").constantOr(1), this._currentTileIndex = 0, this._currentPartIndex = 0, this._seenCrossTileIDs = /* @__PURE__ */ new Set(), this._bucketParts = [];
+            this._sortAcrossTiles = "viewport-y" !== e2.layout.get("symbol-z-order") && void 0 !== e2.layout.get("symbol-sort-key").constantOr(1), this._currentTileIndex = 0, this._currentPartIndex = 0, this._seenCrossTileIDs =  new Set(), this._bucketParts = [];
           }
           continuePlacement(e2, t2, i2, o2, s2, r2) {
             const n2 = this._bucketParts;
@@ -22323,7 +22323,7 @@ Use an identity property function instead: ${t3}.`)];
               this.removeBucketCrossTileIDs(e2.overscaledZ, this.indexes[e2.overscaledZ][e2.key]);
             }
             for (let e3 = 0; e3 < t2.symbolInstances.length; e3++) t2.symbolInstances.get(e3).crossTileID = 0;
-            this.usedCrossTileIDs[e2.overscaledZ] || (this.usedCrossTileIDs[e2.overscaledZ] = /* @__PURE__ */ new Set());
+            this.usedCrossTileIDs[e2.overscaledZ] || (this.usedCrossTileIDs[e2.overscaledZ] =  new Set());
             const o2 = this.usedCrossTileIDs[e2.overscaledZ];
             for (const i3 in this.indexes) {
               const s2 = this.indexes[i3];
@@ -22809,7 +22809,7 @@ Use an identity property function instead: ${t3}.`)];
             const n2 = null != o2, a2 = !n2;
             if (a2 && this.zoom < i2) return r2;
             if (n2 && 0 === o2[0] && 0 === o2[1]) return r2;
-            const l2 = /* @__PURE__ */ new Set(), c2 = (t3, i3, o3, s3, n3) => {
+            const l2 =  new Set(), c2 = (t3, i3, o3, s3, n3) => {
               const a3 = e.cY(i3, t3, o3, s3, n3);
               l2.has(a3) || (r2.push(new e.aQ(t3, i3, o3, s3, n3)), l2.add(a3));
             };
@@ -22836,7 +22836,7 @@ Use an identity property function instead: ${t3}.`)];
             return r2;
           }
           extendTileCoverToNearPlane(t2, i2, o2) {
-            const s2 = [], r2 = /* @__PURE__ */ new Set();
+            const s2 = [], r2 =  new Set();
             for (const e2 of t2) r2.add(e2.key);
             const n2 = (t3, i3, o3, n3, a3) => {
               const l3 = e.cY(i3, t3, o3, n3, a3);
@@ -23716,7 +23716,7 @@ Use an identity property function instead: ${t3}.`)];
         }
         class So {
           constructor(e2, t2, i2) {
-            this.id = e2, this.scope = t2, this.sourceCache = i2, this.pendingRequests = /* @__PURE__ */ new Set(), this.missingRequests = /* @__PURE__ */ new Set();
+            this.id = e2, this.scope = t2, this.sourceCache = i2, this.pendingRequests =  new Set(), this.missingRequests =  new Set();
           }
           addPendingRequest(e2) {
             this.missingRequests.has(e2.name) || this.pendingRequests.has(e2.name) || this.pendingRequests.add(e2.name);
@@ -23725,7 +23725,7 @@ Use an identity property function instead: ${t3}.`)];
             return this.pendingRequests.size > 0;
           }
           resolvePendingRequests() {
-            const t2 = /* @__PURE__ */ new Map();
+            const t2 =  new Map();
             if (!this.sourceCache.loaded()) return t2;
             const i2 = this.sourceCache.getVisibleCoordinates();
             if (0 === i2.length) return t2;
@@ -23737,10 +23737,10 @@ Use an identity property function instead: ${t3}.`)];
             return this.pendingRequests.clear(), t2;
           }
         }
-        const Io = (e2, t2) => Fe(e2, t2 && t2.filter(((e3) => "source.canvas" !== e3.identifier))), Co = e.aH(Vt, ["addLayer", "removeLayer", "setLights", "setPaintProperty", "setLayoutProperty", "setLayerProperty", "setSlot", "setFilter", "addSource", "removeSource", "setLayerZoomRange", "setLight", "setTransition", "setGeoJSONSourceData", "setTerrain", "setFog", "setSnow", "setRain", "setProjection", "setCamera", "addImport", "removeImport", "updateImport", "addIconset", "removeIconset"]), Ro = e.aH(Vt, ["setCenter", "setZoom", "setBearing", "setPitch"]), Ao = /* @__PURE__ */ new Set(["background", "sky", "slot", "custom"]), Lo = { version: 8, layers: [], sources: {} }, Do = { duration: 300, delay: 0 };
+        const Io = (e2, t2) => Fe(e2, t2 && t2.filter(((e3) => "source.canvas" !== e3.identifier))), Co = e.aH(Vt, ["addLayer", "removeLayer", "setLights", "setPaintProperty", "setLayoutProperty", "setLayerProperty", "setSlot", "setFilter", "addSource", "removeSource", "setLayerZoomRange", "setLight", "setTransition", "setGeoJSONSourceData", "setTerrain", "setFog", "setSnow", "setRain", "setProjection", "setCamera", "addImport", "removeImport", "updateImport", "addIconset", "removeIconset"]), Ro = e.aH(Vt, ["setCenter", "setZoom", "setBearing", "setPitch"]), Ao =  new Set(["background", "sky", "slot", "custom"]), Lo = { version: 8, layers: [], sources: {} }, Do = { duration: 300, delay: 0 };
         class Po extends e.E {
           constructor(t2, i2 = {}) {
-            super(), this.map = t2, this.scope = i2.scope || "", this.globalId = null, this.fragments = [], this.importDepth = i2.importDepth || 0, this.importsCache = i2.importsCache || /* @__PURE__ */ new Map(), this.resolvedImports = i2.resolvedImports || /* @__PURE__ */ new Set(), this.transition = Object.assign({}, Do), this._buildingIndex = new Ut(this), this.crossTileSymbolIndex = new Zi(), this._mergedOrder = [], this._drapedFirstOrder = [], this._mergedLayers = {}, this._mergedIndoor = {}, this._mergedSourceCaches = {}, this._mergedOtherSourceCaches = {}, this._mergedSymbolSourceCaches = {}, this._clipLayerPresent = false, this._hasAppearances = false, this._has3DLayers = false, this._hasCircleLayers = false, this._hasSymbolLayers = false, this._importedAsBasemap = false, this._changes = i2.styleChanges || new W(), this._hasDataDrivenEmissive = false, this.dispatcher = i2.dispatcher ? i2.dispatcher : new e.D(e.dh(), this), i2.imageManager ? this.imageManager = i2.imageManager : (this.imageManager = new X(this.map._spriteFormat), this.imageManager.setEventedParent(this)), this.imageManager.addScope(this.scope), this.glyphManager = i2.glyphManager ? i2.glyphManager : new e.di(t2._requestManager, i2.localFontFamily ? e.dj.all : i2.localIdeographFontFamily ? e.dj.ideographs : e.dj.none, i2.localFontFamily || i2.localIdeographFontFamily), i2.modelManager ? this.modelManager = i2.modelManager : (this.modelManager = new xo(t2._requestManager), this.modelManager.setEventedParent(this)), this._layers = {}, this._sourceCaches = {}, this._otherSourceCaches = {}, this._symbolSourceCaches = {}, this._loaded = false, this._precompileDone = false, this._shouldPrecompile = false, this._availableImages = [], this._availableModels = {}, this._order = [], this._markersNeedUpdate = false, this.options = i2.configOptions ? i2.configOptions : /* @__PURE__ */ new Map(), this._configDependentLayers = i2.configDependentLayers ? i2.configDependentLayers : /* @__PURE__ */ new Set(), this._indoorDependentLayers = i2.indoorDependentLayers ? i2.indoorDependentLayers : /* @__PURE__ */ new Set(), this._config = i2.config, this._styleColorTheme = { lut: null, lutLoading: false, lutLoadingCorrelationID: 0, colorTheme: null, colorThemeOverride: i2.colorThemeOverride }, this._styleColorThemeForScope = {}, this._initialConfig = i2.initialConfig, this.dispatcher.broadcast("setReferrer", e.dk());
+            super(), this.map = t2, this.scope = i2.scope || "", this.globalId = null, this.fragments = [], this.importDepth = i2.importDepth || 0, this.importsCache = i2.importsCache ||  new Map(), this.resolvedImports = i2.resolvedImports ||  new Set(), this.transition = Object.assign({}, Do), this._buildingIndex = new Ut(this), this.crossTileSymbolIndex = new Zi(), this._mergedOrder = [], this._drapedFirstOrder = [], this._mergedLayers = {}, this._mergedIndoor = {}, this._mergedSourceCaches = {}, this._mergedOtherSourceCaches = {}, this._mergedSymbolSourceCaches = {}, this._clipLayerPresent = false, this._hasAppearances = false, this._has3DLayers = false, this._hasCircleLayers = false, this._hasSymbolLayers = false, this._importedAsBasemap = false, this._changes = i2.styleChanges || new W(), this._hasDataDrivenEmissive = false, this.dispatcher = i2.dispatcher ? i2.dispatcher : new e.D(e.dh(), this), i2.imageManager ? this.imageManager = i2.imageManager : (this.imageManager = new X(this.map._spriteFormat), this.imageManager.setEventedParent(this)), this.imageManager.addScope(this.scope), this.glyphManager = i2.glyphManager ? i2.glyphManager : new e.di(t2._requestManager, i2.localFontFamily ? e.dj.all : i2.localIdeographFontFamily ? e.dj.ideographs : e.dj.none, i2.localFontFamily || i2.localIdeographFontFamily), i2.modelManager ? this.modelManager = i2.modelManager : (this.modelManager = new xo(t2._requestManager), this.modelManager.setEventedParent(this)), this._layers = {}, this._sourceCaches = {}, this._otherSourceCaches = {}, this._symbolSourceCaches = {}, this._loaded = false, this._precompileDone = false, this._shouldPrecompile = false, this._availableImages = [], this._availableModels = {}, this._order = [], this._markersNeedUpdate = false, this.options = i2.configOptions ? i2.configOptions :  new Map(), this._configDependentLayers = i2.configDependentLayers ? i2.configDependentLayers :  new Set(), this._indoorDependentLayers = i2.indoorDependentLayers ? i2.indoorDependentLayers :  new Set(), this._config = i2.config, this._styleColorTheme = { lut: null, lutLoading: false, lutLoadingCorrelationID: 0, colorTheme: null, colorThemeOverride: i2.colorThemeOverride }, this._styleColorThemeForScope = {}, this._initialConfig = i2.initialConfig, this.dispatcher.broadcast("setReferrer", e.dk());
             const o2 = this;
             this._rtlTextPluginCallback = Po.registerForPluginStateChange(((t3) => {
               o2.dispatcher.broadcast("syncRTLPluginState", { pluginStatus: t3.pluginStatus, pluginURL: t3.pluginURL }, ((t4, i3) => {
@@ -23832,7 +23832,7 @@ Use an identity property function instead: ${t3}.`)];
             }
             return Promise.allSettled(s2);
           }
-          getImportGlobalIds(e2 = this, t2 = /* @__PURE__ */ new Set()) {
+          getImportGlobalIds(e2 = this, t2 =  new Set()) {
             for (const i2 of e2.fragments) i2.style.globalId && t2.add(i2.style.globalId), this.getImportGlobalIds(i2.style, t2);
             return [...t2.values()];
           }
@@ -24070,7 +24070,7 @@ Use an identity property function instead: ${t3}.`)];
             })(t2, this.map._requestManager, ((t3, i2) => {
               if (this._spriteRequest = null, t3) this.fire(new e.y(t3));
               else if (i2) {
-                const t4 = /* @__PURE__ */ new Map();
+                const t4 =  new Map();
                 for (const o2 in i2) t4.set(e.I.from(o2), i2[o2]);
                 this.addImages(t4);
               }
@@ -24097,7 +24097,7 @@ Use an identity property function instead: ${t3}.`)];
             this._spriteRequest = (s2 = (o3, s3) => {
               if (this._spriteRequest = null, o3) i2 ? this._loadSprite(t2) : this.fire(new e.y(o3));
               else if (s3) {
-                const t3 = /* @__PURE__ */ new Map();
+                const t3 =  new Map();
                 for (const i3 in s3) t3.set(e.I.from(i3), s3[i3]);
                 this.addImages(t3);
               }
@@ -24319,7 +24319,7 @@ Use an identity property function instead: ${t3}.`)];
                 let a2 = t3.terrain;
                 a2 && s3[a2.source] && (o3.push({ command: Vt.setTerrain, args: [void 0] }), a2 = void 0), o3 = o3.concat(r3), e.by(a2, i3.terrain) || o3.push({ command: Vt.setTerrain, args: [i3.terrain] }), (function(t4, i4, o4) {
                   i4 = i4 || [];
-                  const s4 = (t4 = t4 || []).map(Xt), r4 = i4.map(Xt), n3 = t4.reduce(Yt, {}), a3 = i4.reduce(Yt, {}), l2 = s4.slice(), c2 = /* @__PURE__ */ Object.create(null);
+                  const s4 = (t4 = t4 || []).map(Xt), r4 = i4.map(Xt), n3 = t4.reduce(Yt, {}), a3 = i4.reduce(Yt, {}), l2 = s4.slice(), c2 =  Object.create(null);
                   let h2, d2, u2, _2, p2, f2, m2;
                   for (h2 = 0, d2 = 0; h2 < s4.length; h2++) u2 = s4[h2], a3.hasOwnProperty(u2) ? d2++ : (o4.push({ command: Vt.removeLayer, args: [u2] }), l2.splice(l2.indexOf(u2, d2), 1));
                   for (h2 = 0, d2 = 0; h2 < r4.length; h2++) u2 = r4[r4.length - 1 - h2], l2[l2.length - 1 - h2] !== u2 && (n3.hasOwnProperty(u2) ? (o4.push({ command: Vt.removeLayer, args: [u2] }), l2.splice(l2.lastIndexOf(u2, l2.length - d2), 1)) : d2++, f2 = l2[l2.length - h2], o4.push({ command: Vt.addLayer, args: [a3[u2], f2] }), l2.splice(l2.length - h2, 0, u2), c2[u2] = true);
@@ -24900,7 +24900,7 @@ Use an identity property function instead: ${t3}.`)];
                 for (const e4 of t3) n2.push({ targetId: r2, filter: s2, target: e4 });
               }
             }
-            const a2 = this.queryRenderedTargets(t2, n2, o2), l2 = [], c2 = /* @__PURE__ */ new Set();
+            const a2 = this.queryRenderedTargets(t2, n2, o2), l2 = [], c2 =  new Set();
             for (const t3 of a2) for (const i3 of t3.variants[r2]) vt(i3, t3, c2) || l2.push(new e.dx(t3, i3));
             return l2;
           }
@@ -25166,7 +25166,7 @@ Use an identity property function instead: ${t3}.`)];
           updateSources(e2) {
             let t2;
             this.directionalLight && (t2 = go(this.directionalLight));
-            const i2 = /* @__PURE__ */ new Set(), o2 = /* @__PURE__ */ new Set();
+            const i2 =  new Set(), o2 =  new Set();
             for (const e3 in this._mergedLayers) {
               const t3 = this._mergedLayers[e3];
               "building" === t3.type && i2.add(t3.source), t3.hasElevation() && !o2.has(t3.source) && o2.add(t3.source);
@@ -25390,10 +25390,10 @@ Use an identity property function instead: ${t3}.`)];
         }, Po.registerForPluginStateChange = e.dA;
         class Oo extends e.E {
           constructor(t2) {
-            super(), this._style = t2, this._buildings = {}, this._activeFloors = /* @__PURE__ */ new Set(), this._activeFloorsVisible = true, this._indoorState = { selectedFloorId: null, lastActiveFloors: null, activeFloorsVisible: true }, e.aY(["_updateUI"], this);
+            super(), this._style = t2, this._buildings = {}, this._activeFloors =  new Set(), this._activeFloorsVisible = true, this._indoorState = { selectedFloorId: null, lastActiveFloors: null, activeFloorsVisible: true }, e.aY(["_updateUI"], this);
           }
           destroy() {
-            this._buildings = {}, this._activeFloors = /* @__PURE__ */ new Set(), this._indoorState = null;
+            this._buildings = {}, this._activeFloors =  new Set(), this._indoorState = null;
           }
           selectFloor(e2) {
             e2 === this._selectedFloorId && this._activeFloorsVisible || (this._selectedFloorId = e2, this._activeFloorsVisible = true, this._updateActiveFloors());
@@ -25439,11 +25439,11 @@ Use an identity property function instead: ${t3}.`)];
           }
           _updateActiveFloors() {
             const e2 = this._activeFloors;
-            this._activeFloors = /* @__PURE__ */ new Set(), this._indoorState = { selectedFloorId: this._selectedFloorId, lastActiveFloors: e2, activeFloorsVisible: this._activeFloorsVisible }, this._style.updateIndoorDependentLayers();
+            this._activeFloors =  new Set(), this._indoorState = { selectedFloorId: this._selectedFloorId, lastActiveFloors: e2, activeFloorsVisible: this._activeFloorsVisible }, this._style.updateIndoorDependentLayers();
           }
         }
         var zo = "\n#define EPSILON 0.0000001\n#define PI 3.141592653589793\n#ifdef RENDER_CUTOFF\nfloat cutoff_opacity(vec4 cutoff_params,float depth) {float near=cutoff_params.x;float far=cutoff_params.y;float cutoffStart=cutoff_params.z;float cutoffEnd=cutoff_params.w;float linearDepth=(depth-near)/(far-near);return clamp((linearDepth-cutoffStart)/(cutoffEnd-cutoffStart),0.0,1.0);}\n#endif", Mo = "\n#ifdef DUAL_SOURCE_BLENDING\nlayout(location=0,index=0) out vec4 glFragColor;layout(location=0,index=1) out vec4 glFragColorSrc1;\n#else\nlayout(location=0) out vec4 glFragColor;\n#endif\n#ifdef USE_MRT1\nlayout(location=1) out vec4 out_Target1;\n#endif\nhighp float unpack_depth(highp vec4 rgba_depth)\n{const highp vec4 bit_shift=vec4(1.0/(255.0*255.0*255.0),1.0/(255.0*255.0),1.0/255.0,1.0);return dot(rgba_depth,bit_shift)*2.0-1.0;}highp vec4 pack_depth(highp float ndc_z) {highp float depth=ndc_z*0.5+0.5;const highp vec4 bit_shift=vec4(255.0*255.0*255.0,255.0*255.0,255.0,1.0);const highp vec4 bit_mask =vec4(0.0,1.0/255.0,1.0/255.0,1.0/255.0);highp vec4 res=fract(depth*bit_shift);res-=res.xxyz*bit_mask;return res;}\n#ifdef INDICATOR_CUTOUT\nuniform vec3 u_indicator_cutout_centers;uniform vec4 u_indicator_cutout_params;\n#endif\nvec4 applyCutout(vec4 color,float height) {\n#ifdef INDICATOR_CUTOUT\nfloat verticalFadeRange=u_indicator_cutout_centers.z*0.25;float holeMinOpacity=mix(1.0,u_indicator_cutout_params.x,smoothstep(u_indicator_cutout_centers.z,u_indicator_cutout_centers.z+verticalFadeRange,height));float holeRadius=max(u_indicator_cutout_params.y,0.0);float holeAspectRatio=u_indicator_cutout_params.z;float fadeStart=u_indicator_cutout_params.w;float distA=distance(vec2(gl_FragCoord.x,gl_FragCoord.y*holeAspectRatio),vec2(u_indicator_cutout_centers[0],u_indicator_cutout_centers[1]*holeAspectRatio));return color*min(smoothstep(fadeStart,holeRadius,distA)+holeMinOpacity,1.0);\n#else\nreturn color;\n#endif\n}\n#ifdef DEBUG_WIREFRAME\n#define HANDLE_WIREFRAME_DEBUG \\\nglFragColor=vec4(0.7,0.0,0.0,0.7); \\\ngl_FragDepth=gl_FragCoord.z-0.0001;\n#else\n#define HANDLE_WIREFRAME_DEBUG\n#endif\n#ifdef RENDER_CUTOFF\nuniform highp vec4 u_cutoff_params;in float v_cutoff_opacity;\n#endif\nvec4 textureLodCustom(sampler2D image,highp vec2 pos,highp vec2 lod_coord) {highp vec2 size=vec2(textureSize(image,0));highp vec2 dx=dFdx(lod_coord.xy*size);highp vec2 dy=dFdy(lod_coord.xy*size);highp float delta_max_sqr=max(dot(dx,dx),dot(dy,dy));highp float lod=0.5*log2(delta_max_sqr);return textureLod(image,pos,lod);}vec4 applyLUT(highp sampler3D lut,vec4 col) {vec3 size=vec3(textureSize(lut,0));vec3 uvw=(col.rbg*float(size-1.0)+0.5)/size;return vec4(texture(lut,uvw).rgb*col.a,col.a);}vec3 applyLUT(highp sampler3D lut,vec3 col) {return applyLUT(lut,vec4(col,1.0)).rgb;}", Fo = "\n#define EXTENT 8192.0\n#define RAD_TO_DEG 180.0/PI\n#define DEG_TO_RAD PI/180.0\n#define GLOBE_RADIUS EXTENT/PI/2.0\nfloat wrap(float n,float min,float max) {float d=max-min;float w=mod(mod(n-min,d)+d,d)+min;return (w==min) ? max : w;}\n#ifdef PROJECTION_GLOBE_VIEW\nvec3 mercator_tile_position(mat4 matrix,vec2 tile_anchor,vec3 tile_id,vec2 mercator_center) {\n#ifndef PROJECTED_POS_ON_VIEWPORT\nfloat tiles=tile_id.z;vec2 mercator=(tile_anchor/EXTENT+tile_id.xy)/tiles;mercator-=mercator_center;mercator.x=wrap(mercator.x,-0.5,0.5);vec4 mercator_tile=vec4(mercator.xy*EXTENT,EXTENT/(2.0*PI),1.0);mercator_tile=matrix*mercator_tile;return mercator_tile.xyz;\n#else\nreturn vec3(0.0);\n#endif\n}vec3 mix_globe_mercator(vec3 globe,vec3 mercator,float t) {return mix(globe,mercator,t);}mat3 globe_mercator_surface_vectors(vec3 pos_normal,vec3 up_dir,float zoom_transition) {vec3 normal=zoom_transition==0.0 ? pos_normal : normalize(mix(pos_normal,up_dir,zoom_transition));vec3 xAxis=normalize(vec3(normal.z,0.0,-normal.x));vec3 yAxis=normalize(cross(normal,xAxis));return mat3(xAxis,yAxis,normal);}\n#endif\nvec2 unpack_float(const float packedValue) {int packedIntValue=int(packedValue);int v0=packedIntValue/256;return vec2(v0,packedIntValue-v0*256);}vec2 unpack_opacity(const float packedOpacity) {int intOpacity=int(packedOpacity)/2;return vec2(float(intOpacity)/127.0,mod(packedOpacity,2.0));}vec4 decode_color(const vec2 encodedColor) {return vec4(\nunpack_float(encodedColor[0])/255.0,unpack_float(encodedColor[1])/255.0\n);}float unpack_mix_vec2(const vec2 packedValue,const float t) {return mix(packedValue[0],packedValue[1],t);}vec4 unpack_mix_color(const vec4 packedColors,const float t) {vec4 minColor=decode_color(vec2(packedColors[0],packedColors[1]));vec4 maxColor=decode_color(vec2(packedColors[2],packedColors[3]));return mix(minColor,maxColor,t);}vec2 get_pattern_pos(const vec2 pixel_coord_upper,const vec2 pixel_coord_lower,const vec2 pattern_size,const vec2 units_to_pixels,const vec2 pos) {vec2 offset=mod(mod(mod(pixel_coord_upper,pattern_size)*256.0,pattern_size)*256.0+pixel_coord_lower,pattern_size);return (units_to_pixels*pos+offset)/pattern_size;}vec2 get_pattern_pos(const vec2 pixel_coord_upper,const vec2 pixel_coord_lower,const vec2 pattern_size,const float tile_units_to_pixels,const vec2 pos) {return get_pattern_pos(pixel_coord_upper,pixel_coord_lower,pattern_size,vec2(tile_units_to_pixels),pos);}float mercatorXfromLng(float lng) {return (180.0+lng)/360.0;}float mercatorYfromLat(float lat) {return (180.0-(RAD_TO_DEG*log(tan(PI/4.0+lat/2.0*DEG_TO_RAD))))/360.0;}vec3 latLngToECEF(vec2 latLng) {latLng=DEG_TO_RAD*latLng;float cosLat=cos(latLng[0]);float sinLat=sin(latLng[0]);float cosLng=cos(latLng[1]);float sinLng=sin(latLng[1]);float sx=cosLat*sinLng*GLOBE_RADIUS;float sy=-sinLat*GLOBE_RADIUS;float sz=cosLat*cosLng*GLOBE_RADIUS;return vec3(sx,sy,sz);}\n#ifdef RENDER_CUTOFF\nuniform vec4 u_cutoff_params;out float v_cutoff_opacity;\n#endif\nconst vec4 AWAY=vec4(-1000.0,-1000.0,-1000.0,1);const float skirtOffset=24575.0;vec3 decomposeToPosAndSkirt(vec2 posWithComposedSkirt)\n{float skirt=float(posWithComposedSkirt.x >=skirtOffset);vec2 pos=posWithComposedSkirt-vec2(skirt*skirtOffset,0.0);return vec3(pos,skirt);}\n#ifndef HAS_SHADER_STORAGE_BLOCK_material_buffer\n#define GET_ATTRIBUTE_float(attrib,matInfo,attrib_id) attrib\n#define GET_ATTRIBUTE_vec4(attrib,matInfo,attrib_id) attrib\n#define GET_ATTRIBUTE_vec2(attrib,matInfo,attrib_id) attrib\n#define DECLARE_MATERIAL_TABLE_INFO\n#endif", Bo = "in highp vec3 a_pos_3f;uniform lowp mat4 u_matrix;out highp vec3 v_uv;void main() {const mat3 half_neg_pi_around_x=mat3(1.0,0.0, 0.0,0.0,0.0,-1.0,0.0,1.0, 0.0);v_uv=half_neg_pi_around_x*a_pos_3f;vec4 pos=u_matrix*vec4(a_pos_3f,1.0);gl_Position=pos.xyww;}", ko = "\n#define ELEVATION_SCALE 7.0\n#define ELEVATION_OFFSET 450.0\n#ifdef PROJECTION_GLOBE_VIEW\nuniform vec3 u_tile_tl_up;uniform vec3 u_tile_tr_up;uniform vec3 u_tile_br_up;uniform vec3 u_tile_bl_up;uniform float u_tile_up_scale;vec3 elevationVector(vec2 pos) {vec2 uv=pos/EXTENT;vec3 up=normalize(mix(\nmix(u_tile_tl_up,u_tile_tr_up,uv.xxx),mix(u_tile_bl_up,u_tile_br_up,uv.xxx),uv.yyy));return up*u_tile_up_scale;}\n#else\nvec3 elevationVector(vec2 pos) { return vec3(0,0,1); }\n#endif\n#ifdef TERRAIN\nuniform highp sampler2D u_dem;uniform highp sampler2D u_dem_prev;uniform vec2 u_dem_tl;uniform vec2 u_dem_tl_prev;uniform float u_dem_scale;uniform float u_dem_scale_prev;uniform float u_dem_size;uniform float u_dem_lerp;uniform float u_exaggeration;uniform float u_meter_to_dem;uniform mat4 u_label_plane_matrix_inv;vec4 tileUvToDemSample(vec2 uv,float dem_size,float dem_scale,vec2 dem_tl) {vec2 pos=dem_size*(uv*dem_scale+dem_tl)+1.0;vec2 f=fract(pos);return vec4((pos-f+0.5)/(dem_size+2.0),f);}float currentElevation(vec2 apos) {\n#ifdef TERRAIN_DEM_FLOAT_FORMAT\nvec2 pos=(u_dem_size*(apos/8192.0*u_dem_scale+u_dem_tl)+1.5)/(u_dem_size+2.0);return u_exaggeration*texture(u_dem,pos).r;\n#else\nfloat dd=1.0/(u_dem_size+2.0);vec4 r=tileUvToDemSample(apos/8192.0,u_dem_size,u_dem_scale,u_dem_tl);vec2 pos=r.xy;vec2 f=r.zw;float tl=texture(u_dem,pos).r;float tr=texture(u_dem,pos+vec2(dd,0)).r;float bl=texture(u_dem,pos+vec2(0,dd)).r;float br=texture(u_dem,pos+vec2(dd,dd)).r;return u_exaggeration*mix(mix(tl,tr,f.x),mix(bl,br,f.x),f.y);\n#endif\n}float prevElevation(vec2 apos) {\n#ifdef TERRAIN_DEM_FLOAT_FORMAT\nvec2 pos=(u_dem_size*(apos/8192.0*u_dem_scale_prev+u_dem_tl_prev)+1.5)/(u_dem_size+2.0);return u_exaggeration*texture(u_dem_prev,pos).r;\n#else\nfloat dd=1.0/(u_dem_size+2.0);vec4 r=tileUvToDemSample(apos/8192.0,u_dem_size,u_dem_scale_prev,u_dem_tl_prev);vec2 pos=r.xy;vec2 f=r.zw;float tl=texture(u_dem_prev,pos).r;float tr=texture(u_dem_prev,pos+vec2(dd,0)).r;float bl=texture(u_dem_prev,pos+vec2(0,dd)).r;float br=texture(u_dem_prev,pos+vec2(dd,dd)).r;return u_exaggeration*mix(mix(tl,tr,f.x),mix(bl,br,f.x),f.y);\n#endif\n}\n#ifdef TERRAIN_VERTEX_MORPHING\nfloat elevation(vec2 apos) {\n#ifdef ZERO_EXAGGERATION\nreturn 0.0;\n#endif\nfloat nextElevation=currentElevation(apos);float prevElevation=prevElevation(apos);return mix(prevElevation,nextElevation,u_dem_lerp);}\n#else\nfloat elevation(vec2 apos) {\n#ifdef ZERO_EXAGGERATION\nreturn 0.0;\n#endif\nreturn currentElevation(apos);}\n#endif\nvec4 fourSample(vec2 pos,vec2 off) {float tl=texture(u_dem,pos).r;float tr=texture(u_dem,pos+vec2(off.x,0.0)).r;float bl=texture(u_dem,pos+vec2(0.0,off.y)).r;float br=texture(u_dem,pos+off).r;return vec4(tl,tr,bl,br);}float flatElevation(vec2 pack) {vec2 apos=floor(pack/8.0);vec2 span=10.0*(pack-apos*8.0);vec2 uvTex=(apos-vec2(1.0,1.0))/8190.0;float size=u_dem_size+2.0;float dd=1.0/size;vec2 pos=u_dem_size*(uvTex*u_dem_scale+u_dem_tl)+1.0;vec2 f=fract(pos);pos=(pos-f+0.5)*dd;vec4 h=fourSample(pos,vec2(dd));float z=mix(mix(h.x,h.y,f.x),mix(h.z,h.w,f.x),f.y);vec2 w=floor(0.5*(span*u_meter_to_dem-1.0));vec2 d=dd*w;h=fourSample(pos-d,2.0*d+vec2(dd));vec4 diff=abs(h.xzxy-h.ywzw);vec2 slope=min(vec2(0.25),u_meter_to_dem*0.5*(diff.xz+diff.yw)/(2.0*w+vec2(1.0)));vec2 fix=slope*span;float base=z+max(fix.x,fix.y);return u_exaggeration*base;}float elevationFromUint16(float word) {return u_exaggeration*(word/ELEVATION_SCALE-ELEVATION_OFFSET);}\n#else\nfloat elevation(vec2 pos) { return 0.0; }\n#endif\n#ifdef DEPTH_OCCLUSION\nuniform highp sampler2D u_depth;uniform highp vec2 u_depth_size_inv;uniform highp vec2 u_depth_range_unpack;uniform highp float u_occluder_half_size;uniform highp float u_occlusion_depth_offset;\n#ifdef DEPTH_D24\nfloat unpack_depth(float depth) {return depth*u_depth_range_unpack.x+u_depth_range_unpack.y;}vec4 unpack_depth4(vec4 depth) {return depth*u_depth_range_unpack.x+vec4(u_depth_range_unpack.y);}\n#else\nhighp float unpack_depth_rgba(vec4 rgba_depth)\n{const highp vec4 bit_shift=vec4(1.0/(255.0*255.0*255.0),1.0/(255.0*255.0),1.0/255.0,1.0);return dot(rgba_depth,bit_shift)*2.0-1.0;}\n#endif\nbool isOccluded(vec4 frag) {vec3 coord=frag.xyz/frag.w;\n#ifdef CLIP_ZERO_TO_ONE\ncoord.z=-1.0+2.0*coord.z; \n#endif\n#ifdef DEPTH_D24\nfloat depth=unpack_depth(texture(u_depth,(coord.xy+1.0)*0.5).r);\n#else\nfloat depth=unpack_depth_rgba(texture(u_depth,(coord.xy+1.0)*0.5));\n#endif\nreturn coord.z+u_occlusion_depth_offset > depth;}highp vec4 getCornerDepths(vec2 coord) {highp vec3 df=vec3(u_occluder_half_size*u_depth_size_inv,0.0);highp vec2 uv=0.5*coord.xy+0.5;\n#ifdef DEPTH_D24\nhighp vec4 depth=vec4(\ntexture(u_depth,uv-df.xz).r,texture(u_depth,uv+df.xz).r,texture(u_depth,uv-df.zy).r,texture(u_depth,uv+df.zy).r\n);depth=unpack_depth4(depth);\n#else\nhighp vec4 depth=vec4(\nunpack_depth_rgba(texture(u_depth,uv-df.xz)),unpack_depth_rgba(texture(u_depth,uv+df.xz)),unpack_depth_rgba(texture(u_depth,uv-df.zy)),unpack_depth_rgba(texture(u_depth,uv+df.zy))\n);\n#endif\nreturn depth;}highp float occlusionFadeMultiSample(vec4 frag) {highp vec3 coord=frag.xyz/frag.w;highp vec2 uv=0.5*coord.xy+0.5;\n#ifdef CLIP_ZERO_TO_ONE\ncoord.z=-1.0+2.0*coord.z; \n#endif\nint NX=3;int NY=4;highp vec2 df=u_occluder_half_size*u_depth_size_inv;highp vec2 oneStep=2.0*u_occluder_half_size*u_depth_size_inv/vec2(NX-1,NY-1);highp float res=0.0;for (int y=0; y < NY;++y) {for (int x=0; x < NX;++x) {\n#ifdef DEPTH_D24\nhighp float depth=unpack_depth(texture(u_depth,uv-df+vec2(float(x)*oneStep.x,float(y)*oneStep.y)).r);\n#else\nhighp float depth=unpack_depth_rgba(texture(u_depth,uv-df+vec2(float(x)*oneStep.x,float(y)*oneStep.y)));\n#endif\nres+=1.0-clamp(300.0*(coord.z+u_occlusion_depth_offset-depth),0.0,1.0);}}res=clamp(2.0*res/float(NX*NY)-0.5,0.0,1.0);return res;}highp float occlusionFade(vec4 frag) {highp vec3 coord=frag.xyz/frag.w;\n#ifdef CLIP_ZERO_TO_ONE\ncoord.z=-1.0+2.0*coord.z; \n#endif\nhighp vec4 depth=getCornerDepths(coord.xy);return dot(vec4(0.25),vec4(1.0)-clamp(300.0*(vec4(coord.z+u_occlusion_depth_offset)-depth),0.0,1.0));}\n#else\nbool isOccluded(vec4 frag) { return false; }highp float occlusionFade(vec4 frag) { return 1.0; }highp float occlusionFadeMultiSample(vec4 frag) { return 1.0; }\n#endif", No = "#ifdef FOG\nuniform mediump vec4 u_fog_color;uniform mediump vec2 u_fog_range;uniform mediump float u_fog_horizon_blend;uniform mediump mat4 u_fog_matrix;out vec3 v_fog_pos;float fog_range(float depth) {return (depth-u_fog_range[0])/(u_fog_range[1]-u_fog_range[0]);}float fog_horizon_blending(vec3 camera_dir) {float t=max(0.0,camera_dir.z/u_fog_horizon_blend);return u_fog_color.a*exp(-3.0*t*t);}float fog_opacity(float t) {const float decay=6.0;float falloff=1.0-min(1.0,exp(-decay*t));falloff*=falloff*falloff;return u_fog_color.a*min(1.0,1.00747*falloff);}vec3 fog_position(vec3 pos) {return (u_fog_matrix*vec4(pos,1.0)).xyz;}vec3 fog_position(vec2 pos) {return fog_position(vec3(pos,0.0));}float fog(vec3 pos) {float depth=length(pos);float opacity=fog_opacity(fog_range(depth));return opacity*fog_horizon_blending(pos/depth);}\n#endif", Uo = "#ifdef FOG\nuniform mediump vec4 u_fog_color;uniform mediump vec2 u_fog_range;uniform mediump float u_fog_horizon_blend;uniform mediump vec2 u_fog_vertical_limit;uniform mediump float u_fog_temporal_offset;in vec3 v_fog_pos;uniform highp vec3 u_frustum_tl;uniform highp vec3 u_frustum_tr;uniform highp vec3 u_frustum_br;uniform highp vec3 u_frustum_bl;uniform highp vec3 u_globe_pos;uniform highp float u_globe_radius;uniform highp vec2 u_viewport;uniform float u_globe_transition;uniform int u_is_globe;float fog_range(float depth) {return (depth-u_fog_range[0])/(u_fog_range[1]-u_fog_range[0]);}float fog_horizon_blending(vec3 camera_dir) {float t=max(0.0,camera_dir.z/u_fog_horizon_blend);return u_fog_color.a*exp(-3.0*t*t);}float fog_opacity(float t) {const float decay=6.0;float falloff=1.0-min(1.0,exp(-decay*t));falloff*=falloff*falloff;return u_fog_color.a*min(1.0,1.00747*falloff);}float globe_glow_progress() {highp vec2 uv=gl_FragCoord.xy/u_viewport;\n#ifdef FLIP_Y\nuv.y=1.0-uv.y;\n#endif\nhighp vec3 ray_dir=mix(\nmix(u_frustum_tl,u_frustum_tr,uv.x),mix(u_frustum_bl,u_frustum_br,uv.x),1.0-uv.y);highp vec3 dir=normalize(ray_dir);highp vec3 closest_point=dot(u_globe_pos,dir)*dir;highp float sdf=length(closest_point-u_globe_pos)/u_globe_radius;return sdf+PI*0.5;}float fog_opacity(vec3 pos) {float depth=length(pos);return fog_opacity(fog_range(depth));}vec3 fog_apply(vec3 color,vec3 pos,float opacity_limit) {float depth=length(pos);float opacity;if (u_is_globe==1) {float glow_progress=globe_glow_progress();float t=mix(glow_progress,depth,u_globe_transition);opacity=fog_opacity(fog_range(t));} else {opacity=fog_opacity(fog_range(depth));opacity*=fog_horizon_blending(pos/depth);}return mix(color,u_fog_color.rgb,min(opacity,opacity_limit));}vec3 fog_apply(vec3 color,vec3 pos) {return fog_apply(color,pos,1.0);}vec4 fog_apply_from_vert(vec4 color,float fog_opac) {float alpha=EPSILON+color.a;color.rgb=mix(color.rgb/alpha,u_fog_color.rgb,fog_opac)*alpha;return color;}vec3 fog_apply_sky_gradient(vec3 camera_ray,vec3 sky_color) {float horizon_blend=fog_horizon_blending(normalize(camera_ray));return mix(sky_color,u_fog_color.rgb,horizon_blend);}vec4 fog_apply_premultiplied(vec4 color,vec3 pos) {float alpha=EPSILON+color.a;color.rgb=fog_apply(color.rgb/alpha,pos)*alpha;return color;}vec4 fog_apply_premultiplied(vec4 color,vec3 pos,float heightMeters) {float verticalProgress=(u_fog_vertical_limit.x > 0.0 || u_fog_vertical_limit.y > 0.0) ? smoothstep(u_fog_vertical_limit.x,u_fog_vertical_limit.y,heightMeters) : 0.0;float opacityLimit=1.0-smoothstep(0.9,1.0,fog_opacity(pos));return mix(fog_apply_premultiplied(color,pos),color,min(verticalProgress,opacityLimit));}vec3 fog_dither(vec3 color) {return color;}vec4 fog_dither(vec4 color) {return vec4(fog_dither(color.rgb),color.a);}\n#endif", jo = "#ifdef RASTER_ARRAY\nuniform highp sampler2D u_image0;uniform sampler2D u_image1;const vec4 NODATA=vec4(1);ivec4 _raTexLinearCoord(highp vec2 texCoord,highp vec2 texResolution,out highp vec2 fxy) {texCoord=texCoord*texResolution-0.5;fxy=fract(texCoord);texCoord-=fxy;return ivec4(texCoord.xxyy+vec2(1.5,0.5).xyxy);}vec2 _raTexLinearMix(highp vec2 fxy,highp vec4 colorMix,highp float colorOffset,highp vec4 t00,highp vec4 t10,highp vec4 t01,highp vec4 t11) {vec2 c00=t00==NODATA ? vec2(0) : vec2(colorOffset+dot(t00,colorMix),1);vec2 c10=t10==NODATA ? vec2(0) : vec2(colorOffset+dot(t10,colorMix),1);vec2 c01=t01==NODATA ? vec2(0) : vec2(colorOffset+dot(t01,colorMix),1);vec2 c11=t11==NODATA ? vec2(0) : vec2(colorOffset+dot(t11,colorMix),1);return mix(mix(c01,c11,fxy.x),mix(c00,c10,fxy.x),fxy.y);}vec2 raTexture2D_image0_linear(highp vec2 texCoord,highp vec2 texResolution,highp vec4 colorMix,highp float colorOffset) {vec2 fxy;ivec4 c=_raTexLinearCoord(texCoord,texResolution,fxy);return _raTexLinearMix(fxy,colorMix,colorOffset,texelFetch(u_image0,c.yz,0),texelFetch(u_image0,c.xz,0),texelFetch(u_image0,c.yw,0),texelFetch(u_image0,c.xw,0)\n);}vec2 raTexture2D_image1_linear(highp vec2 texCoord,highp vec2 texResolution,highp vec4 colorMix,highp float colorOffset) {vec2 fxy;ivec4 c=_raTexLinearCoord(texCoord,texResolution,fxy);return _raTexLinearMix(fxy,colorMix,colorOffset,texelFetch(u_image1,c.yz,0),texelFetch(u_image1,c.xz,0),texelFetch(u_image1,c.yw,0),texelFetch(u_image1,c.xw,0)\n);}vec2 raTexture2D_image0_nearest(highp vec2 texCoord,highp vec2 texResolution,highp vec4 colorMix,highp float colorOffset) {vec4 t=texelFetch(u_image0,ivec2(texCoord*texResolution),0);return t==NODATA ? vec2(0) : vec2(colorOffset+dot(t,colorMix),1);}vec2 raTexture2D_image1_nearest(highp vec2 texCoord,highp vec2 texResolution,highp vec4 colorMix,highp float colorOffset) {vec4 t=texelFetch(u_image1,ivec2(texCoord*texResolution),0);return t==NODATA ? vec2(0) : vec2(colorOffset+dot(t,colorMix),1);}\n#endif", Go = "#ifdef RASTER_ARRAY\nuniform sampler2D u_velocity;uniform mediump vec2 u_velocity_res;uniform mediump float u_max_speed;const vec4 NO_DATA=vec4(1);const vec2 INVALID_VELOCITY=vec2(-1);uniform highp vec2 u_uv_offset;uniform highp float u_data_offset;uniform highp vec2 u_data_scale;ivec4 rasterArrayLinearCoord(highp vec2 texCoord,highp vec2 texResolution,out highp vec2 fxy) {texCoord=texCoord*texResolution-0.5;fxy=fract(texCoord);texCoord-=fxy;return ivec4(texCoord.xxyy+vec2(1.5,0.5).xyxy);}highp vec2 lookup_velocity(highp vec2 uv) {uv=u_uv_offset.x+u_uv_offset.y*uv;highp vec2 fxy;ivec4 c=rasterArrayLinearCoord(uv,u_velocity_res,fxy);highp vec4 tl=texelFetch(u_velocity,c.yz,0);highp vec4 tr=texelFetch(u_velocity,c.xz,0);highp vec4 bl=texelFetch(u_velocity,c.yw,0);highp vec4 br=texelFetch(u_velocity,c.xw,0);if (tl==NO_DATA) {return INVALID_VELOCITY;}if (tr==NO_DATA) {return INVALID_VELOCITY;}if (bl==NO_DATA) {return INVALID_VELOCITY;}if (br==NO_DATA) {return INVALID_VELOCITY;}highp vec4 t=mix(mix(bl,br,fxy.x),mix(tl,tr,fxy.x),fxy.y);highp vec2 velocity=u_data_offset+vec2(dot(t.rg,u_data_scale),dot(t.ba,u_data_scale));velocity.y=-velocity.y;velocity/=max(u_max_speed,length(velocity));return velocity;}\n#endif\nuniform highp float u_particle_pos_scale;uniform highp vec2 u_particle_pos_offset;highp vec4 pack_pos_to_rgba(highp vec2 p) {highp vec2 v=(p+u_particle_pos_offset)/u_particle_pos_scale;highp vec4 r=vec4(v.x,fract(v.x*255.0),v.y,fract(v.y*255.0));return vec4(r.x-r.y/255.0,r.y,r.z-r.w/255.0,r.w);}highp vec2 unpack_pos_from_rgba(highp vec4 v) {v=floor(v*255.0+0.5)/255.0;highp vec2 p=vec2(v.x+(v.y/255.0),v.z+(v.w/255.0));return u_particle_pos_scale*p-u_particle_pos_offset;}", Vo = "#ifdef RENDER_SHADOWS\nuniform mediump vec3 u_shadow_direction;uniform highp vec3 u_shadow_normal_offset;vec3 shadow_normal_offset(vec3 normal) {float tileInMeters=u_shadow_normal_offset[0];vec3 n=vec3(-normal.xy,tileInMeters*normal.z);float dotScale=min(1.0-dot(normal,u_shadow_direction),1.0)*0.5+0.5;return n*dotScale;}vec3 shadow_normal_offset_model(vec3 normal) {vec3 transformed_normal=vec3(-normal.xy,normal.z);float NDotL=dot(normalize(transformed_normal),u_shadow_direction);float dotScale=min(1.0-NDotL,1.0)*0.5+0.5;return normal*dotScale;}float shadow_normal_offset_multiplier0() {return u_shadow_normal_offset[1];}float shadow_normal_offset_multiplier1() {return u_shadow_normal_offset[2];}\n#endif", Ho = "#ifdef RENDER_SHADOWS\nprecision highp sampler2DShadow;uniform sampler2DShadow u_shadowmap_0;uniform sampler2DShadow u_shadowmap_1;uniform float u_shadow_intensity;uniform float u_shadow_map_resolution;uniform float u_shadow_texel_size;uniform highp vec3 u_shadow_normal_offset;uniform vec2 u_fade_range;uniform mediump vec3 u_shadow_direction;uniform highp vec3 u_shadow_bias;float shadow_sample(sampler2DShadow shadowmap,highp vec3 pos,highp float bias) {\n#ifdef CLIP_ZERO_TO_ONE\nhighp vec3 coord=vec3(pos.xy*0.5+0.5,pos.z-bias);\n#else\nhighp vec3 coord=vec3(pos.xy*0.5+0.5,pos.z*0.5+0.5-bias);\n#endif\nreturn texture(shadowmap,coord);}float shadow_occlusion(highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth,highp float bias) {light_view_pos0.xyz/=light_view_pos0.w;\n#ifdef SHADOWS_SINGLE_CASCADE\nvec2 abs_bounds=abs(light_view_pos0.xy);if (abs_bounds.x >=1.0 || abs_bounds.y >=1.0) {return 0.0;}return shadow_sample(u_shadowmap_0,light_view_pos0.xyz,bias);\n#else\nlight_view_pos1.xyz/=light_view_pos1.w;vec4 abs_bounds=abs(vec4(light_view_pos0.xy,light_view_pos1.xy));if (abs_bounds.x < 1.0 && abs_bounds.y < 1.0) {return shadow_sample(u_shadowmap_0,light_view_pos0.xyz,bias);}if (abs_bounds.z >=1.0 || abs_bounds.w >=1.0) {return 0.0;}float occlusion1=shadow_sample(u_shadowmap_1,light_view_pos1.xyz,bias);return clamp(mix(occlusion1,0.0,smoothstep(u_fade_range.x,u_fade_range.y,view_depth)),0.0,1.0);\n#endif\n}highp float calculate_shadow_bias(float NDotL) {\n#ifdef NORMAL_OFFSET\nreturn 0.5*u_shadow_bias.x;\n#else\nreturn 0.5*(u_shadow_bias.x+clamp(u_shadow_bias.y*tan(acos(NDotL)),0.0,u_shadow_bias.z));\n#endif\n}float shadowed_light_factor_normal(vec3 N,highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth) {float NDotL=dot(N,u_shadow_direction);float bias=calculate_shadow_bias(NDotL);float occlusion=shadow_occlusion(light_view_pos0,light_view_pos1,view_depth,bias);return mix(0.0,(1.0-(u_shadow_intensity*occlusion))*NDotL,step(0.0,NDotL));}float shadowed_light_factor_normal_opacity(vec3 N,highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth,float shadow_opacity) {float NDotL=dot(N,u_shadow_direction);float bias=calculate_shadow_bias(NDotL);float occlusion=shadow_occlusion(light_view_pos0,light_view_pos1,view_depth,bias)*shadow_opacity;return mix(0.0,(1.0-(u_shadow_intensity*occlusion))*NDotL,step(0.0,NDotL));}float shadowed_light_factor_normal_unbiased(vec3 N,highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth) {float NDotL=dot(N,u_shadow_direction);float bias=0.0;float occlusion=shadow_occlusion(light_view_pos0,light_view_pos1,view_depth,bias);return mix(0.0,(1.0-(u_shadow_intensity*occlusion))*NDotL,step(0.0,NDotL));}highp vec2 compute_receiver_plane_depth_bias(highp vec3 pos_dx,highp vec3 pos_dy)\n{highp vec2 biasUV=vec2(\npos_dy.y*pos_dx.z-pos_dx.y*pos_dy.z,pos_dx.x*pos_dy.z-pos_dy.x*pos_dx.z);biasUV*=1.0/((pos_dx.x*pos_dy.y)-(pos_dx.y*pos_dy.x));return biasUV;}float shadowed_light_factor_plane_bias(highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth) {highp vec3 light_view_pos0_xyz=light_view_pos0.xyz/light_view_pos0.w*0.5+0.5;highp vec3 light_view_pos0_ddx=dFdx(light_view_pos0_xyz);highp vec3 light_view_pos0_ddy=dFdy(light_view_pos0_xyz);highp vec2 plane_depth_bias=compute_receiver_plane_depth_bias(light_view_pos0_ddx,light_view_pos0_ddy);highp float bias=dot(vec2(u_shadow_texel_size,u_shadow_texel_size),plane_depth_bias)+0.0001;float occlusion=shadow_occlusion(light_view_pos0,light_view_pos1,view_depth,bias);return 1.0-(u_shadow_intensity*occlusion);}float shadowed_light_factor(highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth) {float bias=0.0;float occlusion=shadow_occlusion(light_view_pos0,light_view_pos1,view_depth,bias);return 1.0-(u_shadow_intensity*occlusion);}float shadow_occlusion(float ndotl,highp vec4 light_view_pos0,highp vec4 light_view_pos1,float view_depth) {float bias=calculate_shadow_bias(ndotl);return shadow_occlusion(light_view_pos0,light_view_pos1,view_depth,bias);}\n#endif";
-        const qo = /#include\s+"([^"]+)"/g, Zo = /#pragma mapbox: ([\w\-]+) ([\w]+) ([\w]+) ([\w]+)/g, Wo = /\b[A-Za-z_][A-Za-z0-9_]*\b/g, $o = /* @__PURE__ */ new Set(["ifdef", "ifndef", "elif", "if", "defined"]), Xo = /* @__PURE__ */ new Set();
+        const qo = /#include\s+"([^"]+)"/g, Zo = /#pragma mapbox: ([\w\-]+) ([\w]+) ([\w]+) ([\w]+)/g, Wo = /\b[A-Za-z_][A-Za-z0-9_]*\b/g, $o =  new Set(["ifdef", "ifndef", "elif", "if", "defined"]), Xo =  new Set();
         os(zo, Xo), os(Fo, Xo), os(Mo, Xo);
         const Yo = { "_prelude_fog.vertex.glsl": No, "_prelude_terrain.vertex.glsl": ko, "_prelude_shadow.vertex.glsl": Vo, "_prelude_material_table.vertex.glsl": "#ifdef HAS_SHADER_STORAGE_BLOCK_material_buffer\n#define MATERIAL_TABLE_DEBUG 0\nuniform int u_material_offset;uniform int u_vertex_offset;layout(std140,binding=0)readonly buffer material_buffer{uvec4 material_data[];};struct MaterialInfo{uint dataOffset;\n#if MATERIAL_TABLE_DEBUG\nvec4 colorDebug;\n#endif\n};uint read_buf_no_offset(uint iDword) {return material_data[iDword/4u][iDword % 4u];}uint read_buf(uint iDword) {iDword+=uint(u_material_offset/4);return read_buf_no_offset(iDword);}float read_buf_float(uint iDword){return uintBitsToFloat(read_buf(iDword));}uint read_buf_uint8(uint iDword,uint iUint8){uint dwordOffset=iDword+(iUint8/4u);uint byteOffset=iUint8 & 3u;uint bitOffset=8u*byteOffset;uint mask=0xffu << bitOffset;uint dwordVal=read_buf(dwordOffset);return (dwordVal & mask) >> bitOffset;}uint read_buf_uint16(uint iDword,uint iUint16){uint dwordOffset=iDword+(iUint16 >> 1u);uint bitOffset=(iUint16 & 1u)*16u;uint mask=0xffffu << bitOffset;uint dwordVal=read_buf(dwordOffset);return (dwordVal & mask) >> bitOffset;}uint nrDwordsForVertexIdEntries(uint nrMaterialLookupEntries) {return nrMaterialLookupEntries;}uint nrDwordsForMaterialIdEntries(uint nrMaterialLookupEntries) {return (nrMaterialLookupEntries*2u+3u)/4u;}uint findRangeBinarySearch(uint vertexId,uint numRanges,uint dwordOffset) {uint left=0u;uint right=numRanges-1u;for (uint i=0u; i < 16u; i++) { \nif (left > right) {break;}uint mid=(left+right)/2u;uint start=read_buf(dwordOffset+mid);uint nextStart=(mid+1u < numRanges) ? read_buf(dwordOffset+mid+1u) : 0xffffffffu;if (vertexId >=start && vertexId < nextStart) {return mid;} else if (vertexId < start) {if (mid==0u) {break;}right=mid-1u;} else {left=mid+1u;}}return 0u; \n}uint readVertexId(uint dwordOffset,uint iMaterialLookupEntry) {return read_buf(dwordOffset+iMaterialLookupEntry);}uint findRange(uint vertexId,uint numRanges,uint dwordOffset) {uint iRange;if(numRanges <=64u){uint vertexBegin;for(iRange=0u; iRange < numRanges;++iRange) {vertexBegin=readVertexId(dwordOffset,iRange);if(vertexBegin > vertexId) {break;}}iRange=iRange==0u? 0u : iRange-1u;} else { \niRange=findRangeBinarySearch(vertexId,numRanges,dwordOffset);}return iRange;}MaterialInfo read_material_info(uint vertex_id) {MaterialInfo info;\n#if MATERIAL_TABLE_DEBUG\nconst vec4 red=vec4(1.0,0.0,0.0,1.0);const vec4 orange=vec4(1.0,0.5,0.0,1.0);const vec4 yellow=vec4(1.0,1.0,0.0,1.0);const vec4 green=vec4(0.0,1.0,0.0,1.0);const vec4 indigo=vec4(0.294,0.0,0.510,1.0);const vec4 blue=vec4(0.0,0.0,1.0,1.0);const vec4 purple=vec4(0.5,0.0,0.5,1.0);const vec4 pink=vec4(1.0,0.0,1.0,1.0);info.colorDebug=green;\n#endif\nuint offset=0u;\n#if MATERIAL_TABLE_DEBUG\nbool keepFinding=true;uint magic=read_buf(offset);if(magic !=0xCAFEBABEu) {info.colorDebug=red;keepFinding=false;return info;}\n#endif\noffset++;\n#if MATERIAL_TABLE_DEBUG\nuint nrMaterials=read_buf(offset);uint nrVertices=read_buf(offset+1u);if(keepFinding && vertex_id >=nrVertices) {info.colorDebug=red;keepFinding=false;}\n#endif\noffset+=2u;uint nrMaterialLookupEntries=read_buf(offset++);uint perMaterialEntrySizeDwords=read_buf(offset++);\n#if MATERIAL_TABLE_DEBUG\nif(keepFinding && perMaterialEntrySizeDwords !=1u) {info.colorDebug=red;keepFinding=false;}\n#endif\nuint iMaterialLookup=findRange(vertex_id,nrMaterialLookupEntries,offset);\n#if MATERIAL_TABLE_DEBUG\nif(keepFinding)\n{uint vertexBeginCheck=readVertexId(offset,iMaterialLookup);if(vertexBeginCheck > vertex_id) {info.colorDebug=red;keepFinding=false;}if(iMaterialLookup < nrMaterialLookupEntries-1u) {uint vertexEndCheck=readVertexId(offset,iMaterialLookup+1u);if(vertexEndCheck <=vertex_id) {info.colorDebug=red;keepFinding=false;}}}\n#endif\noffset+=nrDwordsForVertexIdEntries(nrMaterialLookupEntries);uint materialId=iMaterialLookup;\n#if MATERIAL_TABLE_DEBUG\nif(keepFinding) {if(materialId >=nrMaterialLookupEntries) {info.colorDebug=red;}}\n#endif\ninfo.dataOffset=offset+materialId*perMaterialEntrySizeDwords;return info;}uint get_data_location(const MaterialInfo matInfo,uint attribOffsetBytes)\n{uint attribFieldOffsetDwords=attribOffsetBytes/4u;return matInfo.dataOffset+attribFieldOffsetDwords;}vec4 read_material_vec4(const MaterialInfo matInfo,uint attribOffsetBytes){uint loc=get_data_location(matInfo,attribOffsetBytes);return vec4(read_buf_float(loc),read_buf_float(loc+1u),read_buf_float(loc+2u),read_buf_float(loc+3u));}vec2 read_material_vec2(const MaterialInfo matInfo,uint attribOffsetBytes){uint loc=get_data_location(matInfo,attribOffsetBytes);return vec2(read_buf_float(loc),read_buf_float(loc+1u));}float read_material_float(const MaterialInfo matInfo,uint attribOffsetBytes){uint loc=get_data_location(matInfo,attribOffsetBytes);return read_buf_float(loc);}\n#define GET_ATTRIBUTE_float(attrib,matInfo,attrib_offset) read_material_float(matInfo,attrib_offset)\n#define GET_ATTRIBUTE_vec4(attrib,matInfo,attrib_offset) read_material_vec4(matInfo,attrib_offset)\n#define GET_ATTRIBUTE_vec2(attrib,matInfo,attrib_offset) read_material_vec2(matInfo,attrib_offset)\n#define DECLARE_MATERIAL_TABLE_INFO MaterialInfo materialInfo=read_material_info(uint(gl_VertexID));\n#define DECLARE_MATERIAL_TABLE_INFO_DEBUG(dbgColor) MaterialInfo materialInfo=read_material_info(uint(gl_VertexID)); dbgColor=materialInfo.colorDebug;\n#endif", "_prelude_fog.fragment.glsl": Uo, "_prelude_shadow.fragment.glsl": Ho, "_prelude_lighting.glsl": "\n#ifdef LIGHTING_3D_MODE\nuniform mediump vec3 u_lighting_ambient_color;uniform mediump vec3 u_lighting_directional_dir;uniform mediump vec3 u_lighting_directional_color;uniform mediump vec3 u_ground_radiance;float calculate_ambient_directional_factor(vec3 normal) {float NdotL=dot(normal,u_lighting_directional_dir);const float factor_reduction_max=0.3;float dir_luminance=dot(u_lighting_directional_color,vec3(0.2126,0.7152,0.0722));float directional_factor_min=1.0-factor_reduction_max*min(dir_luminance,1.0);float ambient_directional_factor=mix(directional_factor_min,1.0,min((NdotL+1.0),1.0));const float vertical_factor_min=0.92;float vertical_factor=mix(vertical_factor_min,1.0,normal.z*0.5+0.5);return vertical_factor*ambient_directional_factor;}vec3 linearProduct(vec3 srgbIn,vec3 k) {return srgbIn*pow(k,vec3(1./2.2));}vec3 apply_lighting(vec3 color,vec3 normal,float dir_factor) {float ambient_directional_factor=calculate_ambient_directional_factor(normal);vec3 ambient_contrib=ambient_directional_factor*u_lighting_ambient_color;vec3 directional_contrib=u_lighting_directional_color*dir_factor;return linearProduct(color,ambient_contrib+directional_contrib);}vec4 apply_lighting(vec4 color,vec3 normal,float dir_factor) {return vec4(apply_lighting(color.rgb,normal,dir_factor),color.a);}vec3 apply_lighting(vec3 color,vec3 normal) {float dir_factor=max(dot(normal,u_lighting_directional_dir),0.0);return apply_lighting(color.rgb,normal,dir_factor);}vec4 apply_lighting(vec4 color,vec3 normal) {float dir_factor=max(dot(normal,u_lighting_directional_dir),0.0);return vec4(apply_lighting(color.rgb,normal,dir_factor),color.a);}vec3 apply_lighting_ground(vec3 color) {return color*u_ground_radiance;}vec4 apply_lighting_ground(vec4 color) {return vec4(apply_lighting_ground(color.rgb),color.a);}float calculate_NdotL(vec3 normal) {const float ext=0.70710678118;return (clamp(dot(normal,u_lighting_directional_dir),-ext,1.0)+ext)/(1.0+ext);}vec4 apply_lighting_with_emission_ground(vec4 color,float emissive_strength) {return mix(apply_lighting_ground(color),color,emissive_strength);}vec3 compute_flood_lighting(vec3 flood_light_color,float fully_occluded_factor,float occlusion,vec3 ground_shadow_factor) {vec3 fully_occluded_color=flood_light_color*mix(ground_shadow_factor,vec3(1.0),fully_occluded_factor);float occlusion_ramp=smoothstep(0.0,0.2,1.0-occlusion);return mix(fully_occluded_color,flood_light_color,occlusion_ramp);}vec3 compute_emissive_draped(vec3 unlit_color,float fully_occluded_factor,float occlusion,vec3 ground_shadow_factor) {vec3 fully_occluded_color=unlit_color*mix(ground_shadow_factor,vec3(1.0),fully_occluded_factor);return mix(fully_occluded_color,unlit_color,1.0-occlusion);}\n#endif", "_prelude_raster_array.glsl": jo, "_prelude_raster_particle.glsl": Go }, Ko = {};
         ss("", ko), ss(Uo, No), ss(Ho, Vo), ss(jo, ""), ss(Go, "");
@@ -25460,11 +25460,11 @@ Use an identity property function instead: ${t3}.`)];
           }
         }
         function ss(e2, t2) {
-          const i2 = /* @__PURE__ */ new Set(), o2 = [], s2 = [];
+          const i2 =  new Set(), o2 = [], s2 = [];
           e2 = e2.replace(qo, ((e3, t3) => (s2.push(t3), ""))), t2 = t2.replace(qo, ((e3, t3) => (o2.push(t3), "")));
           let r2 = new Set(Xo);
           os(e2, r2), os(t2, r2);
-          for (const e3 of [...o2, ...s2]) Ko[e3] || (Ko[e3] = /* @__PURE__ */ new Set(), os(Yo[e3], Ko[e3])), r2 = /* @__PURE__ */ new Set([...r2, ...Ko[e3]]);
+          for (const e3 of [...o2, ...s2]) Ko[e3] || (Ko[e3] =  new Set(), os(Yo[e3], Ko[e3])), r2 =  new Set([...r2, ...Ko[e3]]);
           return { fragmentSource: e2 = e2.replace(Zo, ((e3, t3, o3, s3, r3) => (i2.add(r3), "define" === t3 ? `
 #ifndef HAS_UNIFORM_u_${r3}
 in ${o3} ${s3} ${r3};
@@ -26637,7 +26637,7 @@ This leads to lower resolution of hillshade. For full hillshade resolution but h
               }
             }
             let n2 = false;
-            const a2 = /* @__PURE__ */ new Set();
+            const a2 =  new Set();
             for (let e2 = 0; e2 < i2.length; e2++) {
               const r3 = t2.getTile(i2[e2]);
               if (!r3 || !r3.hasData()) continue;
@@ -27727,7 +27727,7 @@ ${(s2 ? s2.defines() : []).concat(n2.map(((e2) => `#define ${e2}`))).join("\n")}
               }
             }
             if (!n2) return;
-            const a2 = /* @__PURE__ */ new Set();
+            const a2 =  new Set();
             this.visibleTiles = o2, s2.sort(((e2, t3) => e2.tileID.z - t3.tileID.z || e2.tileID.x - t3.tileID.x || e2.tileID.y - t3.tileID.y));
             for (const t3 of s2) {
               const i3 = new Array(), o3 = new Array(), s3 = t3.bucket;
@@ -27917,7 +27917,7 @@ ${(s2 ? s2.defines() : []).concat(n2.map(((e2) => `#define ${e2}`))).join("\n")}
         }
         class _a {
           constructor() {
-            this._storage = /* @__PURE__ */ new Map();
+            this._storage =  new Map();
           }
           getLinesFromTrianglesBuffer(t2, i2, o2) {
             {
@@ -28674,7 +28674,7 @@ ${(s2 ? s2.defines() : []).concat(n2.map(((e2) => `#define ${e2}`))).join("\n")}
           })(t2, o2), o2.markSkyboxValid(t2)) : "sky" === t2.renderPass && (function(e2, t3, i3, o3, s3) {
             const r3 = e2.context, n3 = r3.gl, a3 = e2.transform, l3 = e2.getOrCreateProgram("skybox");
             r3.activeTexture.set(n3.TEXTURE0), n3.bindTexture(n3.TEXTURE_CUBE_MAP, t3.skyboxTexture);
-            const c3 = /* @__PURE__ */ ((e3, t4, i4, o4, s4) => ({ u_matrix: e3, u_sun_direction: t4, u_cubemap: 0, u_opacity: o4, u_temporal_offset: s4 }))(a3.skyboxMatrix, t3.getCenter(e2, false), 0, o3, s3);
+            const c3 =  ((e3, t4, i4, o4, s4) => ({ u_matrix: e3, u_sun_direction: t4, u_cubemap: 0, u_opacity: o4, u_temporal_offset: s4 }))(a3.skyboxMatrix, t3.getCenter(e2, false), 0, o3, s3);
             e2.uploadCommonUniforms(r3, l3), l3.draw(e2, n3.TRIANGLES, i3, Ki.disabled, e2.colorModeForRenderPass(), eo.backCW, c3, "skybox", t3.skyboxGeometry.vertexBuffer, t3.skyboxGeometry.indexBuffer, t3.skyboxGeometry.segment);
           })(t2, o2, l2, r2, c2) : "gradient" === a2 && "sky" === t2.renderPass && (function(t3, i3, o3, s3, r3) {
             const n3 = t3.context, a3 = n3.gl, l3 = t3.transform, c3 = t3.getOrCreateProgram("skyboxGradient");
@@ -31142,14 +31142,14 @@ ${(s2 ? s2.defines() : []).concat(n2.map(((e2) => `#define ${e2}`))).join("\n")}
         }
         class Ul {
           constructor(e2) {
-            this.map = e2, this.interactionsByType = /* @__PURE__ */ new Map(), this.delegatedInteractions = /* @__PURE__ */ new Map(), this.typeById = /* @__PURE__ */ new Map(), this.filters = /* @__PURE__ */ new Map(), this.handleType = this.handleType.bind(this), this.handleMove = this.handleMove.bind(this), this.handleOut = this.handleOut.bind(this), this.hoveredFeatures = /* @__PURE__ */ new Map(), this.prevHoveredFeatures = /* @__PURE__ */ new Map();
+            this.map = e2, this.interactionsByType =  new Map(), this.delegatedInteractions =  new Map(), this.typeById =  new Map(), this.filters =  new Map(), this.handleType = this.handleType.bind(this), this.handleMove = this.handleMove.bind(this), this.handleOut = this.handleOut.bind(this), this.hoveredFeatures =  new Map(), this.prevHoveredFeatures =  new Map();
           }
           add(t2, i2) {
             if (this.typeById.has(t2)) throw new Error(`Interaction id "${t2}" already exists.`);
             const o2 = i2.filter;
             let s2 = i2.type;
             o2 && this.filters.set(t2, e.b6(o2)), "mouseover" === s2 && (s2 = "mouseenter"), "mouseout" === s2 && (s2 = "mouseleave");
-            const r2 = this.interactionsByType.get(s2) || /* @__PURE__ */ new Map();
+            const r2 = this.interactionsByType.get(s2) ||  new Map();
             "mouseenter" === s2 || "mouseleave" === s2 ? (0 === this.delegatedInteractions.size && (this.map.on("mousemove", this.handleMove), this.map.on("mouseout", this.handleOut)), this.delegatedInteractions.set(t2, i2)) : 0 === r2.size && this.map.on(s2, this.handleType), 0 === r2.size && this.interactionsByType.set(s2, r2), r2.set(t2, i2), this.typeById.set(t2, s2);
           }
           get(e2) {
@@ -31171,10 +31171,10 @@ ${(s2 ? s2.defines() : []).concat(n2.map(((e2) => `#define ${e2}`))).join("\n")}
             return this.map.style.queryRenderedTargets(e2, i2, this.map.transform);
           }
           handleMove(e2) {
-            this.prevHoveredFeatures = this.hoveredFeatures, this.hoveredFeatures = /* @__PURE__ */ new Map();
+            this.prevHoveredFeatures = this.hoveredFeatures, this.hoveredFeatures =  new Map();
             const t2 = this.queryTargets(e2.point, Array.from(this.delegatedInteractions).reverse());
             t2.length && (e2.type = "mouseenter", this.handleType(e2, t2));
-            const i2 = /* @__PURE__ */ new Map();
+            const i2 =  new Map();
             for (const [e3, { feature: t3 }] of this.prevHoveredFeatures) this.hoveredFeatures.has(e3) || i2.set(t3.id, t3);
             i2.size && (e2.type = "mouseleave", this.handleType(e2, Array.from(i2.values())));
           }
@@ -31188,7 +31188,7 @@ ${(s2 ? s2.defines() : []).concat(n2.map(((e2) => `#define ${e2}`))).join("\n")}
             const s2 = Array.from(this.interactionsByType.get(t2.type)).reverse(), r2 = !!i2;
             i2 = i2 || this.queryTargets(t2.point, s2);
             let n2 = false;
-            const a2 = /* @__PURE__ */ new Set();
+            const a2 =  new Set();
             for (const l2 of i2) {
               for (const [i3, c2] of s2) {
                 if (!c2.target) continue;
@@ -32832,4 +32832,4 @@ mapbox-gl/dist/mapbox-gl.js:
    * @preserve
    *)
 */
-//# sourceMappingURL=mapbox-gl.js.map
+

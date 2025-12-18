@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # --- Serviço do Backend ---
@@ -14,9 +14,9 @@ services:
     # AQUI ESTÁ A MUDANÇA:
     # Em vez de escrever a senha aqui, dizemos pro Docker ler o arquivo .env da pasta backend
     env_file:
-      - ./backend/.env 
+      - ./backend/.env
     # Se preferir colocar a URL direto aqui (menos seguro), use 'environment' como antes
-    
+
   # --- Serviço do Frontend ---
   frontend:
     build: ./frontend

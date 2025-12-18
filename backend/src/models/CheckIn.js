@@ -7,11 +7,11 @@ class CheckIn {
       data: {
         usuarioId: usuarioId,
         eventoId: eventoId,
-        data: new Date()
+        data: new Date(),
       },
       include: {
-        evento: true 
-      }
+        evento: true,
+      },
     });
   }
 
@@ -19,19 +19,18 @@ class CheckIn {
     return await prisma.checkIn.findFirst({
       where: {
         usuarioId: usuarioId,
-        eventoId: eventoId
-      }
+        eventoId: eventoId,
+      },
     });
   }
 
-  // MÉTODO IMPORTANTE PARA O HISTÓRICO
   async listarPorUsuario(usuarioId) {
     return await prisma.checkIn.findMany({
       where: { usuarioId },
-      include: { 
-        evento: true // <--- Traz nome, local, imagem, etc.
+      include: {
+        evento: true,
       },
-      orderBy: { data: "desc" } // Mais recentes primeiro
+      orderBy: { data: "desc" },
     });
   }
 }

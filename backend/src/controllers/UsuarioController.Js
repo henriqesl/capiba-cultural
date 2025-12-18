@@ -2,8 +2,7 @@ const UsuarioService = require("../services/UsuarioService");
 const GrupoService = require("../services/GrupoService");
 const conecta = require("../services/ConectaAPI");
 const jwt = require("jsonwebtoken");
-const fs = require('fs');
-
+const fs = require("fs");
 
 class UsuarioController {
   constructor() {
@@ -12,25 +11,37 @@ class UsuarioController {
   }
 
   async criarUsuario(req, res) {
-    const { 
-        nome, email, senha, cpf, dataNascimento, 
-        cep, endereco, numero, bairro 
+    const {
+      nome,
+      email,
+      senha,
+      cpf,
+      dataNascimento,
+      cep,
+      endereco,
+      numero,
+      bairro,
     } = req.body;
 
     try {
       console.log("LOG 1: Controller iniciou criação do usuário:", nome);
-      
-      // 🟢 LÓGICA DE FOTO OPCIONAL
-      // Se tiver arquivo, salva o caminho com a pasta 'perfil'. Se não, null.
+
       let imagemUrlFinal = null;
       if (req.file && req.file.filename) {
-          imagemUrlFinal = `uploads/perfil/${req.file.filename}`;
+        imagemUrlFinal = `uploads/perfil/${req.file.filename}`;
       }
 
       const usuario = await this.usuarioService.criarUsuario(
-        nome, email, senha, cpf, dataNascimento, 
-        cep, endereco, numero, bairro, 
-        imagemUrlFinal 
+        nome,
+        email,
+        senha,
+        cpf,
+        dataNascimento,
+        cep,
+        endereco,
+        numero,
+        bairro,
+        imagemUrlFinal,
       );
 
       console.log("LOG 2: Service retornou sucesso. Usuário ID:", usuario.id);
@@ -39,7 +50,6 @@ class UsuarioController {
         mensagem: `Usuário ${usuario.nome} criado com sucesso!`,
         usuario,
       });
-
     } catch (error) {
       console.log("LOG 3: Erro capturado no Controller:", error.message);
       return res.status(400).json({ erro: error.message });
@@ -50,27 +60,19 @@ class UsuarioController {
     const { email, senha } = req.body;
 
     try {
+      const { token: usuarioToken, usuario: usuarioInfo } =
+        await this.usuarioService.autenticarUsuario(email, senha);
 
-      const { token: usuarioToken, usuario: usuarioInfo } = await this.usuarioService.autenticarUsuario(
-                email,
-                senha
-            );
-
-
-     res.status(200).json({
-        usuario: usuarioInfo, 
+      res.status(200).json({
+        usuario: usuarioInfo,
         token: usuarioToken,
-
-     });
-
+      });
     } catch (error) {
       res.status(401).json({
         erro: `Erro no login: ${error.message}`,
       });
     }
   }
-
-  
 
   async listarUsuarios(req, res) {
     try {
@@ -107,7 +109,7 @@ class UsuarioController {
       }
       const usuario = await this.usuarioService.adicionarMoedas(
         Number(id),
-        quantidade
+        quantidade,
       );
       res.status(200).json({
         mensagem: `Adicionadas ${quantidade} moedas ao usuário ${usuario.nome}`,
@@ -129,7 +131,7 @@ class UsuarioController {
       }
       const usuario = await this.usuarioService.gastarMoedas(
         Number(id),
-        quantidade
+        quantidade,
       );
       res.status(200).json({
         mensagem: `Usuário ${usuario.nome} gastou ${quantidade} moedas`,
@@ -157,21 +159,22 @@ class UsuarioController {
 
   async atualizarUsuario(req, res) {
     const { id } = req.params;
-    
-    const dados = req.body; 
+
+    const dados = req.body;
 
     try {
-
       if (req.file) {
-  
-          const caminhoFoto = `uploads/${req.file.filename}`;        
-          dados.fotoUrl = caminhoFoto;
-        }
+        const caminhoFoto = `uploads/${req.file.filename}`;
+        dados.fotoUrl = caminhoFoto;
+      }
 
-      console.log("Atualizando usuário:", id, dados); 
+      console.log("Atualizando usuário:", id, dados);
 
-      const usuario = await this.usuarioService.atualizarUsuario(Number(id), dados);
-      
+      const usuario = await this.usuarioService.atualizarUsuario(
+        Number(id),
+        dados,
+      );
+
       res.status(200).json({
         mensagem: "Dados atualizados com sucesso!",
         usuario,
