@@ -50,7 +50,7 @@ const Carousel = ({ events }) => {
                     
                     {/* Botão de Ação no Slide */}
                     <a 
-                        href={`#/evento/${currentEvent.id}`}
+                        href={`#/eventos/${currentEvent.id}`}
                         className="mt-4 bg-white text-blue-900 font-bold py-2 px-6 rounded-lg hover:bg-gray-100 transition-colors w-fit shadow-lg"
                     >
                         Ver Detalhes
