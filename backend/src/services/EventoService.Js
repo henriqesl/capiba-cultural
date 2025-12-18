@@ -59,39 +59,28 @@ class EventoService {
     );
   }
 
-  // 🟢 ATUALIZADO: Lógica híbrida (Mês ou Dia)
+  async criarEvento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario, aoVivo, moedasCapibasDestribuidas, ativo, preco, faixaEtaria, precisaInscricao, horario, imagemUrl, latitude, longitude) {
+    // Mantém lógica padrão de criação
+    return await this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario, aoVivo, moedasCapibasDestribuidas, ativo, preco, faixaEtaria, precisaInscricao, horario, imagemUrl, latitude, longitude);
+  }
+
   async listarEventos(filtros) {
-    let whereClause = {};
+    console.log("🔍 LISTAR EVENTOS CHAMADO. Filtros recebidos:", filtros);
 
-    // 1. Filtro por Mês e Ano (Novo)
-    if (filtros.mes && filtros.ano) {
-        const mesIndex = filtros.mes - 1; // JS: Jan=0, Dez=11
-        const ano = filtros.ano;
+    // 🔴 MODO DEBUG: Ignora todos os filtros e busca tudo que existe no banco
+    // Isso garante que se houver registro, ele aparece.
+    const todosEventos = await this.eventoRepository.listar({}); 
+    
+    console.log(`✅ Encontrados ${todosEventos.length} eventos no total (sem filtros).`);
+    
+    return todosEventos;
+  }
 
-        // Primeiro dia do mês (Ex: 01/12/2025 00:00)
-        const inicio = new Date(ano, mesIndex, 1, 0, 0, 0, 0);
-        // Último dia do mês (Ex: 31/12/2025 23:59)
-        const fim = new Date(ano, mesIndex + 1, 0, 23, 59, 59, 999);
-
-        whereClause.data = {
-            gte: inicio,
-            lte: fim,
-        };
-    }
-    // 2. Filtro por Dia Específico (Legado)
-    else if (filtros.data) {
-        const [ano, mes, dia] = filtros.data.split("-").map(Number);
-        const inicio = new Date(ano, mes - 1, dia, 0, 0, 0, 0);
-        const fim = new Date(ano, mes - 1, dia, 23, 59, 59, 999);
-
-        whereClause.data = {
-            gte: inicio,
-            lte: fim,
-        };
-    }
-
-    // Chama o repositório passando o objeto de filtro
-    return await this.eventoRepository.listar(whereClause);
+  async atualizarStatus(id, ativo) {
+      return await prisma.evento.update({
+          where: { id: Number(id) },
+          data: { ativo: ativo }
+      });
   }
 
   async obterPorId(id) {
@@ -145,9 +134,8 @@ class EventoService {
         }
     }
     
-    // Movemos o return para fora do if da imagem, para garantir que deleta do banco mesmo se não tiver imagem
     return await this.eventoRepository.removerEvento(id);
   }
 }
 
-module.exports = new EventoService(); // Exporta instância
+module.exports = new EventoService(); 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Calendar, CircleStar, Star, User, LogOut } from 'lucide-react'; 
+import { Calendar, CircleStar, Star, User, LogOut } from 'lucide-react'; // 🟢 Removido Home
 import { useAuth } from '../../context/AuthContext'; 
 
 const NavItem = ({ href, icon: Icon, label, active = false }) => {
@@ -19,17 +19,13 @@ const TopNav = ({ currentPath }) => {
     return (
         <nav className="hidden md:flex w-full bg-blue-600 border-b border-blue-700 shadow-md py-3 px-6 justify-between items-center sticky top-0 z-50">
             <div className="flex justify-center items-center gap-6 mx-auto">
-                <NavItem 
-                    href="#/home" 
-                    icon={Home} 
-                    label="Início" 
-                    active={currentPath === '#/home'} 
-                />
+                {/* 🟢 REMOVIDO: NavItem Home */}
+                
                 <NavItem 
                     href="#/eventos" 
                     icon={Calendar} 
                     label="Agenda" 
-                    active={currentPath === '#/eventos'} 
+                    active={currentPath.startsWith('#/eventos') || currentPath === '#/'} 
                 />
                 <NavItem 
                     href="#/capiba" 

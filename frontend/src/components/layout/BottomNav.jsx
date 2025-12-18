@@ -25,7 +25,7 @@ const BottomNav = ({ currentPath }) => {
             <NavItem 
                 href="#/perfil" 
                 iconPath={ICONS.user} 
-                label={user?.nome?.split(' ')[0] || "Perfil"} // Pega só o primeiro nome para caber melhor
+                label={user?.nome?.split(' ')[0] || "Perfil"} 
                 active={currentPath.startsWith('#/perfil')} 
             />
         );
@@ -43,15 +43,14 @@ const BottomNav = ({ currentPath }) => {
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] px-4 py-2 md:hidden z-50">
             <div className="flex justify-around items-center">
-                {/* 1. HOME (INÍCIO) ADICIONADA AQUI */}
+                {/* 🟢 REMOVIDO: NavItem Home */}
+                
                 <NavItem 
-                    href="#/home" 
-                    iconPath={ICONS.home} 
-                    label="Início" 
-                    active={currentPath === '#/home'} 
+                    href="#/eventos" 
+                    iconPath={ICONS.calendar} 
+                    label="Agenda" 
+                    active={currentPath.startsWith('#/eventos') || currentPath === '#/'} // Ativo se for eventos ou raiz
                 />
-
-                <NavItem href="#/eventos" iconPath={ICONS.calendar} label="Eventos" active={currentPath.startsWith('#/eventos') && currentPath.length <= 9} />
                 <NavItem href="#/capiba" iconPath={ICONS.dollar} label="Capiba" active={currentPath.startsWith('#/capiba')} />
                 <NavItem href="#/status" iconPath={ICONS.star} label="Status" active={currentPath.startsWith('#/status')} />
                 
