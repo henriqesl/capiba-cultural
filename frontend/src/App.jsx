@@ -13,15 +13,16 @@ import UserPage from './pages/user/UserPage.jsx';
 import CaravanaPage from './pages/user/CaravanaPage.jsx';
 import CaravanaDetailsPage from './pages/user/CaravanaDetailsPage.jsx';
 import CreateCaravanaPage from './pages/user/CreateCaravanaPage.jsx';
+import HomePage from './pages/home/HomePage.jsx';
 import { AuthContext } from './context/AuthContext'; 
 
 const App = () => {
     const { authenticated, loading: authLoading } = useContext(AuthContext); 
-    const [currentPath, setCurrentPath] = useState(window.location.hash || '#/eventos');
+    const [currentPath, setCurrentPath] = useState(window.location.hash || '#/home');
 
     // Listener para mudanças de rota via Hash
     useEffect(() => {
-        const handleHashChange = () => setCurrentPath(window.location.hash || '#/eventos');
+        const handleHashChange = () => setCurrentPath(window.location.hash || '#/home');
         window.addEventListener('hashchange', handleHashChange);
         window.addEventListener('load', handleHashChange); 
         return () => {
@@ -90,9 +91,13 @@ const App = () => {
         if (mainRoute === 'ranking') return <RankingPage />;
         if (mainRoute === 'capiba') return <CheckInPage />;
         if (mainRoute === 'status') return <StatusPage />;
+        if (mainRoute === 'eventos') return <EventPage />;
 
-        // Rota Default (Dashboard/Mapa)
-        return <EventPage />;
+        //5. Rota Home
+        if (mainRoute === 'home') return <HomePage />;
+
+        // Rota Default (Home)
+        return <HomePage />;
     };
 
     // Decide se usa o Layout com a barra de navegação inferior
