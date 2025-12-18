@@ -60,22 +60,55 @@ class EventoService {
   }
 
   async criarEvento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario, aoVivo, moedasCapibasDestribuidas, ativo, preco, faixaEtaria, precisaInscricao, horario, imagemUrl, latitude, longitude) {
-    // Mantém lógica padrão de criação
+
     return await this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario, aoVivo, moedasCapibasDestribuidas, ativo, preco, faixaEtaria, precisaInscricao, horario, imagemUrl, latitude, longitude);
   }
 
   async listarEventos(filtros) {
-    console.log("🔍 LISTAR EVENTOS CHAMADO. Filtros recebidos:", filtros);
+    console.log("🔍 Service: Filtrando eventos com:", filtros);
+    
+    let whereClause = {};
 
-    // 🔴 MODO DEBUG: Ignora todos os filtros e busca tudo que existe no banco
-    // Isso garante que se houver registro, ele aparece.
-    const todosEventos = await this.eventoRepository.listar({}); 
-    
-    console.log(`✅ Encontrados ${todosEventos.length} eventos no total (sem filtros).`);
-    
-    return todosEventos;
+    if (filtros.mes && filtros.ano) {
+        const mesIndex = filtros.mes - 1; // JS usa 0-11
+        const ano = filtros.ano;
+
+        const inicio = new Date(Date.UTC(ano, mesIndex, 1));
+        
+
+        const fim = new Date(Date.UTC(ano, mesIndex + 1, 1));
+
+        console.log(`📅 Intervalo calculado: ${inicio.toISOString()} até ${fim.toISOString()}`);
+
+        whereClause.data = {
+            gte: inicio, 
+            lt: fim,     
+        };
+    } 
+
+    else if (filtros.data) {
+        const [ano, mes, dia] = filtros.data.split("-").map(Number);
+        const inicio = new Date(Date.UTC(ano, mes - 1, dia));
+        const fim = new Date(Date.UTC(ano, mes - 1, dia + 1));
+
+        whereClause.data = {
+            gte: inicio,
+            lt: fim,
+        };
+    }
+
+    if (filtros.pendentes) {
+        whereClause.ativo = false; 
+    } else {
+        whereClause.ativo = true;  
+
+
+    const eventos = await this.eventoRepository.listar(whereClause);
+    console.log(`✅ Eventos encontrados: ${eventos.length}`);
+    return eventos;
   }
-
+}
+  
   async atualizarStatus(id, ativo) {
       return await prisma.evento.update({
           where: { id: Number(id) },
