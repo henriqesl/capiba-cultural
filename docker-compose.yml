@@ -11,11 +11,8 @@ services:
       - ./backend:/app
       - /app/node_modules
       - ./uploads:/app/uploads
-    # AQUI ESTÁ A MUDANÇA:
-    # Em vez de escrever a senha aqui, dizemos pro Docker ler o arquivo .env da pasta backend
     env_file:
       - ./backend/.env
-    # Se preferir colocar a URL direto aqui (menos seguro), use 'environment' como antes
 
   # --- Serviço do Frontend ---
   frontend:
@@ -29,4 +26,3 @@ services:
     environment:
       - VITE_API_URL=http://localhost:3000
 
-# Não precisa mais da seção 'volumes' no final, pois o banco está na nuvem
