@@ -18,9 +18,7 @@ import { AuthContext } from "./context/AuthContext";
 
 const App = () => {
   const { authenticated, loading: authLoading } = useContext(AuthContext);
-  const [currentPath, setCurrentPath] = useState(
-    window.location.hash || "#/eventos",
-  );
+
 
   const [currentPath, setCurrentPath] = useState(
     window.location.hash || "#/eventos",
