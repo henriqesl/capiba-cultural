@@ -7,7 +7,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN mkdir -p uploads # <-- Garante que a pasta existe no container
+RUN mkdir -p uploads 
 
 EXPOSE 5173
 
