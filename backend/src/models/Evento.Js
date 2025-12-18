@@ -6,8 +6,8 @@ class Evento {
     nome,
     local,
     data,
-    descricao,      
-    pequenoPorte,    
+    descricao,
+    pequenoPorte,
     reportadoPorUsuario,
     aoVivo,
     moedasCapibasDestribuidas,
@@ -18,7 +18,8 @@ class Evento {
     horario,
     imagemUrl,
     latitude,
-    longitude) {
+    longitude,
+  ) {
     return await prisma.evento.create({
       data: {
         nome,
@@ -36,19 +37,17 @@ class Evento {
         horario,
         imagemUrl,
         latitude,
-        longitude
+        longitude,
       },
     });
   }
 
-
   async listar(filtro) {
-  return await prisma.evento.findMany({
-    where: filtro,
-    orderBy: { data: "asc" }
-  });
-}
-
+    return await prisma.evento.findMany({
+      where: filtro,
+      orderBy: { data: "asc" },
+    });
+  }
 
   async obterPorNomeLocalEData(nome, local, data) {
     return await prisma.evento.findFirst({

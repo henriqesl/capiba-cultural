@@ -74,7 +74,7 @@ describe("CheckInService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPrismaClient.$transaction.mockImplementation((callback) =>
-      callback(mockTransaction)
+      callback(mockTransaction),
     );
     mockUsuarioService.obterPorId.mockResolvedValue(usuarioMock);
   });
@@ -84,7 +84,7 @@ describe("CheckInService", () => {
       mockUsuarioService.obterPorId.mockResolvedValue(null);
 
       await expect(
-        CheckInService.realizarCheckIn(999, eventoId)
+        CheckInService.realizarCheckIn(999, eventoId),
       ).rejects.toThrow("Usuário não encontrado");
 
       expect(mockEventoService.obterPorId).not.toHaveBeenCalled();
@@ -95,7 +95,7 @@ describe("CheckInService", () => {
       mockEventoService.obterPorId.mockResolvedValue(null);
 
       await expect(
-        CheckInService.realizarCheckIn(usuarioId, 999)
+        CheckInService.realizarCheckIn(usuarioId, 999),
       ).rejects.toThrow("Evento não encontrado");
 
       expect(mockConectaAPI.autenticar).not.toHaveBeenCalled();
@@ -108,7 +108,7 @@ describe("CheckInService", () => {
 
       const resultado = await CheckInService.realizarCheckIn(
         usuarioId,
-        eventoId
+        eventoId,
       );
 
       expect(mockUsuarioService.obterPorId).toHaveBeenCalledWith(usuarioId);
@@ -128,7 +128,7 @@ describe("CheckInService", () => {
 
       expect(mockUsuarioService.adicionarMoedas).toHaveBeenCalledWith(
         usuarioId,
-        moedasEsperadas
+        moedasEsperadas,
       );
 
       expect(resultado).toEqual({
@@ -148,7 +148,7 @@ describe("CheckInService", () => {
 
       expect(mockUsuarioService.adicionarMoedas).toHaveBeenCalledWith(
         usuarioId,
-        moedasEsperadas
+        moedasEsperadas,
       );
     });
   });

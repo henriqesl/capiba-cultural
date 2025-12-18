@@ -3,10 +3,11 @@ const axios = require("axios");
 class ConectaAPI {
   constructor() {
     this.baseURL = "https://gamificacao.homolog.app.emprel.gov.br/api";
-    this.keycloakURL = "https://loginteste.recife.pe.gov.br/auth/realms/recife/protocol/openid-connect/token";
+    this.keycloakURL =
+      "https://loginteste.recife.pe.gov.br/auth/realms/recife/protocol/openid-connect/token";
 
     this.token = null;
-    this.basicAuth = "dGVzdDp0ZXN0"; 
+    this.basicAuth = "dGVzdDp0ZXN0";
   }
 
   async autenticar(username, password) {
@@ -17,7 +18,7 @@ class ConectaAPI {
     params.append("client_id", "app-recife");
 
     const res = await axios.post(this.keycloakURL, params, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 
     this.token = res.data.access_token;
@@ -31,7 +32,7 @@ class ConectaAPI {
 
   async getSelf() {
     const res = await axios.get(`${this.baseURL}/self`, {
-      headers: this.getAuthHeader()
+      headers: this.getAuthHeader(),
     });
     return res.data;
   }
@@ -40,15 +41,15 @@ class ConectaAPI {
     const res = await axios.get(
       `${this.baseURL}/provider/product-item/${uuid}?document=${document}`,
       {
-        headers: { Authorization: `Basic ${this.basicAuth}` }
-      }
+        headers: { Authorization: `Basic ${this.basicAuth}` },
+      },
     );
     return res.data;
   }
 
   async fazerCheckIn(data) {
     const res = await axios.post(`${this.baseURL}/check-in`, data, {
-      headers: this.getAuthHeader()
+      headers: this.getAuthHeader(),
     });
     return res.data;
   }

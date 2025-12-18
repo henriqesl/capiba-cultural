@@ -2,109 +2,120 @@ const eventoService = require("../services/EventoService");
 
 class EventoController {
   safeParseFloat = (value, defaultValue = null) => {
-        if (value === null || value === undefined || value === "") {
-            return defaultValue;
-        }
-        const parsed = parseFloat(value);
-        return isNaN(parsed) ? defaultValue : parsed;
-    };
-
-    safeParseInt = (value, defaultValue = null) => {
-        if (value === null || value === undefined || value === "") {
-            return defaultValue;
-        }
-        const parsed = parseInt(value, 10);
-        return isNaN(parsed) ? defaultValue : parsed;
-    };
-
-    async criarEvento(req, res) {
-        const {
-            nome,
-            local,
-            data,
-            descricao,
-            pequenoPorte = 'false', 
-            reportadoPorUsuario ='true',
-            aoVivo = 'false',
-            moedasCapibasDestribuidas = '0',
-            ativo = 'true',
-            preco,
-            faixaEtaria = '0',
-            precisaInscricao = 'false',
-            horario,
-            imagemUrl: imagemUrlBody,
-            latitude,
-            longitude
-        } = req.body;
-
-        const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
-
-        const ativoFinal = ativo === 'true';
-        const pequenoPorteFinal = pequenoPorte === 'true';
-        const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
-        const aoVivoFinal = aoVivo === 'true';
-        const precisaInscricaoFinal = precisaInscricao === 'true';
-
-        if (imagemUrlFinal) {
-            console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
-        } else {
-            console.log("Nenhum arquivo de imagem foi enviado.");
-        }
-
-        const moedasCapibasDestribuidasParsed = this.safeParseFloat(moedasCapibasDestribuidas, 0); 
-        const faixaEtariaParsed = this.safeParseInt(faixaEtaria, 0); 
-        const latitudeParsed = this.safeParseFloat(latitude, null); 
-        const longitudeParsed = this.safeParseFloat(longitude, null); 
-
-        try {
-            const evento = await eventoService.criarEvento(
-                nome, 
-                local, 
-                data, 
-                descricao, 
-                pequenoPorteFinal, 
-                reportadoPorUsuarioFinal, 
-                aoVivoFinal, 
-                moedasCapibasDestribuidasParsed, 
-                ativoFinal, 
-                preco, 
-                faixaEtariaParsed, 
-                precisaInscricaoFinal, 
-                horario, 
-                imagemUrlFinal,
-                latitudeParsed, 
-                longitudeParsed 
-            );
-            res.status(201).json({
-                mensagem: `Evento criado com sucesso: ${evento.nome}`,
-                evento,
-            });
-        } catch (error) {
-            console.error("[ERRO NO SERVICE/PRISMA]", error.stack); 
-            res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
-        }
+    if (value === null || value === undefined || value === "") {
+      return defaultValue;
     }
-  
-    async listarEventos(req, res) {
-        try {
-            const { data, mes, ano, pendentes } = req.query;
-            let filtros = {};
-            if (pendentes === 'true') filtros.pendentes = true;
-            if (mes && ano) { filtros.mes = Number(mes); filtros.ano = Number(ano); }
-            else if (data) filtros.data = data;
+    const parsed = parseFloat(value);
+    return isNaN(parsed) ? defaultValue : parsed;
+  };
 
-            const eventos = await eventoService.listarEventos(filtros);
-            res.status(200).json(eventos);
-        } catch (error) { res.status(500).json({ erro: error.message }); }
+  safeParseInt = (value, defaultValue = null) => {
+    if (value === null || value === undefined || value === "") {
+      return defaultValue;
+    }
+    const parsed = parseInt(value, 10);
+    return isNaN(parsed) ? defaultValue : parsed;
+  };
+
+  async criarEvento(req, res) {
+    const {
+      nome,
+      local,
+      data,
+      descricao,
+      pequenoPorte = "false",
+      reportadoPorUsuario = "true",
+      aoVivo = "false",
+      moedasCapibasDestribuidas = "0",
+      ativo = "true",
+      preco,
+      faixaEtaria = "0",
+      precisaInscricao = "false",
+      horario,
+      imagemUrl: imagemUrlBody,
+      latitude,
+      longitude,
+    } = req.body;
+
+    const imagemUrlFinal =
+      req.file && req.file.filename
+        ? `uploads/${req.file.filename}`
+        : imagemUrlBody;
+
+    const ativoFinal = ativo === "true";
+    const pequenoPorteFinal = pequenoPorte === "true";
+    const reportadoPorUsuarioFinal = reportadoPorUsuario === "true";
+    const aoVivoFinal = aoVivo === "true";
+    const precisaInscricaoFinal = precisaInscricao === "true";
+
+    if (imagemUrlFinal) {
+      console.log("Multer recebeu e o caminho final é:", imagemUrlFinal);
+    } else {
+      console.log("Nenhum arquivo de imagem foi enviado.");
     }
 
-    async aprovarEvento(req, res) {
-        try {
-            const evento = await eventoService.atualizarStatus(req.params.id, true);
-            res.json({ msg: "Evento Aprovado!", evento });
-        } catch (e) { res.status(400).json({ erro: e.message }); }
-    }
+    const moedasCapibasDestribuidasParsed = this.safeParseFloat(
+      moedasCapibasDestribuidas,
+      0,
+    );
+    const faixaEtariaParsed = this.safeParseInt(faixaEtaria, 0);
+    const latitudeParsed = this.safeParseFloat(latitude, null);
+    const longitudeParsed = this.safeParseFloat(longitude, null);
 
+    try {
+      const evento = await eventoService.criarEvento(
+        nome,
+        local,
+        data,
+        descricao,
+        pequenoPorteFinal,
+        reportadoPorUsuarioFinal,
+        aoVivoFinal,
+        moedasCapibasDestribuidasParsed,
+        ativoFinal,
+        preco,
+        faixaEtariaParsed,
+        precisaInscricaoFinal,
+        horario,
+        imagemUrlFinal,
+        latitudeParsed,
+        longitudeParsed,
+      );
+      res.status(201).json({
+        mensagem: `Evento criado com sucesso: ${evento.nome}`,
+        evento,
+      });
+    } catch (error) {
+      console.error("[ERRO NO SERVICE/PRISMA]", error.stack);
+      res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
+    }
+  }
+
+  async listarEventos(req, res) {
+    try {
+      const { data, mes, ano, pendentes } = req.query;
+      let filtros = {};
+      if (pendentes === "true") filtros.pendentes = true;
+      if (mes && ano) {
+        filtros.mes = Number(mes);
+        filtros.ano = Number(ano);
+      } else if (data) filtros.data = data;
+
+      const eventos = await eventoService.listarEventos(filtros);
+      res.status(200).json(eventos);
+    } catch (error) {
+      res.status(500).json({ erro: error.message });
+    }
+  }
+
+  async aprovarEvento(req, res) {
+    try {
+      const evento = await eventoService.atualizarStatus(req.params.id, true);
+      res.json({ msg: "Evento Aprovado!", evento });
+    } catch (e) {
+      res.status(400).json({ erro: e.message });
+    }
+  }
 
   async obterPorId(req, res) {
     const { id } = req.params;

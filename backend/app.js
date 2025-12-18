@@ -23,7 +23,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 /* ===============================
@@ -36,10 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
    UPLOADS (FOTOS)
    -> ESSENCIAL pra imagem funcionar
 ================================ */
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "uploads"))
-);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* ===============================
    ROTAS
@@ -63,7 +60,7 @@ app.get("/", (req, res) => {
    ERROS GLOBAIS
 ================================ */
 app.use((err, req, res, next) => {
-    console.log(`${req.method} ${req.url} - body:`, req.body);
+  console.log(`${req.method} ${req.url} - body:`, req.body);
 
   console.error("Erro:", err);
   res.status(500).json({

@@ -1,4 +1,3 @@
-// src/components/Calendar.jsx
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -13,7 +12,9 @@ const Calendar = ({ onDateChange }) => {
 
   return (
     <div className="flex flex-col items-center bg-white p-4 rounded-2xl shadow-md w-fit">
-      <label className="text-gray-700 font-semibold mb-2">Selecione a data:</label>
+      <label className="text-gray-700 font-semibold mb-2">
+        Selecione a data:
+      </label>
       <DatePicker
         selected={selectedDate}
         onChange={handleChange}

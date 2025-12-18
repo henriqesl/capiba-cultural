@@ -1,206 +1,292 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import CapibaLogo from '../components/CapibaLogo';
-import { User, Mail, Lock, FileText, Calendar, MapPin, Home, CheckCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import CapibaLogo from "../components/CapibaLogo";
+import {
+  User,
+  Mail,
+  Lock,
+  FileText,
+  Calendar,
+  MapPin,
+  Home,
+  CheckCircle,
+} from "lucide-react";
 
 const RegisterPage = () => {
-    const { register } = useAuth();
-    const [loading, setLoading] = useState(false);
-    
-    // Removido 'username' do estado
-    const [formData, setFormData] = useState({
-        nome: '',
-        email: '',
-        senha: '',
-        confirmarSenha: '',
-        cpf: '',
-        dataNascimento: '',
-        cep: '',
-        endereco: '',
-        bairro: '',
-        numero: ''
-    });
+  const { register } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-    const [foto, setFoto] = useState(null);
-    const [preview, setPreview] = useState(null);
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    senha: "",
+    confirmarSenha: "",
+    cpf: "",
+    dataNascimento: "",
+    cep: "",
+    endereco: "",
+    bairro: "",
+    numero: "",
+  });
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const [foto, setFoto] = useState(null);
+  const [preview, setPreview] = useState(null);
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFoto(file);
-            setPreview(URL.createObjectURL(file));
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFoto(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleBlurCep = async () => {
+    const cepLimpo = formData.cep.replace(/\D/g, "");
+    if (cepLimpo.length === 8) {
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+        const data = await res.json();
+
+        if (!data.erro) {
+          setFormData((prev) => ({
+            ...prev,
+            endereco: data.logradouro || prev.endereco,
+            bairro: data.bairro || prev.bairro,
+          }));
         }
-    };
+      } catch (error) {
+        console.log("ViaCEP indisponível ou erro, preenchimento manual.");
+      }
+    }
+  };
 
-    const handleBlurCep = async () => {
-        const cepLimpo = formData.cep.replace(/\D/g, '');
-        if (cepLimpo.length === 8) {
-            try {
-                const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
-                const data = await res.json();
-                
-                if (!data.erro) {
-                    setFormData(prev => ({
-                        ...prev,
-                        endereco: data.logradouro || prev.endereco,
-                        bairro: data.bairro || prev.bairro
-                    }));
-                }
-            } catch (error) {
-                console.log("ViaCEP indisponível ou erro, preenchimento manual.");
-            }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (formData.senha !== formData.confirmarSenha) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+
+      Object.keys(formData).forEach((key) => {
+        if (key !== "confirmarSenha") {
+          data.append(key, formData[key]);
         }
-    };
+      });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (formData.senha !== formData.confirmarSenha) {
-            alert("As senhas não coincidem!");
-            return;
-        }
+      if (foto) {
+        data.append("foto", foto);
+      }
 
-        setLoading(true);
+      const resultado = await register(data);
 
-        try {
-            const data = new FormData();
-            
-            Object.keys(formData).forEach(key => {
-                if (key !== 'confirmarSenha') {
-                    data.append(key, formData[key]);
-                }
-            });
-            
-            if (foto) {
-                data.append('foto', foto);
-            }
+      if (resultado.sucesso) {
+        alert("Conta criada com sucesso! Faça login.");
+        window.location.hash = "#/login";
+      } else {
+        alert(resultado.mensagem || "Erro ao criar conta.");
+      }
+    } catch (error) {
+      alert("Erro inesperado ao tentar registrar.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            const resultado = await register(data);
-
-            if (resultado.sucesso) {
-                alert("Conta criada com sucesso! Faça login.");
-                window.location.hash = '#/login';
-            } else {
-                alert(resultado.mensagem || "Erro ao criar conta.");
-            }
-        } catch (error) {
-            alert("Erro inesperado ao tentar registrar.");
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
-            <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-                
-                {/* Coluna Visual (Esquerda) */}
-                <div className="bg-blue-600 p-8 flex flex-col items-center justify-center text-white md:w-2/5 text-center">
-                    <CapibaLogo />
-                    <h2 className="text-2xl font-bold mt-4">Junte-se a nós!</h2>
-                    <p className="opacity-90 mt-2 text-sm">Crie sua conta e comece a explorar o melhor da cultura pernambucana.</p>
-                    <a href="#/login" className="mt-8 text-sm underline hover:text-yellow-300">Já tem conta? Entrar</a>
-                </div>
-
-                {/* Formulário (Direita) */}
-                <div className="p-8 md:w-3/5">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-6">Criar Conta</h1>
-                    
-                    <form onSubmit={handleSubmit} className="space-y-3">
-                        
-                        {/* Foto de Perfil */}
-                        <div className="flex justify-center mb-4">
-                            <label className="cursor-pointer group relative">
-                                <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-2 border-dashed border-gray-400 group-hover:border-blue-500 transition-colors">
-                                    {preview ? (
-                                        <img src={preview} className="w-full h-full object-cover" alt="Preview" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center p-1">
-                                            Foto (Opcional)
-                                        </div>
-                                    )}
-                                </div>
-                                <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
-                            </label>
-                        </div>
-
-                        {/* Dados Pessoais: Nome (Username removido) */}
-                        <div className="relative">
-                            <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                            <input name="nome" placeholder="Nome Completo" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                        </div>
-
-                        {/* CPF */}
-                        <div className="relative">
-                            <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                            <input name="cpf" placeholder="CPF (apenas números)" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                        </div>
-
-                        {/* Data e Email */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="relative">
-                                <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="date" name="dataNascimento" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 text-gray-500 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                            </div>
-                            <div className="relative">
-                                <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                            </div>
-                        </div>
-
-                        {/* Endereço */}
-                        <div className="pt-2 border-t border-gray-100">
-                            <p className="text-xs font-bold text-gray-400 uppercase mb-2">Endereço</p>
-                            <div className="grid grid-cols-2 gap-3 mb-3">
-                                <div className="relative">
-                                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                    <input 
-                                        name="cep" 
-                                        placeholder="CEP" 
-                                        onChange={handleChange} 
-                                        onBlur={handleBlurCep} 
-                                        required 
-                                        className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" 
-                                    />
-                                </div>
-                                <div className="relative">
-                                    <Home className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                    <input name="numero" placeholder="Número" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                                </div>
-                            </div>
-                            
-                            <div className="space-y-3">
-                                <input name="endereco" placeholder="Rua / Logradouro" value={formData.endereco} onChange={handleChange} required className="w-full p-2 border rounded-lg text-sm bg-gray-100 text-gray-600 focus:outline-none" />
-                                <input name="bairro" placeholder="Bairro" value={formData.bairro} onChange={handleChange} required className="w-full p-2 border rounded-lg text-sm bg-gray-100 text-gray-600 focus:outline-none" />
-                            </div>
-                        </div>
-
-                        {/* Senha e Confirmação */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div className="relative">
-                                <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="password" name="senha" placeholder="Senha" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                            </div>
-                            <div className="relative">
-                                <CheckCircle className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                                <input type="password" name="confirmarSenha" placeholder="Confirmar" onChange={handleChange} required className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                            </div>
-                        </div>
-
-                        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 mt-4">
-                            {loading ? "Criando Conta..." : "Cadastrar"}
-                        </button>
-
-                    </form>
-                </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
+      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        {}
+        <div className="bg-blue-600 p-8 flex flex-col items-center justify-center text-white md:w-2/5 text-center">
+          <CapibaLogo />
+          <h2 className="text-2xl font-bold mt-4">Junte-se a nós!</h2>
+          <p className="opacity-90 mt-2 text-sm">
+            Crie sua conta e comece a explorar o melhor da cultura pernambucana.
+          </p>
+          <a
+            href="#/login"
+            className="mt-8 text-sm underline hover:text-yellow-300"
+          >
+            Já tem conta? Entrar
+          </a>
         </div>
-    );
+
+        {}
+        <div className="p-8 md:w-3/5">
+          <h1 className="text-2xl font-bold text-gray-800 mb-6">Criar Conta</h1>
+
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {}
+            <div className="flex justify-center mb-4">
+              <label className="cursor-pointer group relative">
+                <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-2 border-dashed border-gray-400 group-hover:border-blue-500 transition-colors">
+                  {preview ? (
+                    <img
+                      src={preview}
+                      className="w-full h-full object-cover"
+                      alt="Preview"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center p-1">
+                      Foto (Opcional)
+                    </div>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept="image/*"
+                />
+              </label>
+            </div>
+
+            {}
+            <div className="relative">
+              <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              <input
+                name="nome"
+                placeholder="Nome Completo"
+                onChange={handleChange}
+                required
+                className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            {}
+            <div className="relative">
+              <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              <input
+                name="cpf"
+                placeholder="CPF (apenas números)"
+                onChange={handleChange}
+                required
+                className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            {}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="relative">
+                <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <input
+                  type="date"
+                  name="dataNascimento"
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 text-gray-500 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                />
+              </div>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                />
+              </div>
+            </div>
+
+            {}
+            <div className="pt-2 border-t border-gray-100">
+              <p className="text-xs font-bold text-gray-400 uppercase mb-2">
+                Endereço
+              </p>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <input
+                    name="cep"
+                    placeholder="CEP"
+                    onChange={handleChange}
+                    onBlur={handleBlurCep}
+                    required
+                    className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  />
+                </div>
+                <div className="relative">
+                  <Home className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <input
+                    name="numero"
+                    placeholder="Número"
+                    onChange={handleChange}
+                    required
+                    className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <input
+                  name="endereco"
+                  placeholder="Rua / Logradouro"
+                  value={formData.endereco}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 border rounded-lg text-sm bg-gray-100 text-gray-600 focus:outline-none"
+                />
+                <input
+                  name="bairro"
+                  placeholder="Bairro"
+                  value={formData.bairro}
+                  onChange={handleChange}
+                  required
+                  className="w-full p-2 border rounded-lg text-sm bg-gray-100 text-gray-600 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <input
+                  type="password"
+                  name="senha"
+                  placeholder="Senha"
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                />
+              </div>
+              <div className="relative">
+                <CheckCircle className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <input
+                  type="password"
+                  name="confirmarSenha"
+                  placeholder="Confirmar"
+                  onChange={handleChange}
+                  required
+                  className="w-full pl-9 p-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition transform hover:scale-105 shadow-lg disabled:opacity-50 mt-4"
+            >
+              {loading ? "Criando Conta..." : "Cadastrar"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default RegisterPage;

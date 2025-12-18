@@ -6,9 +6,9 @@ class ReporteController {
   }
 
   async criarOuConfirmarReporte(req, res) {
-      const reportanteId = req.usuarioId; 
+    const reportanteId = req.usuarioId;
 
-    const {  evento, descricao = ""} = req.body;
+    const { evento, descricao = "" } = req.body;
 
     try {
       if (!reportanteId || !evento) {
@@ -23,7 +23,7 @@ class ReporteController {
         descricao,
       );
 
-          console.log("✅ Reporte criado/confirmado:", reporte);
+      console.log("✅ Reporte criado/confirmado:", reporte);
 
       res.status(201).json({
         mensagem: `Reporte sobre o evento "${evento.nome}" criado ou confirmado com sucesso!`,

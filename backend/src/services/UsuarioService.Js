@@ -7,9 +7,29 @@ class UsuarioService {
     this.usuarioRepository = new Usuario();
   }
 
-  async criarUsuario(nome, email, senha, cpf, dataNascimento, cep, endereco, numero, bairro, imagemUrl) {
-    
-    if (!nome || !email || !senha || !cpf || !dataNascimento || !cep || !endereco || !numero || !bairro) {
+  async criarUsuario(
+    nome,
+    email,
+    senha,
+    cpf,
+    dataNascimento,
+    cep,
+    endereco,
+    numero,
+    bairro,
+    imagemUrl,
+  ) {
+    if (
+      !nome ||
+      !email ||
+      !senha ||
+      !cpf ||
+      !dataNascimento ||
+      !cep ||
+      !endereco ||
+      !numero ||
+      !bairro
+    ) {
       throw new Error("Todos os campos são obrigatórios (exceto foto).");
     }
 
@@ -31,7 +51,7 @@ class UsuarioService {
       endereco,
       numero,
       bairro,
-      imagemUrl 
+      imagemUrl,
     );
 
     delete novoUsuario.senha;
@@ -60,7 +80,7 @@ class UsuarioService {
     return await this.usuarioRepository.listar();
   }
 
-async atualizarUsuario(id, dadosAtualizados) {
+  async atualizarUsuario(id, dadosAtualizados) {
     const usuario = await this.usuarioRepository.buscarId(id);
     if (!usuario) {
       throw new Error("Usuário não encontrado");
@@ -71,13 +91,18 @@ async atualizarUsuario(id, dadosAtualizados) {
     if (dadosAtualizados.nome) dadosParaSalvar.nome = dadosAtualizados.nome;
     if (dadosAtualizados.email) dadosParaSalvar.email = dadosAtualizados.email;
     if (dadosAtualizados.cpf) dadosParaSalvar.cpf = dadosAtualizados.cpf;
-    if (dadosAtualizados.fotoUrl) dadosParaSalvar.fotoUrl = dadosAtualizados.fotoUrl;
-    
-    if (dadosAtualizados.dataNascimento) dadosParaSalvar.dataNascimento = dadosAtualizados.dataNascimento;
+    if (dadosAtualizados.fotoUrl)
+      dadosParaSalvar.fotoUrl = dadosAtualizados.fotoUrl;
+
+    if (dadosAtualizados.dataNascimento)
+      dadosParaSalvar.dataNascimento = dadosAtualizados.dataNascimento;
     if (dadosAtualizados.cep) dadosParaSalvar.cep = dadosAtualizados.cep;
-    if (dadosAtualizados.endereco) dadosParaSalvar.endereco = dadosAtualizados.endereco;
-    if (dadosAtualizados.numero) dadosParaSalvar.numero = dadosAtualizados.numero;
-    if (dadosAtualizados.bairro) dadosParaSalvar.bairro = dadosAtualizados.bairro;
+    if (dadosAtualizados.endereco)
+      dadosParaSalvar.endereco = dadosAtualizados.endereco;
+    if (dadosAtualizados.numero)
+      dadosParaSalvar.numero = dadosAtualizados.numero;
+    if (dadosAtualizados.bairro)
+      dadosParaSalvar.bairro = dadosAtualizados.bairro;
 
     if (dadosAtualizados.senha) {
       const salt = await bcrypt.genSalt(10);
@@ -85,12 +110,11 @@ async atualizarUsuario(id, dadosAtualizados) {
     }
 
     if (Object.keys(dadosParaSalvar).length === 0) {
-      return usuario; 
+      return usuario;
     }
 
     return await this.usuarioRepository.atualizar(id, dadosParaSalvar);
   }
-
 
   async obterPorId(id) {
     const usuario = await this.usuarioRepository.buscarId(id);

@@ -1,6 +1,6 @@
 const Evento = require("../models/Evento");
-const fs = require('fs').promises;
-const path = require('path');
+const fs = require("fs").promises;
+const path = require("path");
 
 class EventoService {
   constructor() {
@@ -17,13 +17,13 @@ class EventoService {
     aoVivo = false,
     moedasCapibasDestribuidas = 0,
     ativo = true,
-    preco = "Gratuito", 
-    faixaEtaria = 0,    
+    preco = "Gratuito",
+    faixaEtaria = 0,
     precisaInscricao = false,
     horario = null,
     imagemUrl = null,
     latitude,
-    longitude
+    longitude,
   ) {
     if (!nome || !local || !data || !descricao)
       throw new Error("Campos obrigatórios: nome, local, data, descricao");
@@ -55,65 +55,96 @@ class EventoService {
       horario,
       imagemUrl,
       latitude,
-      longitude
+      longitude,
     );
   }
 
-  async criarEvento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario, aoVivo, moedasCapibasDestribuidas, ativo, preco, faixaEtaria, precisaInscricao, horario, imagemUrl, latitude, longitude) {
-
-    return await this.eventoRepository.novoEvento(nome, local, data, descricao, pequenoPorte, reportadoPorUsuario, aoVivo, moedasCapibasDestribuidas, ativo, preco, faixaEtaria, precisaInscricao, horario, imagemUrl, latitude, longitude);
+  async criarEvento(
+    nome,
+    local,
+    data,
+    descricao,
+    pequenoPorte,
+    reportadoPorUsuario,
+    aoVivo,
+    moedasCapibasDestribuidas,
+    ativo,
+    preco,
+    faixaEtaria,
+    precisaInscricao,
+    horario,
+    imagemUrl,
+    latitude,
+    longitude,
+  ) {
+    return await this.eventoRepository.novoEvento(
+      nome,
+      local,
+      data,
+      descricao,
+      pequenoPorte,
+      reportadoPorUsuario,
+      aoVivo,
+      moedasCapibasDestribuidas,
+      ativo,
+      preco,
+      faixaEtaria,
+      precisaInscricao,
+      horario,
+      imagemUrl,
+      latitude,
+      longitude,
+    );
   }
 
   async listarEventos(filtros) {
     console.log("🔍 Service: Filtrando eventos com:", filtros);
-    
+
     let whereClause = {};
 
     if (filtros.mes && filtros.ano) {
-        const mesIndex = filtros.mes - 1; // JS usa 0-11
-        const ano = filtros.ano;
+      const mesIndex = filtros.mes - 1;
+      const ano = filtros.ano;
 
-        const inicio = new Date(Date.UTC(ano, mesIndex, 1));
-        
+      const inicio = new Date(Date.UTC(ano, mesIndex, 1));
 
-        const fim = new Date(Date.UTC(ano, mesIndex + 1, 1));
+      const fim = new Date(Date.UTC(ano, mesIndex + 1, 1));
 
-        console.log(`📅 Intervalo calculado: ${inicio.toISOString()} até ${fim.toISOString()}`);
+      console.log(
+        `📅 Intervalo calculado: ${inicio.toISOString()} até ${fim.toISOString()}`,
+      );
 
-        whereClause.data = {
-            gte: inicio, 
-            lt: fim,     
-        };
-    } 
+      whereClause.data = {
+        gte: inicio,
+        lt: fim,
+      };
+    } else if (filtros.data) {
+      const [ano, mes, dia] = filtros.data.split("-").map(Number);
+      const inicio = new Date(Date.UTC(ano, mes - 1, dia));
+      const fim = new Date(Date.UTC(ano, mes - 1, dia + 1));
 
-    else if (filtros.data) {
-        const [ano, mes, dia] = filtros.data.split("-").map(Number);
-        const inicio = new Date(Date.UTC(ano, mes - 1, dia));
-        const fim = new Date(Date.UTC(ano, mes - 1, dia + 1));
-
-        whereClause.data = {
-            gte: inicio,
-            lt: fim,
-        };
+      whereClause.data = {
+        gte: inicio,
+        lt: fim,
+      };
     }
 
     if (filtros.pendentes) {
-        whereClause.ativo = false; 
+      whereClause.ativo = false;
     } else {
-        whereClause.ativo = true;  
+      whereClause.ativo = true;
 
-
-    const eventos = await this.eventoRepository.listar(whereClause);
-    console.log(`✅ Eventos encontrados: ${eventos.length}`);
-    return eventos;
+      const eventos = await this.eventoRepository.listar(whereClause);
+      console.log(`✅ Eventos encontrados: ${eventos.length}`);
+      return eventos;
+    }
   }
-}
-  
+
   async atualizarStatus(id, ativo) {
-      return await prisma.evento.update({
-          where: { id: Number(id) },
-          data: { ativo: ativo }
-      });
+    return await prisma.evento.update({
+      where: { id: Number(id) },
+      data: { ativo: ativo },
+    });
   }
 
   async obterPorId(id) {
@@ -147,28 +178,33 @@ class EventoService {
     }
 
     if (evento.imagemUrl) {
-        try {
-            const nomeDoArquivo = evento.imagemUrl.replace('uploads/', '');
-            
-            const caminhoBase = path.join(__dirname, '..', '..', 'uploads');
-            const caminhoCompleto = path.join(caminhoBase, nomeDoArquivo); 
+      try {
+        const nomeDoArquivo = evento.imagemUrl.replace("uploads/", "");
 
-            console.log(`[DELEÇÃO DE ARQUIVO] Tentando deletar arquivo em: ${caminhoCompleto}`);
-            
-            await fs.unlink(caminhoCompleto);
-            console.log(`[DELEÇÃO DE ARQUIVO] Imagem deletada com sucesso!`);
+        const caminhoBase = path.join(__dirname, "..", "..", "uploads");
+        const caminhoCompleto = path.join(caminhoBase, nomeDoArquivo);
 
-        } catch (error) {
-            if (error.code === 'ENOENT') {
-                console.warn(`[DELEÇÃO DE ARQUIVO] AVISO: Arquivo não encontrado no disco (ENOENT).`);
-            } else {
-                console.error(`[DELEÇÃO DE ARQUIVO] ERRO FATAL: Falha ao deletar arquivo. Código: ${error.code}. Mensagem: ${error.message}`);
-            }
+        console.log(
+          `[DELEÇÃO DE ARQUIVO] Tentando deletar arquivo em: ${caminhoCompleto}`,
+        );
+
+        await fs.unlink(caminhoCompleto);
+        console.log(`[DELEÇÃO DE ARQUIVO] Imagem deletada com sucesso!`);
+      } catch (error) {
+        if (error.code === "ENOENT") {
+          console.warn(
+            `[DELEÇÃO DE ARQUIVO] AVISO: Arquivo não encontrado no disco (ENOENT).`,
+          );
+        } else {
+          console.error(
+            `[DELEÇÃO DE ARQUIVO] ERRO FATAL: Falha ao deletar arquivo. Código: ${error.code}. Mensagem: ${error.message}`,
+          );
         }
+      }
     }
-    
+
     return await this.eventoRepository.removerEvento(id);
   }
 }
 
-module.exports = new EventoService(); 
+module.exports = new EventoService();
