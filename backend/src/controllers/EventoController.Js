@@ -23,10 +23,10 @@ class EventoController {
             local,
             data,
             descricao,
-            pequenoPorte = 'false', // Definindo default como string para consistência
+            pequenoPorte = 'false', 
             reportadoPorUsuario ='true',
             aoVivo = 'false',
-            moedasCapibasDestribuidas = '0', // Usando '0' como string
+            moedasCapibasDestribuidas = '0',
             ativo = 'true',
             preco,
             faixaEtaria = '0',
@@ -39,7 +39,6 @@ class EventoController {
 
         const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
 
-        // Conversão de Strings para Booleanos
         const ativoFinal = ativo === 'true';
         const pequenoPorteFinal = pequenoPorte === 'true';
         const reportadoPorUsuarioFinal = reportadoPorUsuario === 'true';
@@ -52,7 +51,6 @@ class EventoController {
             console.log("Nenhum arquivo de imagem foi enviado.");
         }
 
-        // 🚨 Conversão de Strings para Number (corrigida!)
         const moedasCapibasDestribuidasParsed = this.safeParseFloat(moedasCapibasDestribuidas, 0); 
         const faixaEtariaParsed = this.safeParseInt(faixaEtaria, 0); 
         const latitudeParsed = this.safeParseFloat(latitude, null); 
@@ -67,48 +65,44 @@ class EventoController {
                 pequenoPorteFinal, 
                 reportadoPorUsuarioFinal, 
                 aoVivoFinal, 
-                moedasCapibasDestribuidasParsed, // OK
+                moedasCapibasDestribuidasParsed, 
                 ativoFinal, 
                 preco, 
-                faixaEtariaParsed, // OK
+                faixaEtariaParsed, 
                 precisaInscricaoFinal, 
                 horario, 
                 imagemUrlFinal,
-                latitudeParsed, // OK
-                longitudeParsed // OK
+                latitudeParsed, 
+                longitudeParsed 
             );
             res.status(201).json({
                 mensagem: `Evento criado com sucesso: ${evento.nome}`,
                 evento,
             });
         } catch (error) {
-            // 🚨 LOG DE ERRO CRÍTICO AQUI!
             console.error("[ERRO NO SERVICE/PRISMA]", error.stack); 
             res.status(400).json({ erro: `Erro ao criar evento: ${error.message}` });
         }
     }
   
     async listarEventos(req, res) {
-      try {
-        const { data, mes, ano } = req.query;
-        
-        let filtros = {};
+        try {
+            const { data, mes, ano, pendentes } = req.query;
+            let filtros = {};
+            if (pendentes === 'true') filtros.pendentes = true;
+            if (mes && ano) { filtros.mes = Number(mes); filtros.ano = Number(ano); }
+            else if (data) filtros.data = data;
 
-        // Prioridade 1: Filtro Mensal (Novo Frontend)
-        if (mes && ano) {
-            filtros.mes = Number(mes);
-            filtros.ano = Number(ano);
-        } 
-        // Prioridade 2: Filtro Diário (Legado/Compatibilidade)
-        else if (data) {
-            filtros.data = data;
-        }
+            const eventos = await eventoService.listarEventos(filtros);
+            res.status(200).json(eventos);
+        } catch (error) { res.status(500).json({ erro: error.message }); }
+    }
 
-        const eventos = await eventoService.listarEventos(filtros);
-        res.status(200).json(eventos);
-      } catch (error) {
-        res.status(500).json({ erro: error.message });
-      }
+    async aprovarEvento(req, res) {
+        try {
+            const evento = await eventoService.atualizarStatus(req.params.id, true);
+            res.json({ msg: "Evento Aprovado!", evento });
+        } catch (e) { res.status(400).json({ erro: e.message }); }
     }
 
 
@@ -168,4 +162,4 @@ class EventoController {
   }
 }
 
-module.exports = EventoController;
+module.exports = new EventoController();

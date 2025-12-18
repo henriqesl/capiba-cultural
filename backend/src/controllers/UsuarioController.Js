@@ -13,41 +13,27 @@ class UsuarioController {
 
   async criarUsuario(req, res) {
     const { 
-        nome, 
-        email, 
-        senha, 
-        cpf, 
-        dataNascimento, 
-        cep, 
-        endereco, 
-        numero, 
-        bairro 
+        nome, email, senha, cpf, dataNascimento, 
+        cep, endereco, numero, bairro 
     } = req.body;
 
-    let fotoUrl = null;
-    let caminhoFisicoArquivo = null; 
-
     try {
-
-      const imagemUrlFinal = (req.file && req.file.filename) ? `uploads/${req.file.filename}` : imagemUrlBody;
-
-
       console.log("LOG 1: Controller iniciou criação do usuário:", nome);
       
+      // 🟢 LÓGICA DE FOTO OPCIONAL
+      // Se tiver arquivo, salva o caminho com a pasta 'perfil'. Se não, null.
+      let imagemUrlFinal = null;
+      if (req.file && req.file.filename) {
+          imagemUrlFinal = `uploads/perfil/${req.file.filename}`;
+      }
+
       const usuario = await this.usuarioService.criarUsuario(
-        nome,
-        email,
-        senha,
-        cpf,
-        dataNascimento,
-        cep,
-        endereco,
-        numero,
-        bairro,
+        nome, email, senha, cpf, dataNascimento, 
+        cep, endereco, numero, bairro, 
         imagemUrlFinal 
       );
 
-      console.log("LOG 2: Service retornou sucesso. Usuário criado com ID:", usuario.id);
+      console.log("LOG 2: Service retornou sucesso. Usuário ID:", usuario.id);
 
       return res.status(201).json({
         mensagem: `Usuário ${usuario.nome} criado com sucesso!`,
@@ -56,7 +42,6 @@ class UsuarioController {
 
     } catch (error) {
       console.log("LOG 3: Erro capturado no Controller:", error.message);
-      console.error("Stack do erro:", error);
       return res.status(400).json({ erro: error.message });
     }
   }
