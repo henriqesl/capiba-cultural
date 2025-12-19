@@ -1,90 +1,88 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { MapPin, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Carousel = ({ events }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    if (!events || events.length === 0) return;
-    const interval = setInterval(() => {
-      setActiveIndex((current) =>
-        current === events.length - 1 ? 0 : current + 1,
-      );
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [events]);
+    if (!events || events.length === 0) {
+        return null; 
+    }
 
-  if (!events || events.length === 0) return null;
+    const prevSlide = () => {
+        const isFirstSlide = currentIndex === 0;
+        const newIndex = isFirstSlide ? events.length - 1 : currentIndex - 1;
+        setCurrentIndex(newIndex);
+    };
 
-  const currentEvent = events[activeIndex];
+    const nextSlide = () => {
+        const isLastSlide = currentIndex === events.length - 1;
+        const newIndex = isLastSlide ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex);
+    };
 
-  const imageUrl =
-    currentEvent.image ||
-    `https://placehold.co/800x400/2563eb/ffffff?text=${encodeURIComponent(currentEvent.title)}`;
 
-  return (
-    <div className="w-full max-w-6xl mx-auto mb-10 px-4 sm:px-0">
-      <h2 className="text-xl font-bold text-gray-700 mb-4 flex items-center gap-2">
-        Destaques da Semana
-      </h2>
+    useEffect(() => {
+        const interval = setInterval(() => {
+            nextSlide();
+        }, 5000); 
+        return () => clearInterval(interval);
+    }, [currentIndex, events.length]);
 
-      <div className="relative w-full h-64 sm:h-80 bg-gray-900 rounded-2xl shadow-xl overflow-hidden group">
-        {}
-        <img
-          src={imageUrl}
-          alt={currentEvent.title}
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
 
-        {}
-        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent"></div>
+    const currentEvent = events[currentIndex];
+    if (!currentEvent) return null;
 
-        {}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-10 z-10">
-          <h3 className="text-3xl sm:text-4xl font-bold text-white mb-2 leading-tight drop-shadow-lg">
-            {currentEvent.title}
-          </h3>
-          <div className="flex flex-col sm:flex-row sm:items-center text-gray-200 text-sm sm:text-base gap-1 sm:gap-4 font-medium drop-shadow-md">
-            <span>🗓️ {currentEvent.time}</span>
-            <span className="hidden sm:inline">•</span>
-            <span>📍 {currentEvent.location}</span>
-          </div>
+    return (
+        <div className="relative group w-full max-w-6xl mx-auto h-56 sm:h-72 rounded-2xl overflow-hidden shadow-lg">
 
-          {}
-          <a
-            href={`#/evento/${currentEvent.id}`}
-            className="mt-4 bg-white text-blue-900 font-bold py-2 px-6 rounded-lg hover:bg-gray-100 transition-colors w-fit shadow-lg"
-          >
-            Ver Detalhes
-          </a>
+            <div 
+                style={{ backgroundImage: `url(${currentEvent.image || 'https://via.placeholder.com/800x400?text=Sem+Foto'})` }} 
+                className="w-full h-full bg-center bg-cover duration-500 transition-all"
+            >
+               
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            </div>
+
+   
+            <div className="absolute bottom-0 left-0 p-5 text-white w-full">
+                <h2 className="text-xl sm:text-2xl font-bold mb-1 drop-shadow-md truncate">{currentEvent.title}</h2>
+                
+                <div className="flex items-center gap-3 text-sm sm:text-base opacity-90">
+                    <div className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        <span>{currentEvent.time}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        <span className="truncate max-w-[150px] sm:max-w-xs">{currentEvent.location}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] left-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/40 transition-all">
+                <ChevronLeft onClick={prevSlide} size={30} />
+            </div>
+            <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/40 transition-all">
+                <ChevronRight onClick={nextSlide} size={30} />
+            </div>
+
+      
+            <div className="flex top-4 justify-center py-2 absolute w-full gap-2">
+                {events.map((_, slideIndex) => (
+                    <div
+                        key={slideIndex}
+                        onClick={() => setCurrentIndex(slideIndex)}
+                        className={`text-2xl cursor-pointer transition-all duration-300 h-1.5 rounded-full ${currentIndex === slideIndex ? 'bg-white w-6' : 'bg-white/40 w-2'}`}
+                    ></div>
+                ))}
+            </div>
+            
+            <a href={`#/eventos/${currentEvent.id}`} className="absolute inset-0 z-0" onClick={(e) => {
+
+                if(e.target.closest('svg')) e.preventDefault();
+            }}></a>
         </div>
-
-        {}
-        <div className="absolute bottom-4 right-4 flex gap-2 z-20">
-          {events.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveIndex(index)}
-              className={`h-2 rounded-full transition-all duration-300 shadow-sm ${
-                index === activeIndex
-                  ? "bg-yellow-400 w-8"
-                  : "bg-white/50 w-2 hover:bg-white"
-              }`}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Carousel;
-
-/*
-  [INTEGRAÇÃO]
-  Esse componente espera receber um array `events`. 
-  Quando fizermos o fetch no `EventPage`, precisamos passar os eventos "Destaque" pra cá.
-  
-  Regra de Negócio:
-  Quais eventos aparecem aqui? 
-  Podemos filtrar no front os eventos que têm `pequenoPorte = false` ou criar uma flag `destaque` no backend.
-*/

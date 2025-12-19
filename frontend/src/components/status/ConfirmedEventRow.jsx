@@ -1,63 +1,44 @@
-import React from "react";
-import { Calendar, MapPin, CheckCircle2 } from "lucide-react";
+import React from 'react';
+import { MapPin, Clock } from 'lucide-react';
 
-const ConfirmedEventRow = ({ evento, data }) => {
-  const formatarData = (dataString) => {
-    if (!dataString) return "--/--";
-    const date = new Date(dataString);
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  };
+const ConfirmedEventRow = ({ evento }) => {
+    if (!evento) return null;
 
-  const nomeEvento = evento?.nome || "Evento Removido";
-  const localEvento = evento?.local || "Local desconhecido";
-  const imagemEvento = evento?.imagemUrl || null;
+    const getImageUrl = (url) => {
+        if (!url) return "https://via.placeholder.com/150?text=Sem+Foto";
 
-  return (
-    <div className="flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors border-l-4 border-transparent hover:border-green-500">
-      {}
-      <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden border border-gray-200">
-        {imagemEvento ? (
-          <img
-            src={imagemEvento}
-            alt={nomeEvento}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <CheckCircle2 className="w-6 h-6 text-green-600" />
-        )}
-      </div>
+        return url.startsWith('http') ? url : `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+    };
 
-      {}
-      <div className="flex-1 min-w-0">
-        <h4 className="font-bold text-gray-800 text-sm truncate">
-          {nomeEvento}
-        </h4>
+    return (
+        <div className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm items-center hover:border-blue-200 transition-colors">
+            
+            <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-xl overflow-hidden bg-gray-100 border border-gray-100">
+                <img 
+                    src={getImageUrl(evento.imagemUrl)} 
+                    alt={evento.nome} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => { e.target.src = "https://via.placeholder.com/150?text=Erro"; }}
+                />
+            </div>
+            
+            <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-gray-800 text-sm sm:text-base truncate">{evento.nome}</h4>
+                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                    <MapPin size={12} className="shrink-0"/>
+                    <span className="truncate">{evento.local}</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+                    <Clock size={12} className="shrink-0"/>
+                    <span>{new Date(evento.data).toLocaleDateString('pt-BR')}</span>
+                </div>
+            </div>
 
-        <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
-          <span className="flex items-center gap-1">
-            <Calendar className="w-3 h-3" />
-            {formatarData(data)}
-          </span>
-          <span className="flex items-center gap-1 truncate max-w-[120px]">
-            <MapPin className="w-3 h-3" />
-            {localEvento}
-          </span>
+            <div className="bg-green-100 text-green-700 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider shrink-0 border border-green-200">
+                Visitado
+            </div>
         </div>
-      </div>
-
-      {}
-      <div className="text-right">
-        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-          Confirmado
-        </span>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ConfirmedEventRow;

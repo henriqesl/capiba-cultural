@@ -125,12 +125,21 @@ class UsuarioService {
   }
 
   async adicionarMoedas(usuarioId, quantidade) {
-    if (quantidade <= 0)
-      throw new Error("Valor adicionado não pode ser zero ou negativo");
+    if (quantidade <= 0) throw new Error("Valor inválido");
 
-    const saldoAtual = await this.usuarioRepository.getSaldo(usuarioId);
-    const novoSaldo = saldoAtual + quantidade;
-    return await this.usuarioRepository.setSaldo(usuarioId, novoSaldo);
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: Number(usuarioId) },
+      select: { moedasCapiba: true } 
+    });
+
+    if (!usuario) throw new Error("Usuário não encontrado");
+
+    const novoSaldo = (usuario.moedasCapiba || 0) + quantidade;
+
+    return await prisma.usuario.update({
+      where: { id: Number(usuarioId) },
+      data: { moedasCapiba: novoSaldo }
+    });
   }
 
   async gastarMoedas(usuarioId, quantidade) {

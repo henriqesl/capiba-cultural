@@ -73,10 +73,10 @@ const UserPage = () => {
                                    {" "}
             <h1 className="text-3xl font-bold text-gray-800">{nomeUsuario}</h1> 
                                                          {" "}
-            <p className="text-md text-blue-600 font-semibold mt-2">
-                                          {pontos.toLocaleString("pt-BR")}{" "}
-              Capibas                        {" "}
-            </p>
+            
+              <span class="block text-center text-md text-blue-600 font-semibold mt-2">
+                  {pontos.toLocaleString("pt-BR")}{" "}Capibas 
+              </span>
                                {" "}
           </div>
                          {" "}

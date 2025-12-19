@@ -70,24 +70,6 @@ const StatusPage = () => {
       </div>
 
       {}
-      <div className="grid grid-cols-2 gap-4">
-        <StatusCard
-          icon={Target}
-          title="Missões Ativas"
-          value={missoes.filter((m) => !m.completada).length}
-          color="text-orange-500"
-          bg="bg-orange-50"
-        />
-        <StatusCard
-          icon={CheckCircle}
-          title="Eventos Visitados"
-          value={historico.length}
-          color="text-green-500"
-          bg="bg-green-50"
-        />
-      </div>
-
-      {}
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Trophy className="w-5 h-5 text-yellow-500" /> Missões & Conquistas

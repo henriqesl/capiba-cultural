@@ -13,7 +13,6 @@ import UserPage from "./pages/user/UserPage.jsx";
 import CaravanaPage from "./pages/user/CaravanaPage.jsx";
 import CaravanaDetailsPage from "./pages/user/CaravanaDetailsPage.jsx";
 import CreateCaravanaPage from "./pages/user/CreateCaravanaPage.jsx";
-import AdminPage from "./pages/AdminPage.jsx";
 import { AuthContext } from "./context/AuthContext";
 
 const App = () => {
@@ -60,9 +59,6 @@ const App = () => {
     if (mainRoute === "registrar") return <RegisterPage />;
     if (mainRoute === "login") return <LoginPage />;
 
-    if (mainRoute === "admin") {
-      return <AdminPage />;
-    }
 
     if (mainRoute === "locais" && subRoute) {
       return (
