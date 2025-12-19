@@ -124,7 +124,6 @@ const SuggestForm = ({ onBack }) => {
         </header>
 
         <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Nome do Evento
@@ -139,7 +138,6 @@ const SuggestForm = ({ onBack }) => {
             />
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
               Imagem de Divulgação (Opcional)
@@ -173,7 +171,6 @@ const SuggestForm = ({ onBack }) => {
             </div>
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Data
@@ -204,7 +201,6 @@ const SuggestForm = ({ onBack }) => {
             </div>
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Local
@@ -244,7 +240,6 @@ const SuggestForm = ({ onBack }) => {
             )}
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Link Oficial

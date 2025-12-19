@@ -47,7 +47,6 @@ const BottomNav = ({ currentPath }) => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 w-full max-w-md mx-auto bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] px-4 py-2 md:hidden z-50">
       <div className="flex justify-around items-center">
-        {}
 
         <NavItem
           href="#/eventos"
@@ -68,7 +67,6 @@ const BottomNav = ({ currentPath }) => {
           active={currentPath.startsWith("#/status")}
         />
 
-        {}
         {userOrLoginItem}
       </div>
     </nav>

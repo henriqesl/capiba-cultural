@@ -30,7 +30,7 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen font-sans bg-linear-to-br from-blue-600 to-blue-800 flex justify-center items-center p-8">
-      {}
+      
       <div className="w-full max-w-sm text-center flex flex-col items-center gap-y-4 animate-fade-in">
         <CapibaLogo />
         <header className="w-full mb-4">
@@ -38,7 +38,6 @@ const LoginPage = () => {
           <p className="text-blue-100 mt-1">Digite suas credenciais</p>
         </header>
 
-        {}
         <form onSubmit={handleLogin} className="w-full flex flex-col gap-y-4">
           <input
             type="email"
@@ -63,7 +62,6 @@ const LoginPage = () => {
             {isLoading ? "ENTRANDO..." : "LOGAR"}
           </button>
 
-          {}
           <div className="mt-2">
             <Button variant="secondary" href="#/registrar">
               CRIAR CONTA

@@ -113,7 +113,6 @@ const EventPage = () => {
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-      {}
       <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 flex">
           <button
@@ -145,7 +144,6 @@ const EventPage = () => {
         </div>
       </div>
 
-      {}
       {activeTab === "agenda" && (
         <>
           <div className="pt-6 pb-2">
@@ -160,7 +158,7 @@ const EventPage = () => {
 
           <div className="max-w-6xl mx-auto border-t border-gray-200 mb-6 mt-4"></div>
 
-          {}
+
           <div className="mb-8 w-full">
             <div className="px-4 mb-4 flex items-baseline justify-center gap-2">
               <h2 className="text-xl font-bold text-gray-800 capitalize">
@@ -184,13 +182,13 @@ const EventPage = () => {
                   >
                     <div
                       className={`
-                                            w-[70px] h-[70px] rounded-full p-[3px] transition-all duration-300
-                                            ${
-                                              isSelected
-                                                ? "bg-gradient-to-tr from-blue-500 to-cyan-400 shadow-md scale-105"
-                                                : "bg-gray-200 hover:bg-gray-300"
-                                            }
-                                        `}
+                        w-[70px] h-[70px] rounded-full p-[3px] transition-all duration-300
+                        ${
+                          isSelected
+                            ? "bg-gradient-to-tr from-blue-500 to-cyan-400 shadow-md scale-105"
+                            : "bg-gray-200 hover:bg-gray-300"
+                        }
+                    `}
                     >
                       <div className="w-full h-full rounded-full bg-white flex flex-col items-center justify-center border-[3px] border-white">
                         <span
@@ -213,9 +211,7 @@ const EventPage = () => {
         </>
       )}
 
-      {}
       <div className="px-4 sm:p-8 pt-0">
-        {}
         <div className="flex flex-col items-center mb-10">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 capitalize mb-6 text-center">
             {activeTab === "reminders"
@@ -235,7 +231,6 @@ const EventPage = () => {
           </div>
         ) : (
           <>
-            {}
             {(activeTab === "agenda" || activeTab === "reminders") && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
                 {displayedEvents.length > 0 ? (
@@ -275,8 +270,7 @@ const EventPage = () => {
                 )}
               </div>
             )}
-
-            {}
+            
             {activeTab === "map" && (
               <div className="max-w-6xl mx-auto w-full h-[500px] bg-gray-200 rounded-3xl overflow-hidden shadow-lg">
                 {}

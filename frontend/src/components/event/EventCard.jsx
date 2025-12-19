@@ -32,7 +32,6 @@ const EventCard = ({
       {...interactProps}
       {...props}
     >
-      {}
       <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden shrink-0 ml-0 mr-4 bg-gray-100 flex items-center justify-center border border-gray-100">
         <img
           src={imageUrl}
@@ -44,7 +43,6 @@ const EventCard = ({
         />
       </div>
 
-      {}
       <div className="flex flex-col flex-grow min-w-0 h-full justify-between py-1">
         <div>
           <h3 className="font-bold text-lg sm:text-xl truncate text-gray-900 leading-tight mb-1">
@@ -60,7 +58,6 @@ const EventCard = ({
         </p>
       </div>
 
-      {}
       <div className="shrink-0 ml-2 text-blue-500 text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity">
         &rarr;
       </div>

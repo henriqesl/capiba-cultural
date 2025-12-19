@@ -53,7 +53,7 @@ const JoinCaravanaPage = ({ onBack, onJoin }) => {
         </header>
 
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
-          {}
+          
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Código de Acesso do Grupo

@@ -7,7 +7,6 @@ const MainLayout = ({ children, currentPath }) => {
     <div className="w-full min-h-screen bg-gray-100">
       <TopNav currentPath={currentPath} />
 
-      {}
       <main>{children}</main>
 
       <BottomNav currentPath={currentPath} />

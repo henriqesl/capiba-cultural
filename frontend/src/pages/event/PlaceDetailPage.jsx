@@ -28,7 +28,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
         if (!placeData) return;
         const { latitude, longitude, nome, local } = placeData;
         
-        // Correção na montagem da URL
         const url = (latitude && longitude) 
             ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
             : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${nome} ${local} Recife`)}`;
@@ -60,7 +59,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
-            {/* Header / Hero */}
             <div className="relative h-[35vh] w-full bg-purple-700 flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-purple-500 via-transparent to-transparent opacity-50" />
                 
@@ -78,7 +76,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
             <div className="max-w-5xl mx-auto px-6 -mt-10 relative z-20 pb-20">
                 <div className="bg-white rounded-[40px] shadow-2xl p-6 md:p-12 border border-gray-100">
                     
-                    {/* Badge Capibas */}
                     <div className="flex justify-end mb-6">
                         <div className="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-2xl border border-green-200">
                             <Star className="w-4 h-4 text-green-600 fill-current" />
@@ -91,7 +88,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                         <div className="md:col-span-2 space-y-8">
                             
-                            {/* Imagem Principal */}
                             <div className="relative w-full h-64 md:h-80 rounded-[30px] overflow-hidden shadow-lg border-4 border-white">
                                 <img 
                                     src={placeData.imagemUrl ? `${API_URL}/${placeData.imagemUrl}` : "https://images.unsplash.com/photo-1492684223066-81342ee5ff30"} 
@@ -103,7 +99,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                                 </div>
                             </div>
 
-                            {/* Descrição */}
                             <div>
                                 <h3 className="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
                                     <Info className="w-3 h-3 text-purple-500" /> Sobre o local
@@ -113,7 +108,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                                 </p>
                             </div>
 
-                            {/* Info Cards */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="p-5 bg-gray-50 rounded-3xl border border-gray-100 flex items-center gap-4">
                                     <Clock className="w-5 h-5 text-purple-600" />
@@ -144,7 +138,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                             </div>
                         </div>
 
-                        {/* Sidebar / Endereço */}
                         <div className="bg-gray-950 rounded-[35px] p-8 text-white h-fit shadow-xl flex flex-col gap-6 self-start">
                             <div className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-purple-400 shrink-0" />
@@ -172,7 +165,6 @@ const PlaceDetailPage = ({ placeId, onBack }) => {
                         </div>
                     </div>
 
-                    {/* Botão de Check-in */}
                     <div className="mt-12 pt-8 border-t border-gray-100 text-center">
                         <button 
                             onClick={() => setShowScanner(true)}

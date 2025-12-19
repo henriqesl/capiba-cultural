@@ -27,46 +27,43 @@ const StatusCard = ({
     const percentage = Math.min((progress / total) * 100, 100);
     return (
       <div className={`${cardBaseClasses} ${missionCardClasses}`}>
-               {" "}
+        {" "}
         <div className="flex justify-between items-start mb-3">
-                   {" "}
+          {" "}
           <h3
             className={`font-bold text-xl ${isMissionCompleted ? "text-gray-500" : "text-gray-800"}`}
           >
             {title}
           </h3>
-                   {" "}
+            {" "}
           {reward && (
-            <span
-              className={`text-sm ${rewardPillColor} px-3 py-1 rounded-full font-semibold`}
-            >
-                            {reward}           {" "}
+            <span className={`text-sm ${rewardPillColor} px-3 py-1 rounded-full font-semibold`}>
+              {reward}
+              {" "}
             </span>
           )}
-                 {" "}
+          {" "}
         </div>
-                        {}       {" "}
+          {}{" "}
         <div className="w-full bg-gray-200 rounded-full h-8 mb-2">
-                   {" "}
-          <div
-            className={`${progressFillColor} h-8 rounded-full flex items-center justify-center text-white text-sm font-bold transition-all duration-300`}
-            style={{ width: `${percentage}%` }}
-          >
-                        {progress > 0 && `${progress}/${total}`}         {" "}
+          {" "}
+          <div className={`${progressFillColor} h-8 rounded-full flex items-center justify-center text-white text-sm font-bold transition-all duration-300`}
+            style={{ width: `${percentage}%` }} >
+            {progress > 0 && `${progress}/${total}`}         {" "}
           </div>
-                 {" "}
+          {" "}
         </div>
-                       {" "}
+        {" "}
         <p
           className={`text-sm ${isMissionCompleted ? "text-gray-400" : "text-gray-500"}`}
         >
-                   {" "}
+          {" "}
           {isMissionCompleted
             ? "Missão Concluída!"
             : `Progresso: ${progress} de ${total}`}
-                 {" "}
+          {" "}
         </p>
-             {" "}
+        {" "}
       </div>
     );
   }
@@ -80,22 +77,23 @@ const StatusCard = ({
             : "bg-gray-100 border-2 border-gray-400 opacity-75"
         }`}
       >
-               {" "}
+        {" "}
         <div className="flex items-start gap-4">
-                   {" "}
+          {" "}
           <span className="text-4xl">
-                        {isUnlocked ? "🏆" : "🔒"}         {" "}
+            {isUnlocked ? "🏆" : "🔒"}
+            {" "}
           </span>
-                   {" "}
+            {" "}
           <div>
-                       {" "}
-            <h3 className="font-bold text-lg text-gray-800">{title}</h3>       
-                <p className="text-sm text-gray-600 mt-1">{description}</p>     
-               {" "}
+            {" "}
+            <h3 className="font-bold text-lg text-gray-800">{title}</h3>
+            <p className="text-sm text-gray-600 mt-1">{description}</p>
+              {" "}
           </div>
-                 {" "}
+            {" "}
         </div>
-             {" "}
+          {" "}
       </div>
     );
   }

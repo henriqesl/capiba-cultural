@@ -252,7 +252,6 @@ const ReportForm = ({ onBack }) => {
         </header>
 
         <form className="p-6 md:p-8 space-y-6" onSubmit={handleSubmit}>
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Título do Evento
@@ -266,12 +265,10 @@ const ReportForm = ({ onBack }) => {
                 className="w-full pl-10 p-2.5 border border-gray-300 rounded-lg outline-none"
                 required
               />
-              {}
               <Megaphone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">
               Foto do local/evento
@@ -345,7 +342,6 @@ const ReportForm = ({ onBack }) => {
             )}
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Local
@@ -397,8 +393,7 @@ const ReportForm = ({ onBack }) => {
               />
             )}
           </div>
-
-          {}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1">

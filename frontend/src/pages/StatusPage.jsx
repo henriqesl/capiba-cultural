@@ -51,7 +51,6 @@ const StatusPage = () => {
 
   return (
     <div className="p-4 md:p-8 space-y-6 bg-gray-50 min-h-screen pb-24">
-      {}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl p-6 text-white shadow-lg flex justify-between items-center relative overflow-hidden">
         <div className="relative z-10">
           <p className="text-blue-200 text-sm font-medium mb-1">
@@ -65,11 +64,10 @@ const StatusPage = () => {
         <div className="bg-white/20 p-4 rounded-full relative z-10 backdrop-blur-sm">
           <Wallet className="w-8 h-8 text-white" />
         </div>
-        {}
+
         <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
       </div>
 
-      {}
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Trophy className="w-5 h-5 text-yellow-500" /> Missões & Conquistas
@@ -92,7 +90,6 @@ const StatusPage = () => {
                   </span>
                 </div>
 
-                {}
                 <div className="w-full bg-gray-100 rounded-full h-2.5 mt-3">
                   <div
                     className={`h-2.5 rounded-full transition-all duration-500 ${missao.completada ? "bg-green-500" : "bg-blue-600"}`}
@@ -119,7 +116,6 @@ const StatusPage = () => {
         </div>
       </div>
 
-      {}
       <div>
         <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-blue-500" /> Histórico Recente

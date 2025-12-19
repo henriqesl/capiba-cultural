@@ -106,7 +106,7 @@ const RegisterPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-        {}
+
         <div className="bg-blue-600 p-8 flex flex-col items-center justify-center text-white md:w-2/5 text-center">
           <CapibaLogo />
           <h2 className="text-2xl font-bold mt-4">Junte-se a nós!</h2>
@@ -121,12 +121,10 @@ const RegisterPage = () => {
           </a>
         </div>
 
-        {}
         <div className="p-8 md:w-3/5">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Criar Conta</h1>
 
           <form onSubmit={handleSubmit} className="space-y-3">
-            {}
             <div className="flex justify-center mb-4">
               <label className="cursor-pointer group relative">
                 <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border-2 border-dashed border-gray-400 group-hover:border-blue-500 transition-colors">
@@ -151,7 +149,6 @@ const RegisterPage = () => {
               </label>
             </div>
 
-            {}
             <div className="relative">
               <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
               <input
@@ -163,7 +160,6 @@ const RegisterPage = () => {
               />
             </div>
 
-            {}
             <div className="relative">
               <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
               <input
@@ -175,7 +171,6 @@ const RegisterPage = () => {
               />
             </div>
 
-            {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="relative">
                 <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
@@ -200,7 +195,6 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {}
             <div className="pt-2 border-t border-gray-100">
               <p className="text-xs font-bold text-gray-400 uppercase mb-2">
                 Endereço
@@ -249,7 +243,6 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="relative">
                 <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />

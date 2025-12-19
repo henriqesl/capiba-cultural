@@ -39,8 +39,4 @@ const Button = ({
 
 export default Button;
 
-/*
-  Quando formos ligar com a API, vale a pena adicionar uma prop `isLoading`.
-  Assim, enquanto o login carrega, o botão fica desabilitado e mostra um spinner, 
-  evitando que o usuário clique 10 vezes seguidas.
-*/
+

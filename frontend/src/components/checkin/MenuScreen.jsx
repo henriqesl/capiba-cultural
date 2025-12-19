@@ -22,7 +22,7 @@ const MenuScreen = ({ onScan, onReport, onSuggest, onSpots }) => (
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
-        {}
+  
         <section className="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col h-full min-h-[400px]">
           <div className="flex items-center gap-2 mb-6">
             <div className="bg-blue-100 p-2 rounded-lg">
@@ -35,7 +35,6 @@ const MenuScreen = ({ onScan, onReport, onSuggest, onSpots }) => (
             onClick={onScan}
             className="flex-1 relative group cursor-pointer rounded-2xl overflow-hidden bg-gray-900 flex flex-col items-center justify-center transition-all hover:shadow-2xl hover:shadow-blue-500/20"
           >
-            {}
             <div className="absolute top-6 left-6 w-12 h-12 border-t-4 border-l-4 border-white/50 rounded-tl-xl"></div>
             <div className="absolute top-6 right-6 w-12 h-12 border-t-4 border-r-4 border-white/50 rounded-tr-xl"></div>
             <div className="absolute bottom-6 left-6 w-12 h-12 border-b-4 border-l-4 border-white/50 rounded-bl-xl"></div>
@@ -50,7 +49,6 @@ const MenuScreen = ({ onScan, onReport, onSuggest, onSpots }) => (
           </div>
         </section>
 
-        {}
         <section className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -59,7 +57,6 @@ const MenuScreen = ({ onScan, onReport, onSuggest, onSpots }) => (
             </h2>
           </div>
 
-          {}
           <button
             onClick={onSpots}
             className="relative overflow-hidden bg-white p-6 rounded-3xl shadow-lg border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-xl group"
@@ -83,7 +80,6 @@ const MenuScreen = ({ onScan, onReport, onSuggest, onSpots }) => (
             </div>
           </button>
 
-          {}
           <button
             onClick={onReport}
             className="relative overflow-hidden bg-white p-6 rounded-3xl shadow-lg border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-xl group"
@@ -107,7 +103,6 @@ const MenuScreen = ({ onScan, onReport, onSuggest, onSpots }) => (
             </div>
           </button>
 
-          {}
           <button
             onClick={onSuggest}
             className="relative overflow-hidden bg-white p-6 rounded-3xl shadow-lg border border-gray-100 text-left transition-all hover:-translate-y-1 hover:shadow-xl group"

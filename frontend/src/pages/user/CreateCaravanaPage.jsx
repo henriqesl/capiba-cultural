@@ -91,7 +91,6 @@ const CreateCaravanaPage = ({ onBack, onCreate }) => {
         </header>
 
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Nome do Grupo *
@@ -109,7 +108,6 @@ const CreateCaravanaPage = ({ onBack, onCreate }) => {
             </div>
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Descrição Breve (Opcional)
@@ -130,7 +128,6 @@ const CreateCaravanaPage = ({ onBack, onCreate }) => {
             </p>
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Evento de Destino *
@@ -153,7 +150,6 @@ const CreateCaravanaPage = ({ onBack, onCreate }) => {
             </div>
           </div>
 
-          {}
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-1">
               Código de Acesso *

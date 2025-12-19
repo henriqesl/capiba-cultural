@@ -1,9 +1,7 @@
 import React from "react";
 import { ICONS } from "../../utils/icons";
 
-/* ===============================
-   ÍCONE GENÉRICO (SVG)
-================================ */
+
 export const Icon = ({ path, className = "w-6 h-6" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -15,10 +13,6 @@ export const Icon = ({ path, className = "w-6 h-6" }) => (
   </svg>
 );
 
-/* ===============================
-   FOTO DE PERFIL (PADRÃO ÚNICO)
-   -> SEMPRE usa `src`
-================================ */
 export const PerfilImage = ({ src, className = "w-48 h-48" }) => {
   const FALLBACK = "https://placehold.co/200x200/e2e8f0/94a3b8?text=USER";
 
@@ -37,9 +31,6 @@ export const PerfilImage = ({ src, className = "w-48 h-48" }) => {
   );
 };
 
-/* ===============================
-   LINHA DE INFO SIMPLES
-================================ */
 export const InfoRow = ({ label, value }) => (
   <div className="flex justify-between items-center py-4 border-b border-gray-200 px-2 rounded-lg">
     <div>

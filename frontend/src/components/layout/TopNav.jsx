@@ -24,7 +24,6 @@ const TopNav = ({ currentPath }) => {
   return (
     <nav className="hidden md:flex w-full bg-blue-600 border-b border-blue-700 shadow-md py-3 px-6 justify-between items-center sticky top-0 z-50">
       <div className="flex justify-center items-center gap-6 mx-auto">
-        {}
 
         <NavItem
           href="#/eventos"
@@ -52,7 +51,6 @@ const TopNav = ({ currentPath }) => {
         />
       </div>
 
-      {}
       <button
         onClick={logout}
         className="absolute right-8 flex items-center gap-2 text-blue-200 hover:text-red-300 transition-colors font-medium text-sm"
